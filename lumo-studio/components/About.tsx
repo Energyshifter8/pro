@@ -49,6 +49,7 @@ function Tile({ t, i, tileRef }: { t: (typeof TILES)[number]; i: number; tileRef
   useEffect(() => {
     // icons alternate every 3s, staggered 0.4s per tile; old icon shrinks (0.3s ease-in),
     // then the new one grows (0.35s ease-out)
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let iv = 0;
     const to = window.setTimeout(() => { setShowB((v) => !v); iv = window.setInterval(() => setShowB((v) => !v), 3000); }, 2200 + i * 400);
     return () => { clearTimeout(to); clearInterval(iv); };

@@ -31,7 +31,11 @@ export default function Cursor() {
       if (!raf) raf = requestAnimationFrame(tick);
       setVisible(true);
       const el = e.target as HTMLElement;
-      const m = el.closest?.("[data-cursor]")?.getAttribute("data-cursor");
+      // the innermost of an explicit [data-cursor] or an interactive element decides the label
+      const tagged = el.closest?.("[data-cursor]");
+      const interactive = el.closest?.("a[href], button, label, select, [role=button], [role=option]");
+      let m = tagged?.getAttribute("data-cursor") ?? null;
+      if (interactive && (!tagged || (tagged !== interactive && tagged.contains(interactive)))) m = "pointer";
       setMode(m === "drag" ? "drag" : m === "pointer" ? "pointer" : "default");
     };
     const onLeave = () => setVisible(false);

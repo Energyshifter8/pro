@@ -10,7 +10,7 @@ const ANCHORS: [number, number][] = [[590,510],[2020,1160],[2690,2480],[3570,-10
 
 const SPEED = (1300 / 240) * 1000; // 1300rem/s at a 240rem font, in path units per second
 const DECEL = 1.5; // seconds of ease-out at the end of the stroke
-const ENTER = 1.2; // seconds until the stroke enters the viewport's left edge
+const ENTER = 0.65; // seconds until the stroke enters the viewport's left edge
 const EDGE_X = -333; // viewport left edge (container padding 80rem / 240rem)
 
 export default function PenLine() {
@@ -24,7 +24,7 @@ export default function PenLine() {
     const L = p.getTotalLength();
     p.style.strokeDasharray = `${L}`;
     // arc length where each anchor lies, and where the curve crosses the viewport edge
-    const N = 1500, samples: [number, number, number][] = [];
+    const N = 400, samples: [number, number, number][] = [];
     for (let i = 0; i <= N; i++) { const s = (L * i) / N; const q = p.getPointAtLength(s); samples.push([s, q.x, q.y]); }
     const at = ANCHORS.map(([x, y]) => samples.reduce((b, c) => (Math.hypot(c[1] - x, c[2] - y) < Math.hypot(b[1] - x, b[2] - y) ? c : b))[0]);
     const cross = samples.find((c) => c[1] >= EDGE_X)![0];
