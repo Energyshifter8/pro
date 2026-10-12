@@ -86,6 +86,8 @@ export const cases = [
   { name: "MOUNTAIN LAB", tag: "Platform", color: "#C4B2FF" },
   { name: "BLUE YURT", tag: "Branding", color: "#FFD23F" },
   { name: "FERRO", tag: "Web", color: "#F2452E" },
+  { name: "LUMEN", tag: "Web", color: "#C8F53C" },
+  { name: "ARCTICA", tag: "UI/UX", color: "#C4B2FF" },
 ];
 
 // SAMPLE testimonials — placeholders only. Replace with real client reviews before launch.
