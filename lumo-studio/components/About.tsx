@@ -1,51 +1,206 @@
 "use client";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { Reveal } from "./Reveal";
-import { aboutMetrics } from "@/lib/content";
+import { useEffect, useRef, useState } from "react";
+import { useInView } from "framer-motion";
+import { about, aboutMetrics } from "@/lib/content";
+import { backOut, power1In, power1Out, power2InOut, power2Out, sineInOut } from "@/lib/ease";
+import { useDesktop } from "@/lib/useMedia";
+import { Frag, useLineProgress } from "./ui/LineReveal";
+import { GlyphText, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
+import { ICONS, TileShape, type Shape } from "./about/TileArt";
 
-const words = ["We build brands", "people love", "and websites", "that win clients.", "Clean in form.", "Sharp in function."];
+// Tiles in row order; `slot` is the index of the sentence slot each one lands in.
+const TILES: { shape: Shape; color: string; a: string; b: string; slot: number }[] = [
+  { shape: "square", color: "#F04C8A", a: "cursor", b: "star", slot: 3 },
+  { shape: "square", color: "#C2EC40", a: "heart", b: "smile", slot: 1 },
+  { shape: "circle", color: "#104EFF", a: "chart", b: "eye", slot: 4 },
+  { shape: "tag", color: "#E1611C", a: "crown", b: "spark", slot: 0 },
+  { shape: "circle", color: "#EA3323", a: "bolt", b: "note", slot: 2 },
+];
+
+// Scroll timeline, in px of scroll for a 900px-tall viewport (scaled by viewport height),
+// measured from the moment the pinned stage reaches the top of the viewport.
+const INTRO_FADE = [[0, 88], [15, 103], [30, 118]]; // subtitle, title, description: -60px, fade, power1.in
+const GATHER = { start: [42, 56, 71, 88, 101], dur: 118 }; // shrink into a centred row (power2.inOut)
+const DROP: [number, number, (t: number) => number][] = [ // move to the slot's line
+  [310, 420, power2InOut], [243, 345, (t) => backOut(t)], [262, 380, (t) => backOut(t)], [205, 290, power2Out], [222, 320, power2Out],
+];
+const SLIDE = [[470, 625], [355, 505], [470, 625], [315, 445], [415, 565]]; // into the slot (sine.inOut)
+const SENTENCE_ON = 210;
+const WORDS = { start: 397, step: 60, dur: 103 }; // per line, ±50px, power1.out
+const ROW_GAP_REM = 125;
+const SCRUB_TAU = 0.25; // seconds; ~1s catch-up like a GSAP scrub: 1
+
+const seg = (u: number, a: number, b: number) => Math.min(1, Math.max(0, (u - a) / (b - a)));
+
+// Decorative glyph slots ({x} in the copy). Values: advance, ink x, ascent above baseline,
+// ink width/height — all in em of the surrounding text — plus the line-height used there.
+const TITLE_GLYPHS: Record<string, GlyphSlot> = {
+  r: { k: "R", adv: 0.843, ix: 0.047, asc: 0.729, iw: 0.785, ih: 0.682 },
+  s: { k: "S", adv: 1.049, ix: 0.015, asc: 0.714, iw: 1.02, ih: 0.659 },
+};
+const SENTENCE_GLYPHS: Record<string, GlyphSlot> = {
+  b: { k: "B", adv: 0.539, ix: 0.012, asc: 0.612, iw: 0.558, ih: 0.752 },
+  a: { k: "a", adv: 0.785, ix: 0.012, asc: 0.625, iw: 0.8, ih: 0.752 },
+};
+
+const plain = (t: string) => t.replace(/[{}]/g, "");
+
+function Tile({ t, i, tileRef }: { t: (typeof TILES)[number]; i: number; tileRef: (n: HTMLLIElement | null) => void }) {
+  const [showB, setShowB] = useState(false);
+  useEffect(() => {
+    // icons alternate every 3s, staggered 0.4s per tile; old icon shrinks (0.3s ease-in),
+    // then the new one grows (0.35s ease-out)
+    let iv = 0;
+    const to = window.setTimeout(() => { setShowB((v) => !v); iv = window.setInterval(() => setShowB((v) => !v), 3000); }, 2200 + i * 400);
+    return () => { clearTimeout(to); clearInterval(iv); };
+  }, [i]);
+  const vb = t.shape === "tag" ? "0 0 370 340" : "0 0 340 340";
+  const icon = (name: string, on: boolean) => (
+    <span className="absolute inset-0" style={{
+      transform: `scale(${on ? 1 : 0})`,
+      transition: on ? "transform 0.35s cubic-bezier(0.215,0.61,0.355,1) 0.3s" : "transform 0.3s cubic-bezier(0.55,0.055,0.675,0.19)",
+    }}>
+      <svg viewBox={vb} className="block h-full w-full">{ICONS[name]}</svg>
+    </span>
+  );
+  return (
+    <li ref={tileRef} className={`relative shrink-0 will-change-transform ${t.shape === "tag" ? "aspect-[412/360]" : "aspect-square"} h-[min(66rem,9vh)] md:h-[min(128rem,11vh)] lg:h-full lg:max-h-[calc(0.194401*(-20px-96rem+min(100vw,1920rem)))]`}>
+      <svg viewBox={vb} className="absolute inset-0 block h-full w-full" aria-hidden><TileShape shape={t.shape} color={t.color} /></svg>
+      {icon(t.a, !showB)}
+      {icon(t.b, showB)}
+    </li>
+  );
+}
 
 export default function About() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["5%", "-45%"]);
+  const wrap = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLElement>(null);
+  const tiles = useRef<(HTMLLIElement | null)[]>([]);
+  const slots = useRef<(HTMLSpanElement | null)[]>([]);
+  const words = useRef<{ el: HTMLSpanElement | null; line: number; dir: number }[]>([]);
+  const fades = useRef<(HTMLElement | null)[]>([]);
+  const sentence = useRef<HTMLDivElement>(null);
+  const entered = useInView(wrap, { once: true });
+  const desktop = useDesktop();
+  const l1 = useLineProgress(entered, 0);
+  const l2 = useLineProgress(entered, 0.3);
 
+  useEffect(() => {
+    type Pt = { x: number; y: number; w: number };
+    let base: Pt[] = [], slot: Pt[] = [], W = 0, H = 0, rem = 1;
+    const measure = () => {
+      const st = stage.current!.getBoundingClientRect();
+      tiles.current.forEach((el) => el && (el.style.transform = "none"));
+      const c = (el: Element): Pt => { const r = el.getBoundingClientRect(); return { x: r.left - st.left + r.width / 2, y: r.top - st.top + r.height / 2, w: r.width }; };
+      base = tiles.current.map((el) => c(el!));
+      slot = slots.current.map((el) => c(el!));
+      W = st.width; H = st.height;
+      rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    };
+    const render = (u: number) => {
+      fades.current.forEach((el, j) => {
+        if (!el) return;
+        const p = power1In(seg(u, INTRO_FADE[j][0], INTRO_FADE[j][1]));
+        el.style.transform = p ? `translate3d(0, ${-60 * p}px, 0)` : "";
+        el.style.opacity = `${1 - p}`;
+      });
+      TILES.forEach((t, i) => {
+        const el = tiles.current[i]; if (!el) return;
+        const b = base[i], s = slot[t.slot];
+        const cx = W / 2 + (i - 2) * ROW_GAP_REM * rem, cy = H / 2;
+        const pa = power2InOut(seg(u, GATHER.start[i], GATHER.start[i] + GATHER.dur));
+        const pb = DROP[i][2](seg(u, DROP[i][0], DROP[i][1]));
+        const pc = sineInOut(seg(u, SLIDE[i][0], SLIDE[i][1]));
+        const x = b.x + (cx - b.x) * pa + (s.x - cx) * pc;
+        const y = b.y + (cy - b.y) * pa + (s.y - cy) * pb;
+        const sc = 1 + (s.w / b.w - 1) * pa;
+        el.style.transform = `translate3d(${x - b.x}px, ${y - b.y}px, 0) scale(${sc})`;
+      });
+      if (sentence.current) sentence.current.style.opacity = u >= SENTENCE_ON ? "1" : "0";
+      words.current.forEach(({ el, line, dir }) => {
+        if (!el) return;
+        const a = WORDS.start + WORDS.step * line;
+        const p = power1Out(seg(u, a, a + WORDS.dur));
+        el.style.transform = `translate3d(${dir * 50 * (1 - p)}px, 0, 0)`;
+        el.style.opacity = `${Math.min(1, p / 0.2)}`;
+      });
+    };
+
+    let raf = 0, last = performance.now(), uS = NaN;
+    const target = () => (-wrap.current!.getBoundingClientRect().top / window.innerHeight) * 900;
+    const tick = (now: number) => {
+      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      const u = target();
+      uS = Number.isNaN(uS) ? u : uS + (u - uS) * (1 - Math.exp(-dt / SCRUB_TAU));
+      if (Math.abs(u - uS) < 0.05) uS = u;
+      render(uS);
+      raf = requestAnimationFrame(tick);
+    };
+    measure();
+    raf = requestAnimationFrame(tick);
+    const ro = new ResizeObserver(() => { measure(); render(uS || 0); });
+    ro.observe(stage.current!);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, []);
+
+  let wi = 0, si = 0;
+  words.current = [];
   return (
-    <section id="about" className="relative bg-lav text-ink">
-      <div className="mx-auto max-w-[1440px] px-4 pb-20 pt-16 md:px-10 md:pt-24">
-        <Reveal><p className="mb-6 text-sm font-bold tracking-[.3em]">ABOUT US</p></Reveal>
-        <Reveal><h2 className="h-display max-w-5xl !leading-[1] text-[12vw] md:text-[7.5vw] xl:text-[110px]">
-          We craft brands and digital <span className="my-1 inline-block rounded-[0.2em] bg-ink px-3 pt-1 text-lime">products</span> that scale
-        </h2></Reveal>
-        <div className="mt-12 grid gap-10 md:grid-cols-[1fr_1.4fr] md:items-end">
-          <Reveal><p className="max-w-sm text-lg font-semibold">Clean in form. Sharp in function. Across our client projects:</p></Reveal>
-          <div className="grid grid-cols-3 gap-3">
-            {aboutMetrics.map((m, i) => (
-              <Reveal key={m.label} delay={i * 0.1}>
-                <div className="rounded-3xl bg-ink p-5 text-cream md:p-8">
-                  <div className="h-display text-4xl text-lime md:text-7xl">{m.value}</div>
-                  <div className="mt-2 text-xs md:text-sm">{m.label}</div>
-                </div>
-              </Reveal>
-            ))}
+    <div ref={wrap} id="about" className="relative h-[185svh] mb-[-8svh]">
+      <section ref={stage} className="sticky top-0 flex h-[100svh] min-h-[100vh] flex-col justify-start overflow-hidden bg-lilac pb-[min(48rem,4vh)] pt-[min(98rem,8vh)] text-ink md:pt-[min(92rem,6vh)] lg:pt-[min(60rem,5vh)]">
+        <div className="relative mx-auto w-full max-w-[1920rem] px-[16rem] md:pl-[24rem] md:pr-[25rem] lg:px-[48rem]">
+          <h3 ref={(n) => { fades.current[0] = n; }} className="mb-[47rem] text-[13rem] font-bold uppercase leading-[1.5] md:mb-[min(92rem,6vh)] md:text-[18rem] lg:mb-0 lg:text-[15rem]">
+            {about.label}
+          </h3>
+          <h2 ref={(n) => { fades.current[1] = n; }} aria-label={about.title.map(plain).join(" ")}
+            style={fitSpacing()} className="display flex flex-col items-stretch text-[60rem] leading-none md:mt-[85rem] md:text-[96rem] md:leading-[1.02] lg:text-[170rem] lg:leading-[0.85]">
+            <Frag p={l1} d={0.919} off={0.3} className="block"><GlyphText text={about.title[0]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
+            <Frag p={l2} d={0.919} off={0.3} className="block text-right lg:mt-[4rem] lg:whitespace-nowrap"><GlyphText text={about.title[1]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
+          </h2>
+          <div ref={(n) => { fades.current[2] = n; }} className="mt-[20rem] text-[12rem] leading-[1.2] md:mt-[45rem] md:text-[16rem] lg:pl-[591rem] lg:text-[19rem]">
+            <p className="mb-[14rem] font-medium md:mb-[18rem] lg:mb-[20rem]">{about.lead}</p>
+            <p className="font-light">
+              {about.statsIntro} {aboutMetrics.map((m, i) => (
+                <span key={m.label}>{m.label} {m.value}{i < aboutMetrics.length - 1 ? "," : "."}{i < aboutMetrics.length - 1 && <br />}</span>
+              ))}
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* scroll-driven giant statement */}
-      <div ref={ref} className="overflow-hidden border-y-2 border-ink py-8">
-        <motion.div style={{ x }} className="h-display flex gap-10 whitespace-nowrap text-[18vw] md:text-[11vw]">
-          {words.map((w, i) => (
-            <span key={w} className={i % 2 ? "text-transparent [-webkit-text-stroke:2px_#1B0B3F]" : ""}>{w}</span>
-          ))}
-        </motion.div>
-      </div>
+        <ul aria-hidden className="relative z-[2] mt-[min(50rem,6vh)] flex shrink-0 items-center justify-start gap-[5.8rem] px-[16rem] md:mt-[min(100rem,6vh)] md:gap-[10.9rem] md:pl-[24rem] md:pr-[25rem] lg:mt-[min(73rem,6.08vh)] lg:min-h-0 lg:flex-auto lg:justify-center lg:gap-0 lg:px-[32rem]">
+          {TILES.map((t, i) => <Tile key={i} t={t} i={i} tileRef={(n) => { tiles.current[i] = n; }} />)}
+        </ul>
 
-      <div className="mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-6 px-4 py-16 md:flex-row md:items-center md:px-10">
-        <Reveal><h3 className="h-display text-5xl md:text-7xl">Trust comes from design,<br />not explanation.</h3></Reveal>
-        <Reveal delay={0.2}><a href="#contact" className="pill bg-ink text-lime">design trust ↗</a></Reveal>
-      </div>
-    </section>
+        <div ref={sentence} className="pointer-events-none absolute inset-x-0 top-0 z-[1] flex h-[100vh] flex-col items-center justify-center px-[16rem] opacity-0 md:px-0">
+          <p className="flex flex-col items-center text-[25.9rem] font-bold leading-[0.92] tracking-[-0.04em] md:text-[52rem] lg:text-[110rem]"
+            aria-label={about.sentence.map((l) => l.filter((x) => x !== "slot").map(plain).join(" ")).join(" ")}>
+            {about.sentence.map((line, li) => {
+              let seenSlot = false;
+              return (
+                <span key={li} aria-hidden className="flex items-center justify-center whitespace-nowrap">
+                  {line.map((part, pi) => {
+                    if (part === "slot") {
+                      const k = si++;
+                      seenSlot = true;
+                      const tileIdx = TILES.findIndex((t) => t.slot === k);
+                      const isTag = TILES[tileIdx]?.shape === "tag";
+                      return <span key={pi} ref={(n) => { slots.current[k] = n; }}
+                        className={`inline-block shrink-0 ${isTag ? "h-[0.88em] w-[1.01em] lg:h-[97rem] lg:w-[111rem]" : k === 1 ? "h-[0.85em] w-[0.85em] lg:h-[94rem] lg:w-[94rem]" : "h-[0.88em] w-[0.88em] lg:h-[97rem] lg:w-[97rem]"} mx-[0.15em] lg:mx-[16rem] ${k === 2 ? "!mr-0" : ""} ${k === 3 ? "!mr-[0.05em] lg:!mr-[5rem]" : ""} ${k === 4 ? "!ml-[0.05em] lg:!ml-[5rem]" : ""}`} />;
+                    }
+                    const w = wi++;
+                    const dir = seenSlot ? 1 : -1;
+                    return (
+                      <span key={pi} ref={(n) => { words.current[w] = { el: n, line: li, dir }; }} className="inline-block opacity-0 will-change-transform">
+                        <GlyphText text={part} glyphs={SENTENCE_GLYPHS} lh={0.92} extra={0.109} />
+                      </span>
+                    );
+                  })}
+                </span>
+              );
+            })}
+          </p>
+        </div>
+      </section>
+    </div>
   );
 }

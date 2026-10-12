@@ -1,38 +1,12 @@
 "use client";
-import { animate, motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
-import { useEffect } from "react";
 import { Glyph, InlineGlyph } from "../Glyph";
 import type { GlyphKey } from "@/lib/glyphs";
-import { INTRO, INTRO_ADAPTIVE, reducedMotion, useIntroReady } from "@/lib/intro";
-import { power4Out } from "@/lib/ease";
+import { INTRO, INTRO_ADAPTIVE, useIntroReady } from "@/lib/intro";
+import { Frag, useLineProgress } from "../ui/LineReveal";
 import PenLine from "./PenLine";
 
 const TITLE = "Websites people trust. Designed to sell.";
 const TAN6 = Math.tan((6 * Math.PI) / 180);
-
-// One progress value per line, eased 0→1 over 1s (power4.out) after its intro delay.
-function useLine(delay: number, ready: boolean) {
-  const p = useMotionValue(0);
-  useEffect(() => {
-    if (!ready) return;
-    if (reducedMotion()) { p.set(1); return; }
-    const c = animate(p, 1, { duration: 1, delay, ease: power4Out });
-    return () => c.stop();
-  }, [ready, delay, p]);
-  return p;
-}
-
-// Line reveal: the fragment starts `d` em lower, skewed 6° about its bottom-left, and is
-// clipped `off` em below its own bottom edge so it rises out of the line's baseline mask.
-function Frag({ p, d, off, className = "", style, children }: { p: MotionValue<number>; d: number; off: number; className?: string; style?: React.CSSProperties; children: React.ReactNode }) {
-  const transform = useTransform(p, (v) => (v >= 1 ? "none" : `translateY(${(d * (1 - v)).toFixed(4)}em) skewY(${(6 * (1 - v)).toFixed(3)}deg)`));
-  const clipPath = useTransform(p, (v) => (v >= 1 ? "none" : `inset(-0.3em -0.25em ${(d * (1 - v) - off).toFixed(4)}em)`));
-  return (
-    <motion.span aria-hidden className={className} style={{ ...style, transform, clipPath, opacity: p, transformOrigin: "0% 100%" }}>
-      {children}
-    </motion.span>
-  );
-}
 
 // Desktop layout (≥992px): absolutely placed fragments in em of the 240rem headline.
 // Text fragments carry `left`/`sx` chosen so each fragment's ink box matches the reference
@@ -58,7 +32,7 @@ const PIECES: Piece[] = [
 ];
 
 function DesktopTitle({ ready }: { ready: boolean }) {
-  const lines = [useLine(INTRO.heroLines[0], ready), useLine(INTRO.heroLines[1], ready), useLine(INTRO.heroLines[2], ready)];
+  const lines = [useLineProgress(ready, INTRO.heroLines[0]), useLineProgress(ready, INTRO.heroLines[1]), useLineProgress(ready, INTRO.heroLines[2])];
   return (
     <h1 aria-label={TITLE} className="display relative hidden pt-[20rem] text-[240rem] leading-[0.78] text-lilac lg:block">
       {PIECES.map((pc, i) => {
@@ -94,7 +68,7 @@ const G = {
 } as const;
 
 function AdaptiveTitle({ ready }: { ready: boolean }) {
-  const ps = INTRO_ADAPTIVE.heroLines.map((d) => useLine(d, ready)); // fixed-length list
+  const ps = INTRO_ADAPTIVE.heroLines.map((d) => useLineProgress(ready, d)); // fixed-length list
   const rows: { cls: string; content: React.ReactNode }[] = [
     { cls: "md:inline-block md:ml-[24rem] ml-[16rem]", content: <>W<InlineGlyph {...G.e} />BSITES</> },
     { cls: "md:inline-block md:ml-[30rem] md:mt-0 ml-[16rem] mt-[-13.5rem]", content: <>PE<InlineGlyph {...G.o} />PLE</> },

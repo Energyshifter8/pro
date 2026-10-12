@@ -25,6 +25,21 @@ export const stats = [
   { id: "years", value: "6 years", label: "of experience" },
 ] as const;
 
+export const about = {
+  label: "About us",
+  // {x} marks a letter drawn as a decorative stretched glyph.
+  title: ["We craft b{r}ands and digital", "products that {s}cale"],
+  lead: "Clean in form. Sharp in function.",
+  statsIntro: "Across our client projects:",
+  // The pinned statement the icon tiles fly into. `slot` marks where a tile lands.
+  sentence: [
+    ["We {b}uild brands", "slot", "people love"],
+    ["and websites", "slot", "that win clients."],
+    ["Cle{a}n in form.", "slot"],
+    ["Sharp in", "slot", "slot", "function."],
+  ],
+};
+
 export const aboutMetrics = [
   { value: "+42%", label: "retention" },
   { value: "−67%", label: "bounce rate" },

@@ -1,4 +1,5 @@
 // Easing curves measured on the reference (GSAP naming). Usable as framer-motion `ease`.
+export const power1In = (t: number) => t * t;
 export const power1Out = (t: number) => 1 - (1 - t) ** 2;
 export const power2Out = (t: number) => 1 - (1 - t) ** 3;
 export const power3Out = (t: number) => 1 - (1 - t) ** 4;
