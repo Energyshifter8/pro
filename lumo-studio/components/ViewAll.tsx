@@ -53,7 +53,7 @@ export default function ViewAll() {
   return (
     <section ref={sec} aria-label="View all" className="relative mt-[135rem] flex h-[340rem] items-center justify-center overflow-hidden md:mt-0 md:h-[788rem] lg:h-[max(1320rem,110svh)]">
       <div className="relative flex h-[100svh] min-w-0 flex-[0_0_50%] flex-row-reverse items-center justify-start [perspective:403rem] md:[perspective:775rem] lg:flex-[0_1_50%] lg:[perspective:2000rem]">
-        <div aria-hidden className="absolute -left-[480rem] right-0 top-[120rem] h-[960rem] border-[2px] border-r-0 border-[#d9d9d9] opacity-[.04] [transform:rotateY(-1deg)]" />
+        <div aria-hidden className="pointer-events-none absolute -left-[480rem] right-0 top-[120rem] h-[960rem] border-[2px] border-r-0 border-[#d9d9d9] opacity-[.04] [transform:rotateY(-1deg)]" />
         <a ref={left} href={blogs.href} data-cursor="pointer" style={{ ...fitSpacing(), transform: "translateY(50%)", transformOrigin: "100% 100%" }}
           className={`display bg-[#dee6ff] text-[#3d71ff] hover:pl-[80rem] ${sign}`}>
           <span aria-hidden className="absolute left-0 top-0 z-[-1] h-full -translate-x-1/2 bg-[#dee6ff] [clip-path:polygon(100%_0,33.333%_0,0_50%,33.333%_100%,100%_100%)]" style={{ aspectRatio: "1.5 / 1" }} />
@@ -69,7 +69,7 @@ export default function ViewAll() {
           <span aria-hidden className="absolute left-0 top-0 h-full bg-[#ffe1ed] [aspect-ratio:1/1] [transform-origin:left_center] [transform:rotateY(90deg)]" />
         </a>
         <div aria-hidden className="absolute left-[-1rem] top-1/2 z-[1] h-[55rem] w-[55rem] -translate-y-[128rem] md:left-[-2rem] md:h-[100rem] md:w-[100rem] md:-translate-y-[246rem] lg:left-[40rem] lg:h-[120rem] lg:w-[120rem] lg:-translate-y-[330rem]"><Sparkle /></div>
-        <div aria-hidden className="absolute -right-[480rem] left-0 top-[120rem] h-[960rem] border-[2px] border-[#d9d9d9] bg-[#d9d9d9] opacity-[.04] [transform:rotateY(1deg)]" />
+        <div aria-hidden className="pointer-events-none absolute -right-[480rem] left-0 top-[120rem] h-[960rem] border-[2px] border-[#d9d9d9] bg-[#d9d9d9] opacity-[.04] [transform:rotateY(1deg)]" />
       </div>
     </section>
   );
