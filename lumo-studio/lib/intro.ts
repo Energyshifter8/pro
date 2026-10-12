@@ -16,6 +16,7 @@ export const INTRO_ADAPTIVE = {
   heroLines: [0, 0.3, 0.6, 0.9, 1.2],
   header: 0.61,
   stickers: { rating: 0.85, response: 0.97, audit: 1.09, support: 1.21, built: 1.33, years: 1.45 },
+  bottomNav: 0.06,
 };
 
 let readyAt: number | null = null;

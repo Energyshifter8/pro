@@ -75,6 +75,58 @@ body {
   }
 }
 
+/* ---------- Menu overlay (components/overlays/MenuOverlay.tsx) ---------- */
+.mnu { position: fixed; inset: 0; z-index: 91; height: 100dvh; overflow: hidden; }
+.mnu-backdrop { position: absolute; inset: 0; backdrop-filter: blur(10rem); opacity: 0; transition: opacity 0.4s ease-in-out 1.1s; }
+.mnu.on .mnu-backdrop { opacity: 1; transition-delay: 0s; }
+.mnu-row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.mnu-ball { flex: 0 0 45%; aspect-ratio: 1; border-radius: 100%; transition: translate 0.9s cubic-bezier(0.55, 0, 0.45, 1), rotate 0.9s cubic-bezier(0.55, 0, 0.45, 1); }
+.mnu-ball.w { background: #fff; transform: scale(1.3); }
+.mnu-ball.c { transform: scale(1.15); }
+/* closed: parked off-screen left, rolled back; open: right ball first, close: left ball first */
+.mnu-ball:nth-child(1) { translate: -110%; rotate: -110deg; transition-delay: 0.4s; }
+.mnu-ball:nth-child(2) { translate: -185%; rotate: -185deg; transition-delay: 0.55s; }
+.mnu-ball:nth-child(3) { translate: -285%; rotate: -285deg; transition-delay: 0.7s; }
+.mnu.on .mnu-ball { translate: 0; rotate: 0deg; }
+.mnu.on .mnu-ball:nth-child(1) { transition-delay: 0.3s; }
+.mnu.on .mnu-ball:nth-child(2) { transition-delay: 0.15s; }
+.mnu.on .mnu-ball:nth-child(3) { transition-delay: 0s; }
+.mnu-pop { opacity: 0; transform: translateY(100%) scale(0.5); transition: opacity 0.4s ease-in-out, transform 0.4s cubic-bezier(0.3, 1.25, 0.45, 1); }
+.mnu.on .mnu-pop { opacity: 1; transform: none; transition-delay: var(--d, 0s); }
+.mnu-badge { opacity: 0; scale: 0.5; transition: opacity 0.4s ease-in-out, scale 0.4s cubic-bezier(0.3, 1.25, 0.45, 1); }
+.mnu.on .mnu-badge { opacity: 1; scale: 1; transition-delay: var(--d, 0s); }
+.mnu-badge .arrows { transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.mnu-badge.l:hover .arrows { transform: translate(-104px, -104px); }
+.mnu-badge.r:hover .arrows { transform: translate(104px, 104px); }
+@media (min-width: 992px) {
+  .mnu-close { transform: translate(-50%, 100%) scale(0.5); }
+  .mnu.on .mnu-close { transform: translate(-50%, 0); }
+}
+@media (max-width: 991px) {
+  .mnu-ball:nth-child(1), .mnu-ball:nth-child(3) { display: none; }
+  .mnu-ball.c:nth-child(2) { flex-basis: 131.5%; }
+  .mnu-ball.w:nth-child(2) { flex-basis: 120vmax; }
+}
+@media (max-width: 743px) { .mnu-ball.c:nth-child(2) { flex-basis: 195%; } }
+
+/* ---------- Contact modal (components/overlays/ContactModal.tsx) ---------- */
+.dsc-backdrop { position: fixed; inset: 0; background: rgba(21, 7, 52, 0.55); opacity: 0; backdrop-filter: blur(0); transition: opacity 0.26s ease-in-out, backdrop-filter 0.26s ease-in-out; }
+.dsc.on .dsc-backdrop { opacity: 1; backdrop-filter: blur(14rem); transition-duration: 0.4s; }
+.dsc-card { opacity: 0; scale: 0.82; transition: opacity 0.22s ease-in, scale 0.24s cubic-bezier(0.55, 0, 0.7, 0.6); }
+.dsc.on .dsc-card { opacity: 1; scale: 1; transition: opacity 0.32s ease-in-out, scale 0.46s cubic-bezier(0.34, 1.28, 0.5, 1); }
+.dsc-layer { transition: transform 0.24s cubic-bezier(0.34, 1.3, 0.5, 1); }
+.dsc.on .dsc-layer { transition-duration: 0.56s; }
+.dsc.on .dsc-layer.white { transform: rotate(4.6deg); transition-delay: 0.06s; }
+.dsc.on .dsc-layer.lime { transform: rotate(-5.24deg); transition-delay: 0.11s; }
+.dsc-in { opacity: 0; transform: translateY(26rem); transition: opacity 0.3s ease-in-out, transform 0.4s cubic-bezier(0.3, 1.2, 0.5, 1); }
+.dsc.on .dsc-in { opacity: 1; transform: none; transition-delay: var(--d, 0s); }
+.dsc-title { opacity: 0; transform: translateY(46rem); transition: opacity 0.36s ease-in-out, transform 0.52s cubic-bezier(0.3, 1.2, 0.5, 1); }
+.dsc.on .dsc-title { opacity: 1; transform: none; transition-delay: 0.17s; }
+.dsc-close { opacity: 0; transform: scale(0.5); transition: opacity 0.3s ease-in-out, transform 0.4s cubic-bezier(0.3, 1.25, 0.45, 1); }
+.dsc.on .dsc-close { opacity: 1; transform: none; transition-delay: 0.38s; }
+.dsc-close svg { transition: transform 0.13s ease-out; }
+.dsc-close:hover svg { transform: rotate(90deg); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

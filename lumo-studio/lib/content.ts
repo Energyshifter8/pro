@@ -127,3 +127,19 @@ export const moods = [
   { label: "I want a website", face: "happy", color: "#C2EC40" },
   { label: "I want a free audit", face: "curious", color: "#FBD402" },
 ] as const;
+
+export const contact = {
+  title: "L{e}t's discuss",
+  fields: {
+    name: "Your name",
+    email: "Your email",
+    website: "Company website",
+    message: "Tell us about your project",
+    budget: "Choose a budget",
+    kind: "What do you need?",
+  },
+  budgets: ["$1k–3k", "$3k–7k", "$7k–15k", "$15k+"],
+  kinds: ["UI/UX design", "Web development", "Branding", "Custom project"],
+  submit: "send request",
+  thanks: "Thanks! We got your request and will reply within an hour.",
+} as const;

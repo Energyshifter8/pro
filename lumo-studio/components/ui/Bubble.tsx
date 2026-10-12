@@ -3,7 +3,7 @@ import { useRef } from "react";
 
 type Props = {
   href?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   className?: string;
   circle?: string; // fill colour class of the rising ellipse
   children: React.ReactNode;
