@@ -103,7 +103,18 @@ export const testimonials = [
   { quote: "Sample review: a modern style and good taste in every detail.", client: "Client name", type: "Development", rating: "5.0" },
 ];
 
-export const auditTags = ["Speed", "SEO", "Animation", "Design", "Conversion"];
+export const audit = {
+  title: ["{g}et a free", "audit of your", "websit{e}"],
+  cta: "get my free audit",
+  // Example scores shown on the floating cards.
+  scores: [
+    { label: "Speed", value: 99 },
+    { label: "SEO", value: 100 },
+    { label: "Animation", value: 89 },
+    { label: "Design", value: 76 },
+    { label: "Conversion", value: 82 },
+  ],
+};
 
 export const moods = [
   { label: "I want but not now", face: "angry", color: "#F2452E" },
