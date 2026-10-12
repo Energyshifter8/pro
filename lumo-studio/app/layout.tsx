@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import "@fontsource/anton/400.css";
-import "@fontsource-variable/manrope";
+import "@fontsource-variable/ibm-plex-sans";
 import "./globals.css";
+import { display } from "@/lib/fonts";
 import SmoothScroll from "@/components/SmoothScroll";
-
+import ScrollBar from "@/components/ScrollBar";
+import Cursor from "@/components/Cursor";
 
 export const metadata: Metadata = {
   title: "Lumo Studio — Design & Web Development That Sells",
@@ -12,10 +13,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="font-sans">
+    <html lang="en" className={display.variable}>
+      <body>
         <SmoothScroll />
         {children}
+        <ScrollBar />
+        <Cursor />
       </body>
     </html>
   );

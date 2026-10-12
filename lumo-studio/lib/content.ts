@@ -15,14 +15,15 @@ export const nav = [
 ];
 
 // Placeholder metrics: replace with your real, verifiable numbers.
+// `id` ties each stat to its hero sticker (shape/colour/position).
 export const stats = [
-  { value: "4.9/5", label: "client rating" },
-  { value: "1h", label: "response time" },
-  { value: "Free", label: "website audit" },
-  { value: "24/7", label: "post-launch support" },
-  { value: "120+", label: "websites built" },
-  { value: "6 years", label: "of experience" },
-];
+  { id: "rating", value: "4.9/5", label: "client rating" },
+  { id: "response", value: "1h", label: "response time" },
+  { id: "audit", value: "Free", label: "website audit" },
+  { id: "support", value: "24/7", label: "post-launch support" },
+  { id: "built", value: "120+", label: "websites built" },
+  { id: "years", value: "6 years", label: "of experience" },
+] as const;
 
 export const aboutMetrics = [
   { value: "+42%", label: "retention" },

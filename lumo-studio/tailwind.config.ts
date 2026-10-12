@@ -1,29 +1,39 @@
 import type { Config } from "tailwindcss";
+
+// Sizing note: the root font-size is fluid (see globals.css), so `1rem` equals one
+// design pixel — 1/1920 of the viewport on desktop, 1/744 on tablet, 1/390 on mobile.
+// Write sizes as arbitrary rem values, e.g. `text-[240rem]`, `px-[60rem]`.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
+    screens: {
+      sm: "480px",
+      md: "744px",
+      tab: "768px",
+      lg: "992px",
+    },
     extend: {
       colors: {
-        ink: "#1B0B3F",
-        ink2: "#2A1660",
-        lav: "#D9CCFF",
-        lav2: "#C4B2FF",
-        lime: "#C8F53C",
-        tomato: "#F2452E",
-        sun: "#FFD23F",
-        cream: "#F7F3FF",
+        ink: "#150734",
+        lilac: "#d3c5f6",
+        lime: "#c2ec40",
+        pink: "#f04c8a",
+        red: "#ea3323",
+        blue: "#3d71ff",
+        violet: "#4e00ff",
+        green: "#11b04c",
       },
       fontFamily: {
         display: ["var(--font-display)", "Impact", "sans-serif"],
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Verdana", "sans-serif"],
+      },
+      transitionTimingFunction: {
+        roll: "cubic-bezier(0.645, 0.045, 0.355, 1)",
+        bubble: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+        out: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
       keyframes: {
-        marquee: { "0%": { transform: "translateX(0)" }, "100%": { transform: "translateX(-50%)" } },
         spin: { to: { transform: "rotate(360deg)" } },
-      },
-      animation: {
-        marquee: "marquee 28s linear infinite",
-        "spin-slow": "spin 14s linear infinite",
       },
     },
   },

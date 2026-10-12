@@ -2,12 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: dark; --font-display: "Anton"; --font-sans: "Manrope Variable"; }
-html { scroll-behavior: auto; overflow-x: clip; }
-body { background: #1B0B3F; color: #F7F3FF; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-::selection { background: #C8F53C; color: #1B0B3F; }
+:root {
+  --font-sans: "IBM Plex Sans Variable";
+  color-scheme: dark;
+}
 
-.h-display { font-family: var(--font-display); text-transform: uppercase; line-height: .9; letter-spacing: -.01em; }
-.pill { @apply inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold lowercase transition-transform; }
-.pill:hover { transform: translateY(-2px); }
+/* Fluid design-pixel scale: 1rem = 1px of the 1920 / 744 / 390 wide layouts. */
+html {
+  font-size: calc(100vw / 390);
+  background: #150734;
+  overflow-x: clip;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar { display: none; }
+@media (min-width: 744px) { html { font-size: calc(100vw / 744); } }
+@media (min-width: 992px) { html { font-size: calc(100vw / 1920); } }
+
+body {
+  font-family: var(--font-sans), Verdana, sans-serif;
+  font-size: 19rem;
+  line-height: 1.2;
+  color: #d3c5f6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+@media (hover: hover) and (pointer: fine) {
+  html.has-cursor, html.has-cursor * { cursor: none !important; }
+}
+::selection { background: #c2ec40; color: #150734; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+@layer components {
+  /* Display face: the fitted Anton (see lib/fonts.ts). */
+  .display { font-family: var(--font-display), Impact, sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: -0.022em; }
+
+  /* Two-line text roll used on nav links and menu buttons (0.4s, shifts one 1.35em line). */
+  .roll { display: inline-block; overflow: hidden; vertical-align: top; height: 1.35em; }
+  .roll-stack { display: block; transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); }
+  .roll-line { display: flex; align-items: center; height: 1.35em; }
+  .roll-host:hover .roll-stack, .roll-host:focus-visible .roll-stack { transform: translateY(-1.35em); }
+
+  /* Pill whose fill rises as an oversized ellipse from below (hover), then keeps rising out
+     of the top on leave (0.4s) before snapping back — see components/ui/Bubble.tsx. */
+  .bubble { position: relative; z-index: 1; overflow: hidden; isolation: isolate; transition: color 0.35s; }
+  .bubble-circle {
+    position: absolute; z-index: -1; left: -14%; bottom: -400%; width: 125%; height: 400%;
+    border-radius: 100%; pointer-events: none; transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .bubble:hover .bubble-circle, .bubble:focus-visible .bubble-circle { transform: translateY(-50%); }
+  .bubble.is-out .bubble-circle { transform: translateY(-125%); transition-duration: 0.4s; }
+  .bubble.is-reset .bubble-circle { transform: translateY(0) !important; transition: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
