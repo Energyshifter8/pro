@@ -21,7 +21,7 @@ html::-webkit-scrollbar { display: none; }
 body {
   font-family: var(--font-sans), Verdana, sans-serif;
   font-size: 19rem;
-  line-height: 1.2;
+  line-height: 120%; /* computed once and inherited as a length, as on the reference */
   color: #d3c5f6;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;

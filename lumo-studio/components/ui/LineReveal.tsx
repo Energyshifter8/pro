@@ -1,14 +1,15 @@
 "use client";
 import { animate, motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { power4Out } from "@/lib/ease";
 import { reducedMotion } from "@/lib/intro";
 
-// Progress 0→1 over 1s (power4.out) once `go` turns true, after `delay` seconds.
+// Progress 0→1 over 1s (power4.out) when `go` turns true, after `delay` seconds; snaps
+// back to 0 when `go` turns false so the reveal replays on re-entry (as on the reference).
 export function useLineProgress(go: boolean, delay = 0) {
   const p = useMotionValue(0);
   useEffect(() => {
-    if (!go) return;
+    if (!go) { p.set(0); return; }
     if (reducedMotion()) { p.set(1); return; }
     const c = animate(p, 1, { duration: 1, delay, ease: power4Out });
     return () => c.stop();
@@ -30,4 +31,17 @@ export function Frag({ p, d, off, className = "", style, as = "span", children }
       {children}
     </C>
   );
+}
+
+// True while any part of the element is in the viewport.
+export function useInViewToggle(ref: RefObject<Element>) {
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setV(e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
+  return v;
 }

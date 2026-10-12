@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useInView } from "framer-motion";
 import { trust } from "@/lib/content";
 import { ui } from "@/lib/store";
-import { Frag, useLineProgress } from "./ui/LineReveal";
+import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import ArrowButton from "./ui/ArrowButton";
 import Mascot from "./trust/Mascot";
 
@@ -24,7 +23,7 @@ export default function Trust() {
   const button = useRef<HTMLDivElement>(null);
   const mascot = useRef<HTMLDivElement>(null);
   const follow = useRef<HTMLDivElement>(null);
-  const seen = useInView(title, { once: true });
+  const seen = useInViewToggle(title);
   const lines = [useLineProgress(seen, 0), useLineProgress(seen, 0.3), useLineProgress(seen, 0.6)];
 
   useEffect(() => {

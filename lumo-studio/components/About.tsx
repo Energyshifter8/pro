@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
 import { about, aboutMetrics } from "@/lib/content";
 import { backOut, power1In, power1Out, power2InOut, power2Out, sineInOut } from "@/lib/ease";
 import { useDesktop } from "@/lib/useMedia";
-import { Frag, useLineProgress } from "./ui/LineReveal";
+import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import { GlyphText, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
 import { ICONS, TileShape, type Shape } from "./about/TileArt";
 
@@ -80,7 +79,7 @@ export default function About() {
   const words = useRef<{ el: HTMLSpanElement | null; line: number; dir: number }[]>([]);
   const fades = useRef<(HTMLElement | null)[]>([]);
   const sentence = useRef<HTMLDivElement>(null);
-  const entered = useInView(wrap, { once: true });
+  const entered = useInViewToggle(wrap);
   const desktop = useDesktop();
   const l1 = useLineProgress(entered, 0);
   const l2 = useLineProgress(entered, 0.3);

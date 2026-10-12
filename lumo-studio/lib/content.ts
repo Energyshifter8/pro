@@ -52,26 +52,29 @@ export const aboutMetrics = [
   { value: "4×", label: "faster launches" },
 ];
 
+export const servicesTitle = ["What are we", "building for", "you?"];
+
+// `variant` picks the card colourway (green / pink / violet).
 export const services = [
   {
     title: ["UI/UX", "Design"],
     text: "Design that converts. Clear, intentional interfaces that make the next step obvious. Less hesitation, more forward movement.",
     cta: "design my product",
-    color: "bg-lime",
+    variant: "green",
   },
   {
     title: ["Web", "Development"],
     text: "Speed you can feel: fast loading, smooth animation, SEO built in. Your website just works and quietly earns trust.",
     cta: "build my website",
-    color: "bg-lav2",
+    variant: "pink",
   },
   {
     title: ["Custom", "project?"],
     text: "When things don't fit templates — web or mobile app, platform or marketplace — we turn complexity into clarity.",
     cta: "discuss my project",
-    color: "bg-sun",
+    variant: "violet",
   },
-];
+] as const;
 
 // Sample case names (fictional). Swap in your real projects.
 export const cases = [
