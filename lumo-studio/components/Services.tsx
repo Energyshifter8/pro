@@ -13,7 +13,7 @@ const WAVE =
 function CardIcon({ variant }: { variant: string }) {
   const c = variant === "green" ? "#150734" : variant === "pink" ? "#ffe1ed" : "#d3c5f6";
   return (
-    <svg viewBox="0 0 256 256" className="inline h-auto w-full" aria-hidden>
+    <svg viewBox="0 0 256 256" className="inline h-auto w-full align-baseline" aria-hidden>
       {variant === "green" && (
         <g fill={c}>{Array.from({ length: 8 }, (_, i) => <rect key={i} x="110" y="8" width="36" height="120" rx="18" transform={`rotate(${i * 45} 128 128)`} />)}</g>
       )}
