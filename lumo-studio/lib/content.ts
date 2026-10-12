@@ -90,6 +90,11 @@ export const cases = [
   { name: "ARCTICA", tag: "UI/UX", color: "#C4B2FF" },
 ];
 
+export const viewAll = [
+  { label: "view all ca{s}es", href: "#cases" },
+  { label: "view all blogs", href: "#blog" },
+];
+
 // SAMPLE testimonials — placeholders only. Replace with real client reviews before launch.
 export const testimonials = [
   { quote: "Sample review: the team structured our request and shipped on time.", client: "Client name", type: "Development", rating: "5.0" },

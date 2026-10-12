@@ -4,6 +4,7 @@ import About from "@/components/About";
 import Trust from "@/components/Trust";
 import Services from "@/components/Services";
 import Cases from "@/components/Cases";
+import ViewAll from "@/components/ViewAll";
 import Audit from "@/components/Audit";
 import Feel from "@/components/Feel";
 import Footer from "@/components/Footer";
@@ -18,6 +19,7 @@ export default function Home() {
       <Trust />
       <Services />
       <Cases />
+      <ViewAll />
       <Audit />
       <Feel />
       <Footer />
