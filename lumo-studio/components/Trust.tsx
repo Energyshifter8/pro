@@ -77,7 +77,7 @@ export default function Trust() {
             </div>
             <div ref={mascot} className="relative z-[1] w-[300rem] shrink-0 md:w-[400rem] lg:w-auto lg:flex-[0_0_33%]" style={{ transform: "scale(0)" }}>
               <div ref={follow}>
-                <Mascot className="block h-auto w-full" />
+                <Mascot className="inline h-auto w-full align-baseline" />
               </div>
             </div>
             <div ref={button} className="flex shrink-0 justify-center lg:flex-[0_0_33%] lg:justify-start">

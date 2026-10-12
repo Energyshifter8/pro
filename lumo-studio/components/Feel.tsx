@@ -40,7 +40,7 @@ export default function Feel() {
                 <li key={m.label}>
                   <label className="flex cursor-pointer flex-col items-center gap-[23rem]" data-cursor="pointer">
                     <input type="radio" name="mood" className="sr-only" checked={mood === i} onChange={() => setMood(i)} />
-                    <span className="flex aspect-[180/244] w-[108rem] items-center md:w-[180rem] lg:w-[240rem]">
+                    <span className="flex aspect-square w-[108rem] items-center md:w-[180rem] lg:aspect-[180/244] lg:w-[240rem]">
                       <Sticker label={m.label} face={m.face} color={m.color} className="block h-auto w-full" />
                     </span>
                     <span className={`relative flex h-[30rem] w-[30rem] items-center justify-center rounded-[8rem] border-[2rem] border-ink transition-colors duration-500 ease-in-out md:h-[50rem] md:w-[50rem] md:rounded-[12rem] ${mood === i ? "bg-ink" : "bg-ink/[.12]"}`}>
@@ -54,8 +54,8 @@ export default function Feel() {
             </ul>
           </fieldset>
           <ArrowButton type="submit"
-            className="mt-[40rem] gap-[3rem] text-[16rem] font-bold lowercase leading-[1.2] [--arrow-size:49rem] md:mt-[57rem] md:text-[20rem] md:[--arrow-size:60rem] lg:mt-[96rem] lg:text-[19rem] lg:[--arrow-size:70.8rem]"
-            pillClass="rounded-[210rem] bg-white px-[28rem] py-[14.9rem] text-ink md:px-[34rem] md:py-[18rem] lg:px-[31rem] lg:py-[24rem]"
+            className="mt-[40rem] gap-[3rem] text-[16rem] font-bold lowercase leading-[1.2] [--arrow-size:55.2rem] md:mt-[57rem] md:text-[20rem] md:[--arrow-size:60rem] lg:mt-[96rem] lg:text-[19rem] lg:[--arrow-size:70.8rem]"
+            pillClass="rounded-[210rem] bg-white px-[28rem] py-[18rem] text-ink md:px-[34rem] lg:px-[31rem] lg:py-[24rem]"
             arrowClass="bg-lime text-ink">
             {feel.cta}
           </ArrowButton>

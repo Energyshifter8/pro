@@ -15,7 +15,7 @@ const BODY = scallop(290, 330, 178, 12);
 
 export default function Mascot({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 580 708" className={className} aria-hidden fill="none" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 580 706" className={className} aria-hidden fill="none" strokeLinecap="round" strokeLinejoin="round">
       {/* limbs behind the body */}
       <g stroke={INK} strokeWidth="26">
         <path d="M232 470c-6 60-24 104-58 142" />
