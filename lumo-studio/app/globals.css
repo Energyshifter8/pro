@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; --font-display: "Anton"; --font-sans: "Manrope Variable"; }
+html { scroll-behavior: auto; overflow-x: clip; }
+body { background: #1B0B3F; color: #F7F3FF; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+::selection { background: #C8F53C; color: #1B0B3F; }
+
+.h-display { font-family: var(--font-display); text-transform: uppercase; line-height: .9; letter-spacing: -.01em; }
+.pill { @apply inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold lowercase transition-transform; }
+.pill:hover { transform: translateY(-2px); }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
