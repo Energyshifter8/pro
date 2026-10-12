@@ -57,6 +57,22 @@ body {
   .bubble:hover .bubble-circle, .bubble:focus-visible .bubble-circle { transform: translateY(-50%); }
   .bubble.is-out .bubble-circle { transform: translateY(-125%); transition-duration: 0.4s; }
   .bubble.is-reset .bubble-circle { transform: translateY(0) !important; transition: none !important; }
+
+  /* Arrow button (components/ui/ArrowButton.tsx). */
+  .arrow-btn .arrow-icon {
+    width: var(--arrow-size, 70rem); height: var(--arrow-size, 70rem); transform: rotate(0deg);
+    transition: transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1), width 0.5s cubic-bezier(0.645, 0.045, 0.355, 1), height 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  .arrow-btn .arrow-icon:first-child { width: 0; height: 0; transform: rotate(-90deg); }
+  .arrow-btn:hover .arrow-icon:first-child { width: var(--arrow-size, 70rem); height: var(--arrow-size, 70rem); transform: rotate(0deg); }
+  .arrow-btn:hover .arrow-icon:last-child { width: 0; height: 0; transform: rotate(90deg); }
+
+  /* Lime marker behind a phrase. */
+  .highlight { position: relative; display: inline-flex; isolation: isolate; }
+  .highlight::before {
+    content: ""; position: absolute; z-index: -1; top: 57%; left: calc(50% - 5rem); width: 105%; height: 120%;
+    border-radius: 15rem; background: #c2ec40; transform: translate(-50%, -50%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

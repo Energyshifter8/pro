@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
+import Trust from "@/components/Trust";
 import Services from "@/components/Services";
 import Cases from "@/components/Cases";
 import Audit from "@/components/Audit";
@@ -14,6 +15,7 @@ export default function Home() {
       <Header />
       <Hero />
       <About />
+      <Trust />
       <Services />
       <Cases />
       <Audit />

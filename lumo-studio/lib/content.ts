@@ -40,6 +40,12 @@ export const about = {
   ],
 };
 
+export const trust = {
+  // [..] marks the highlighted phrase
+  title: ["Trust comes", "[from design,] not", "explanation."],
+  cta: "design trust",
+};
+
 export const aboutMetrics = [
   { value: "+42%", label: "retention" },
   { value: "−67%", label: "bounce rate" },
