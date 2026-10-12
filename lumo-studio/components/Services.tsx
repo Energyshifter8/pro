@@ -32,7 +32,7 @@ export default function Services() {
           </div>
         </div>
       </div>
-      <Wave fill="#1B0B3F" flip />
+      <Wave fill="#1B0B3F" />
     </section>
   );
 }

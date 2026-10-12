@@ -1,8 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import { stats } from "@/lib/content";
-import { INTRO, reducedMotion, useIntroReady } from "@/lib/intro";
-import { power2Out, sineInOut } from "@/lib/ease";
+import { INTRO, INTRO_ADAPTIVE, reducedMotion, useIntroReady } from "@/lib/intro";
+import { backOut, power2Out, sineInOut } from "@/lib/ease";
+import { useDesktop } from "@/lib/useMedia";
 
 type Id = (typeof stats)[number]["id"];
 const stat = (id: Id) => stats.find((s) => s.id === id)!;
@@ -82,16 +83,19 @@ const defs: Def[] = [
 
 export default function Stickers() {
   const ready = useIntroReady();
+  const desktop = useDesktop();
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-[3] lg:z-[1]">
       {defs.map((d) => {
         const rm = ready && reducedMotion();
         const rest = d.rock ? d.rock[0] : 0;
         return (
-          <motion.div key={d.id} className={`absolute ${d.box}`} style={{ transformOrigin: d.origin ?? "50% 50%", rotate: rest }}
-            initial={{ scale: 0.5, opacity: 0 }}
+          <motion.div key={d.id + (desktop ? "d" : "m")} className={`absolute ${d.box}`} style={{ transformOrigin: d.origin ?? "50% 50%", rotate: rest }}
+            initial={{ scale: desktop ? 0.5 : 0, opacity: 0 }}
             animate={ready ? { scale: 1, opacity: 1 } : undefined}
-            transition={{ delay: rm ? 0 : INTRO.stickers[d.id], duration: rm ? 0 : 0.45, ease: power2Out }}>
+            transition={rm ? { duration: 0 } : desktop
+              ? { delay: INTRO.stickers[d.id], duration: 0.45, ease: power2Out }
+              : { delay: INTRO_ADAPTIVE.stickers[d.id], duration: 0.4, ease: (t: number) => backOut(t) }}>
             <motion.div className="relative h-full w-full"
               animate={ready && !rm ? { x: [0, `${d.float[0]}rem`], y: [0, `${d.float[1]}rem`] } : undefined}
               transition={{ duration: d.float[2], ease: sineInOut, repeat: Infinity, repeatType: "mirror" }}>

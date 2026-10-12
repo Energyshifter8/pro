@@ -1,8 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import { brand, nav } from "@/lib/content";
-import { INTRO, useIntroReady } from "@/lib/intro";
-import { power2Out } from "@/lib/ease";
+import { INTRO, INTRO_ADAPTIVE, useIntroReady } from "@/lib/intro";
+import { backOut, power2Out } from "@/lib/ease";
+import { useDesktop } from "@/lib/useMedia";
 import { ui } from "@/lib/store";
 import Bubble from "./ui/Bubble";
 import Roll from "./ui/Roll";
@@ -29,15 +30,19 @@ export function Logo({ className = "" }: { className?: string }) {
 
 export default function Header() {
   const ready = useIntroReady();
+  const desktop = useDesktop();
+  // desktop: 0.45s power2.out from 0.5 at +2.67s; below 992px: back.out pop from 0 at +0.61s
   const enter = {
-    initial: { scale: 0.5, opacity: 0 },
+    initial: { scale: desktop ? 0.5 : 0, opacity: 0 },
     animate: ready ? { scale: 1, opacity: 1 } : undefined,
-    transition: { delay: INTRO.header, duration: 0.45, ease: power2Out },
+    transition: desktop
+      ? { delay: INTRO.header, duration: 0.45, ease: power2Out }
+      : { delay: INTRO_ADAPTIVE.header, duration: 0.4, ease: (t: number) => backOut(t) },
   };
   return (
     <header className="pointer-events-none absolute inset-x-0 top-0 z-[1] pt-[55rem] text-white md:pt-[51rem] lg:pt-[37rem]">
       <div className="relative mx-auto flex w-[359rem] items-center justify-center md:w-[706rem] md:gap-x-[14rem] lg:w-auto lg:max-w-[1920rem] lg:gap-[6rem] lg:px-[80rem]">
-        <motion.nav {...enter} aria-label="Main"
+        <motion.nav key={desktop ? "d" : "m"} {...enter} aria-label="Main"
           className="pointer-events-auto relative flex h-[52rem] w-full flex-row-reverse items-center justify-between py-[10rem] pl-[13rem] pr-[44rem] md:w-auto md:flex-1 md:flex-row md:justify-start md:gap-[40rem] md:px-[16rem] md:py-[8rem] lg:h-auto lg:min-w-[536rem] lg:flex-none lg:items-stretch lg:py-[10rem] lg:pl-[13rem] lg:pr-[65rem]">
           <TagBg />
           <a href="#" aria-label={`${brand.full} — home`} className="flex md:[&>span]:w-[66rem] lg:[&>span]:w-[76rem]" data-cursor="pointer">
@@ -55,7 +60,7 @@ export default function Header() {
             {[0, 1, 2, 3].map((i) => <i key={i} className="block h-[12.5rem] w-[12.5rem] rounded-[5rem] bg-pink shadow-[0_0_0_3.5rem_#fff]" />)}
           </button>
         </motion.nav>
-        <motion.div {...enter} className="pointer-events-auto hidden md:block">
+        <motion.div key={desktop ? "bd" : "bm"} {...enter} className="pointer-events-auto hidden md:block">
           <Bubble onClick={() => ui.set({ contact: true })}
             className="inline-flex h-[52rem] items-center whitespace-nowrap rounded-[40rem] bg-lilac px-[26rem] text-[14rem] font-bold lowercase leading-[1.52] text-ink lg:h-auto lg:rounded-[90rem] lg:px-[30rem] lg:py-[14rem] lg:text-[15rem]">
             let&apos;s talk

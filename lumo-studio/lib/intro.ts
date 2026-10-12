@@ -6,8 +6,16 @@ export const INTRO = {
   heroLines: [0, 0.3, 0.6], // headline lines: 1s power4.out each
   pen: 0.06,
   stickers: { rating: 0.81, built: 1.86, support: 2.08, response: 3.36, audit: 3.88, years: 4.48 },
-  header: 2.67, // 0.45s power2.out
+  header: 2.67, // 0.45s power2.out from scale 0.5
   bottomNav: 5.0, // 0.5s ease-in-out
+};
+
+// Below 992px the reference runs a shorter sequence: five stacked lines, then everything
+// pops in with back.out(1.7) over 0.4s from scale 0.
+export const INTRO_ADAPTIVE = {
+  heroLines: [0, 0.3, 0.6, 0.9, 1.2],
+  header: 0.61,
+  stickers: { rating: 0.85, response: 0.97, audit: 1.09, support: 1.21, built: 1.33, years: 1.45 },
 };
 
 let readyAt: number | null = null;
