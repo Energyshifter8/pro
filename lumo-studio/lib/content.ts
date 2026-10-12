@@ -116,8 +116,14 @@ export const audit = {
   ],
 };
 
+export const feel = {
+  title: ["So… how {d}o", "we make you feel?"],
+  text: "Choose your vibe, we're listening.",
+  cta: "get my website",
+};
+
 export const moods = [
-  { label: "I want but not now", face: "angry", color: "#F2452E" },
-  { label: "I want a website", face: "happy", color: "#C8F53C" },
-  { label: "I want a free audit", face: "curious", color: "#FFD23F" },
+  { label: "I want but not now", face: "angry", color: "#EA3323" },
+  { label: "I want a website", face: "happy", color: "#C2EC40" },
+  { label: "I want a free audit", face: "curious", color: "#FBD402" },
 ] as const;

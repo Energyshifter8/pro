@@ -1,49 +1,49 @@
-"use client";
-import { motion } from "framer-motion";
-
+// Round mood badge (original artwork): a coloured disc with a text ring and a starburst face.
 type Face = "angry" | "happy" | "curious";
+const INK = "#150734";
 
-function FaceSvg({ face }: { face: Face }) {
-  const ink = "#1B0B3F";
+function starPath(cx: number, cy: number, n: number, r1: number, r2: number) {
+  let d = "";
+  for (let i = 0; i < n * 2; i++) {
+    const a = (Math.PI * i) / n - Math.PI / 2, r = i % 2 ? r2 : r1;
+    d += `${i ? "L" : "M"}${(cx + r * Math.cos(a)).toFixed(1)} ${(cy + r * Math.sin(a)).toFixed(1)}`;
+  }
+  return d + "Z";
+}
+
+function FaceArt({ face }: { face: Face }) {
   return (
     <g>
-      {/* spiky star body */}
-      <path fill="#fff" stroke={ink} strokeWidth="3"
-        d="M100 38l9 14 16-6 2 17 17 3-6 16 14 10-14 10 6 16-17 3-2 17-16-6-9 14-9-14-16 6-2-17-17-3 6-16-14-10 14-10-6-16 17-3 2-17 16 6z" />
+      <path d={starPath(100, 100, 14, 52, 40)} fill="#fff" stroke={INK} strokeWidth="3" strokeLinejoin="round" />
       {face === "angry" && (<>
-        <path d="M78 88l16 6M122 88l-16 6" stroke={ink} strokeWidth="4" strokeLinecap="round" />
-        <circle cx="88" cy="102" r="5" fill={ink} /><circle cx="112" cy="102" r="5" fill={ink} />
-        <path d="M86 126q14-10 28 0" stroke={ink} strokeWidth="4" fill="none" strokeLinecap="round" />
+        <path d="M78 86l16 7M122 86l-16 7" stroke={INK} strokeWidth="4.5" strokeLinecap="round" />
+        <circle cx="88" cy="101" r="5.5" fill={INK} /><circle cx="112" cy="101" r="5.5" fill={INK} />
+        <path d="M86 125q14-10 28 0" stroke={INK} strokeWidth="4.5" fill="none" strokeLinecap="round" />
       </>)}
       {face === "happy" && (<>
-        <path d="M80 98q8-10 16 0M104 98q8-10 16 0" stroke={ink} strokeWidth="4" fill="none" strokeLinecap="round" />
-        <path d="M82 112q18 22 36 0z" fill={ink} />
+        <path d="M80 98q8-10 16 0M104 98q8-10 16 0" stroke={INK} strokeWidth="4.5" fill="none" strokeLinecap="round" />
+        <path d="M82 112q18 22 36 0z" fill={INK} />
       </>)}
       {face === "curious" && (<>
-        <circle cx="86" cy="100" r="11" fill="#fff" stroke={ink} strokeWidth="3" /><circle cx="114" cy="100" r="11" fill="#fff" stroke={ink} strokeWidth="3" />
-        <circle cx="88" cy="102" r="5" fill={ink} /><circle cx="116" cy="102" r="5" fill={ink} />
-        <circle cx="100" cy="124" r="5" fill={ink} />
+        <circle cx="87" cy="99" r="11" fill="#fff" stroke={INK} strokeWidth="3" /><circle cx="113" cy="99" r="11" fill="#fff" stroke={INK} strokeWidth="3" />
+        <circle cx="89" cy="101" r="5" fill={INK} /><circle cx="115" cy="101" r="5" fill={INK} />
+        <circle cx="100" cy="123" r="5" fill={INK} />
       </>)}
     </g>
   );
 }
 
-export default function Sticker({ label, face, color, size = 200 }: { label: string; face: Face; color: string; size?: number }) {
-  const id = `p-${face}`;
+export default function Sticker({ label, face, color, className = "" }: { label: string; face: Face; color: string; className?: string }) {
+  const id = `ring-${face}`;
   const text = `${label.toUpperCase()} • ${label.toUpperCase()} • `;
   return (
-    <motion.button whileHover={{ scale: 1.08, rotate: -6 }} whileTap={{ scale: 0.95 }}
-      className="relative shrink-0 rounded-full" style={{ width: size, height: size }} aria-label={label}>
-      <svg viewBox="0 0 200 200" className="h-full w-full drop-shadow-[0_8px_0_rgba(27,11,63,.35)]">
-        <circle cx="100" cy="100" r="96" fill={color} stroke="#1B0B3F" strokeWidth="4" />
-        <FaceSvg face={face} />
-      </svg>
-      <svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full animate-spin-slow">
-        <defs><path id={id} d="M100 100m-80 0a80 80 0 1 1 160 0a80 80 0 1 1-160 0" /></defs>
-        <text fontSize="15" fontWeight="800" fill="#1B0B3F" letterSpacing="2">
-          <textPath href={`#${id}`}>{text}</textPath>
-        </text>
-      </svg>
-    </motion.button>
+    <svg viewBox="0 0 200 200" className={className} aria-hidden>
+      <circle cx="100" cy="100" r="96" fill={color} stroke={INK} strokeWidth="4" />
+      <defs><path id={id} d="M100 100m-79 0a79 79 0 1 1 158 0a79 79 0 1 1-158 0" /></defs>
+      <text fontSize="14.5" fontWeight="700" fill={INK} letterSpacing="1.5" style={{ fontFamily: "var(--font-sans)" }}>
+        <textPath href={`#${id}`}>{text}</textPath>
+      </text>
+      <FaceArt face={face} />
+    </svg>
   );
 }
