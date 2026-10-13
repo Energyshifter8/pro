@@ -23,6 +23,9 @@ export default function PenLine() {
     const p = path.current!;
     const L = p.getTotalLength();
     p.style.strokeDasharray = `${L}`;
+    p.style.strokeDashoffset = `${L}`;
+    // the server markup ships the path hidden: until the dash above is set it would render whole
+    p.style.visibility = "visible";
     // arc length where each anchor lies, and where the curve crosses the viewport edge
     const N = 400, samples: [number, number, number][] = [];
     for (let i = 0; i <= N; i++) { const s = (L * i) / N; const q = p.getPointAtLength(s); samples.push([s, q.x, q.y]); }
@@ -43,7 +46,7 @@ export default function PenLine() {
       });
     };
 
-    if (!ready) { p.style.strokeDashoffset = `${L}`; return; }
+    if (!ready) return;
     if (reducedMotion()) { place(L); pen.current?.style.setProperty("opacity", "1"); return; }
     let raf = 0;
     const start = performance.now() + INTRO.pen * 1000;
@@ -63,7 +66,7 @@ export default function PenLine() {
 
   return (
     <svg aria-hidden viewBox="-8500 -600 15500 3800" className="pointer-events-none absolute left-[-8.5em] top-[-0.6em] z-0 h-[3.8em] w-[15.5em] overflow-visible">
-      <path ref={path} d={PATH} fill="none" stroke="#c2ec40" strokeWidth={25} />
+      <path ref={path} d={PATH} fill="none" stroke="#c2ec40" strokeWidth={25} visibility="hidden" />
       {ANCHORS.map(([x, y], i) => (
         <circle key={i} ref={(n) => { dots.current[i] = n; }} cx={x} cy={y} r={31.25} fill="#150734" stroke="#c2ec40" strokeWidth={12.5}
           style={{ transform: "scale(0)", transformBox: "fill-box", transformOrigin: "center" }} />
