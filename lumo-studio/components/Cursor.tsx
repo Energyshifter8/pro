@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 type Mode = "default" | "pointer" | "drag";
 
 // Custom cursor: arrow + label pill. Follows the pointer with a 0.12s power3.out tween
-// toward each new position; swaps to "Click" over [data-cursor=pointer] targets and
+// toward each new position (snapping to it when the cursor first appears); swaps to "Click" over [data-cursor=pointer] targets and
 // "Drag" over [data-cursor=drag] areas (0.2s cross-fade).
 export default function Cursor() {
   const block = useRef<HTMLDivElement>(null);
@@ -15,20 +15,33 @@ export default function Cursor() {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     document.documentElement.classList.add("has-cursor");
     const pos = { x: -100, y: -100 };
-    let from = { ...pos }, to = { ...pos }, start = 0, raf = 0;
+    let from = { ...pos }, to = { ...pos }, start = 0, last = 0, raf = 0, shown = false;
     const D = 120;
+    const place = () => { if (block.current) block.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`; };
     const tick = (now: number) => {
+      // a new target's tween starts one frame back (as a GSAP tween does): timing it from the
+      // event put t at ~0 (or below, rAF time precedes the event) every frame, stalling the cursor
+      if (start < 0) start = last || now - 1000 / 60;
       const t = Math.min(1, (now - start) / D);
       const e = 1 - Math.pow(1 - t, 3);
       pos.x = from.x + (to.x - from.x) * e;
       pos.y = from.y + (to.y - from.y) * e;
-      if (block.current) block.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+      place();
+      last = t < 1 ? now : 0;
       raf = t < 1 ? requestAnimationFrame(tick) : 0;
     };
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
-      from = { ...pos }; to = { x: e.clientX, y: e.clientY }; start = performance.now();
-      if (!raf) raf = requestAnimationFrame(tick);
+      to = { x: e.clientX, y: e.clientY };
+      if (shown) {
+        from = { ...pos }; start = -1;
+        if (!raf) raf = requestAnimationFrame(tick);
+      } else {
+        // appear under the pointer instead of sliding in from the corner / the last exit point
+        cancelAnimationFrame(raf); raf = 0; last = 0;
+        pos.x = to.x; pos.y = to.y; place();
+        shown = true;
+      }
       setVisible(true);
       const el = e.target as HTMLElement;
       // the innermost of an explicit [data-cursor] or an interactive element decides the label
@@ -38,7 +51,7 @@ export default function Cursor() {
       if (interactive && (!tagged || (tagged !== interactive && tagged.contains(interactive)))) m = "pointer";
       setMode(m === "drag" ? "drag" : m === "pointer" ? "pointer" : "default");
     };
-    const onLeave = () => setVisible(false);
+    const onLeave = () => { shown = false; setVisible(false); };
     window.addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
     return () => {
