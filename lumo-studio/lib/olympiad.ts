@@ -13,7 +13,7 @@ export const brand = {
   name: "SYS&COTECH",
   full: "Sys&CoTech клуб",
   logo: "/logos/syscotech.png",
-  since: 2012,
+  since: 2009,
   email: "sysandcotechc@gmail.com",
   phone: "+976 89099473",
   address: "ШУТИС-МХТС (VI байр), 400 тоот",
