@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-// Overlay scrollbar (the native one is hidden): 10px gutter with 2px padding, a 6px lime
-// thumb sized to the viewport ratio, fading out 1.3s after the last scroll.
 export default function ScrollBar() {
   const bar = useRef<HTMLDivElement>(null);
   const thumb = useRef<HTMLDivElement>(null);

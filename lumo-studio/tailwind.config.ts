@@ -1,8 +1,5 @@
 import type { Config } from "tailwindcss";
 
-// Sizing note: the root font-size is fluid (see globals.css), so `1rem` equals one
-// design pixel — 1/1920 of the viewport on desktop, 1/744 on tablet, 1/390 on mobile.
-// Write sizes as arbitrary rem values, e.g. `text-[240rem]`, `px-[60rem]`.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
@@ -17,7 +14,7 @@ const config: Config = {
         ink: "#150734",
         lilac: "#d3c5f6",
         lime: "#c2ec40",
-        brandgreen: "#097140", // main green of public/illustrations/green.svg
+        brandgreen: "#097140",
         pink: "#f04c8a",
         red: "#ea3323",
         blue: "#3d71ff",

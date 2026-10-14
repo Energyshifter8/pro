@@ -8,7 +8,6 @@ import { openRegister, ui } from "@/lib/store";
 import Bubble from "./ui/Bubble";
 import Roll from "./ui/Roll";
 
-// Tag-shaped translucent backdrop behind the nav (original shape).
 function TagBg() {
   return (
     <span aria-hidden className="absolute inset-x-0 top-1/2 z-[-1] flex -translate-y-1/2 max-lg:bottom-0 max-lg:top-0 max-lg:translate-y-0">
@@ -20,7 +19,6 @@ function TagBg() {
   );
 }
 
-// Club mark: the logo in a white disc beside the wordmark.
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex h-[41rem] items-center gap-[9rem] ${className}`}>
@@ -36,7 +34,6 @@ export function Logo({ className = "" }: { className?: string }) {
 export default function Header() {
   const ready = useIntroReady();
   const desktop = useDesktop();
-  // desktop: 0.45s power2.out from 0.5 at +2.67s; below 992px: back.out pop from 0 at +0.61s
   const enter = {
     initial: { scale: desktop ? 0.5 : 0, opacity: 0 },
     animate: ready ? { scale: 1, opacity: 1 } : undefined,

@@ -1,7 +1,3 @@
-// All site content lives here — texts, numbers, links and lists are edited in this one file.
-// In display lines, {x} draws that letter as a stretched decorative glyph and [..] marks a
-// highlighted phrase (a lime pill on light backgrounds, lime text on ink).
-
 export const year = 2026;
 
 export const site = {
@@ -33,7 +29,6 @@ export const nav = [
   { label: "Холбоо барих", href: "#contact" },
 ];
 
-// Labels for the header, floating dock, menu overlay and cursor.
 export const ui = {
   register: "бүртгүүлэх",
   home: "Нүүр",
@@ -55,18 +50,13 @@ const zeroGlyph = (y: number) => String(y).replace("0", "{0}");
 
 export const hero = {
   label: `Программчлалын олимпиад ${year}`,
-  // Desktop headline, three lines (the last one is lime).
   lines: ["Программчлалын", "{о}лимпиад", zeroGlyph(year)],
-  // Below 992px the long word is split over two rows.
   mobileLines: ["Программ-", "члалын", "{о}лимпиад", zeroGlyph(year)],
   sub: "Авьяасаа дэлгэрүүлж, мэдлэгээ бататгах боломж.",
-  // Start time as an ISO date, e.g. "2026-11-21T09:00:00+08:00". While null the countdown is
-  // replaced by `dateSoon`.
   startsAt: null as string | null,
   dateSoon: "Огноо : 11.14",
   started: "Олимпиад эхэллээ!",
   units: ["өдөр", "цаг", "мин", "сек"],
-  // Floating badges; `id` picks the sticker's shape and position.
   badges: [
     { id: "participants", value: "1000+", label: "оролцогч" },
     { id: "fund", value: "600'000₮", label: "Шагналын сан" },
@@ -86,8 +76,6 @@ export const about = {
     { value: "3", label: "шагналт байр" },
     { value: "5,000–15,000₮", label: "бүртгэлийн хураамж" },
   ],
-  // The pinned words the icon tiles fly into (`slot` = where a tile lands); every other line
-  // is drawn in outline.
   sentence: [
     ["К{о}дло.", "slot"],
     ["slot", "Сэтгэ."],
@@ -105,7 +93,6 @@ export const goals = {
   label: "Тэмцээний зорилго",
   title: ["Яагаад", "[оролцох вэ?]"],
   cta: "бүртгүүлэх ↗",
-  // `color` picks the card colourway (lime / red / sun).
   cards: [
     { title: ["Чөлөөт цаг", "үр дүнтэй"], text: "Оюутан залуусын чөлөөт цагийг зөв боловсон, үр дүнтэй өнгөрүүлэх.", color: "lime" },
     { title: ["Бүтээлч", "сэтгэлгээ"], text: "Мэдлэг боловсрол, бүтээлч сэтгэлгээг хөгжүүлж, программчлалын мэдлэгийг дээшлүүлэх.", color: "red" },
@@ -146,7 +133,6 @@ export const sponsors = {
 
 export const fee = {
   title: ["Бүртгэлийн", "хураамж"],
-  // Fee per year of study, shown as pills under the title.
   tiers: [
     { who: "1–2-р курс", amount: "5,000₮" },
     { who: "3–4-р курс", amount: "15,000₮" },
@@ -156,7 +142,6 @@ export const fee = {
     "Гүйлгээ хийхдээ зөв мэдээллээ оруулна уу.",
   ],
   cardTitle: "Дансны мэдээлэл",
-  // `mono` rows are set in a monospace face and shown in groups of four.
   rows: [
     { label: "Банк", value: "Хаан банк" },
     { label: "Дансны дугаар", value: "MN070005005920847579", mono: true },
@@ -165,7 +150,6 @@ export const fee = {
     { label: "Дүн · 3–4-р курс", value: "15,000₮" },
   ],
   reference: "Гүйлгээний утга: Овог, нэр, оюутны код, утасны дугаар",
-  // Path to a QR image under /public (e.g. "/logos/fee-qr.png"); the QR block shows only when set.
   qr: null as string | null,
   qrLabel: "QR кодоор төлөх",
   copy: "хуулах",
@@ -175,7 +159,6 @@ export const fee = {
 
 export const faq = {
   title: "Түгээмэл асуулт хариулт",
-  // Shown for every question whose answer is still empty.
   pending: "Удахгүй мэдэгдэнэ. Клубийн Facebook хуудсаар мэдээлэл авна уу.",
   items: [
     { q: "Программчлалын олимпиад хэзээ болох вэ?", a: "" },
@@ -196,8 +179,6 @@ export const footer = {
 export const register = {
   title: "Бүртгүүлэх",
   intro: "Олимпиадад оролцохын тулд доорх мэдээллийг бөглөнө үү. ;3",
-  // URL that receives the form as a JSON POST. While null, submitting only shows the success
-  // screen — nothing is sent or stored anywhere.
   endpoint: null as string | null,
   fields: {
     lastName: { label: "Овог", placeholder: "" },
@@ -207,7 +188,6 @@ export const register = {
     phone: { label: "Утасны дугаар", placeholder: "XXXXXXXX" },
   },
   course: { placeholder: "Курс сонгох", options: ["1-р курс", "2-р курс", "3-р курс", "4-р курс", "5-р курс"] },
-  // Placeholder list — replace with the real majors.
   major: { label: "Мэргэжил", placeholder: "— Сонгох —", options: ["Программ хангамж", "Компьютерийн ухаан", "Мэдээллийн технологи", "Мэдээллийн систем", "Холбооны технологи", "Бусад"] },
   phoneHint: "8 оронтой дугаар оруулна уу",
   selectHint: "Сонголтоо хийнэ үү",

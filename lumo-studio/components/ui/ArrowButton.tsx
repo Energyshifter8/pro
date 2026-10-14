@@ -1,7 +1,3 @@
-// Pill + round arrow button. On hover the trailing arrow shrinks away (rotating to 90°)
-// while a leading arrow grows in from -90° (0.5s, cubic-bezier(.645,.045,.355,1)).
-// Size the arrows with the `--arrow-size` custom property on the button.
-// `straight` draws a horizontal arrow (the leading icon), otherwise a diagonal one.
 export function ArrowIcon({ className = "", straight = false }: { className?: string; straight?: boolean }) {
   return (
     <svg viewBox="0 0 70 70" aria-hidden className={`arrow-icon block aspect-square shrink-0 rounded-full ${className}`}>

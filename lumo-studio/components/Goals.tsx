@@ -12,7 +12,6 @@ const WAVE =
 type Color = (typeof goals.cards)[number]["color"];
 type Card = (typeof goals.cards)[number];
 
-// Original card icons (256rem square).
 function CardIcon({ variant }: { variant: Color }) {
   const c = "#150734";
   return (
@@ -53,10 +52,6 @@ function CardBody({ s }: { s: Card }) {
   );
 }
 
-// Cards travel into place while the list's top moves from the viewport bottom to 45% of
-// its height (linear scrub): on desktop the outer cards rise from +55% / +50% of card height,
-// and the middle one drops from -50% while spinning 360° around Y; stacked, only the middle
-// one moves (from -30%). The full goal statement follows the cards.
 export default function Goals() {
   const title = useRef<HTMLHeadingElement>(null);
   const list = useRef<HTMLUListElement>(null);

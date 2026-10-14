@@ -4,9 +4,6 @@ import { ui as copy } from "@/lib/olympiad";
 
 type Mode = "default" | "pointer" | "drag";
 
-// Custom cursor: arrow + label pill. Follows the pointer with a 0.12s power3.out tween
-// toward each new position (snapping to it when the cursor first appears); swaps to "Click" over [data-cursor=pointer] targets and
-// "Drag" over [data-cursor=drag] areas (0.2s cross-fade).
 export default function Cursor() {
   const block = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<Mode>("default");
@@ -20,8 +17,6 @@ export default function Cursor() {
     const D = 120;
     const place = () => { if (block.current) block.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`; };
     const tick = (now: number) => {
-      // a new target's tween starts one frame back (as a GSAP tween does): timing it from the
-      // event put t at ~0 (or below, rAF time precedes the event) every frame, stalling the cursor
       if (start < 0) start = last || now - 1000 / 60;
       const t = Math.min(1, (now - start) / D);
       const e = 1 - Math.pow(1 - t, 3);
@@ -38,14 +33,12 @@ export default function Cursor() {
         from = { ...pos }; start = -1;
         if (!raf) raf = requestAnimationFrame(tick);
       } else {
-        // appear under the pointer instead of sliding in from the corner / the last exit point
         cancelAnimationFrame(raf); raf = 0; last = 0;
         pos.x = to.x; pos.y = to.y; place();
         shown = true;
       }
       setVisible(true);
       const el = e.target as HTMLElement;
-      // the innermost of an explicit [data-cursor] or an interactive element decides the label
       const tagged = el.closest?.("[data-cursor]");
       const interactive = el.closest?.("a[href], button, label, select, [role=button], [role=option]");
       let m = tagged?.getAttribute("data-cursor") ?? null;

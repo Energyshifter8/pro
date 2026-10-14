@@ -10,9 +10,6 @@ import ArrowButton from "./ui/ArrowButton";
 import Wave from "./Wave";
 import { BankRows, Reference } from "./olympiad/BankInfo";
 
-// Registration fee: a lime band between two waves. The title lines rise on view, then the
-// per-course amounts (ink pills), the notes and the ink bank card — every row with a copy
-// button — fade up, followed by the register button.
 export default function Fee() {
   const title = useRef<HTMLHeadingElement>(null);
   const seen = useInViewToggle(title);

@@ -4,8 +4,6 @@ import { useEffect, useState, type RefObject } from "react";
 import { power4Out } from "@/lib/ease";
 import { reducedMotion } from "@/lib/intro";
 
-// Progress 0→1 over 1s (power4.out) when `go` turns true, after `delay` seconds; snaps
-// back to 0 when `go` turns false so the reveal replays on re-entry (as on the reference).
 export function useLineProgress(go: boolean, delay = 0) {
   const p = useMotionValue(0);
   useEffect(() => {
@@ -17,9 +15,6 @@ export function useLineProgress(go: boolean, delay = 0) {
   return p;
 }
 
-// The reference's line reveal: the element starts `d` em lower, skewed 6° about its
-// bottom-left corner, and is clipped `off` em above its own displaced bottom edge, so it
-// rises out of a mask at its resting baseline while fading in.
 export function Frag({ p, d, off, className = "", style, as = "span", children }: {
   p: MotionValue<number>; d: number; off: number; className?: string; style?: React.CSSProperties; as?: "span" | "div"; children: React.ReactNode;
 }) {
@@ -33,7 +28,6 @@ export function Frag({ p, d, off, className = "", style, as = "span", children }
   );
 }
 
-// True while any part of the element is in the viewport.
 export function useInViewToggle(ref: RefObject<Element>) {
   const [v, setV] = useState(false);
   useEffect(() => {

@@ -1,4 +1,3 @@
-// Original tile artwork: a coloured shape with an ink outline and two alternating icons.
 const INK = "#150734";
 
 export type Shape = "square" | "circle" | "tag";
@@ -11,7 +10,6 @@ export function TileShape({ shape, color }: { shape: Shape; color: string }) {
   return <rect x="2.05" y="2.05" width="335.9" height="335.9" rx="34" {...common} />;
 }
 
-// Icons are drawn on a 340×340 canvas (the tag tile shifts them left within its 370 width).
 export const ICONS: Record<string, React.ReactNode> = {
   cursor: <path d="M118 78v186l46-44 32 66 32-15-32-65h64z" fill={INK} stroke={INK} strokeWidth="14" strokeLinejoin="round" />,
   heart: <path d="M170 262c-60-42-96-76-96-118 0-30 23-52 52-52 19 0 34 10 44 25 10-15 25-25 44-25 29 0 52 22 52 52 0 42-36 76-96 118z" fill={INK} />,

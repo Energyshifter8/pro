@@ -1,6 +1,5 @@
 import { GLYPHS, type GlyphKey } from "@/lib/glyphs";
 
-// A Plex outline stretched to fill its box — the decorative "swap" letters in headlines.
 export function Glyph({ k, className = "", style }: { k: GlyphKey; className?: string; style?: React.CSSProperties }) {
   const g = GLYPHS[k];
   return (
@@ -10,10 +9,6 @@ export function Glyph({ k, className = "", style }: { k: GlyphKey; className?: s
   );
 }
 
-// Inline variant: reserves `adv` em of advance in a line of height `lh` em and draws the
-// glyph into an ink box whose top sits `asc` em above the baseline of the fitted display
-// face (baseline = lh/2 + 0.261em). Values come from measuring the reference's slots.
-// `extra` grows the line box below the glyph, as the reference's inline-block glyphs do.
 export function InlineGlyph({ k, adv, ix, asc, iw, ih, lh = 1, extra = 0 }: { k: GlyphKey; adv: number; ix: number; asc: number; iw: number; ih: number; lh?: number; extra?: number }) {
   return (
     <span aria-hidden className="relative inline-block align-top" style={{ width: `${adv}em`, height: `${lh}em`, marginBottom: extra ? `${extra}em` : undefined }}>

@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { lockScroll } from "./lenis";
 
-// Mount on open, flip `on` a frame later so CSS transitions run; on close flip `on` off
-// and unmount after `exitMs`. Locks page scroll and closes on Escape while open.
 export function usePresence(open: boolean, exitMs: number, onEscape?: () => void) {
   const [mounted, setMounted] = useState(open);
   const [on, setOn] = useState(false);

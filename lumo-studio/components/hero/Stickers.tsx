@@ -8,7 +8,6 @@ import { useDesktop } from "@/lib/useMedia";
 type Id = (typeof hero.badges)[number]["id"];
 const stat = (id: Id) => hero.badges.find((s) => s.id === id)!;
 
-// Star/scallop polygon in a 100×100 box; stroke + round joins soften the tips.
 function star(n: number, inner: number, r = 44) {
   const pts: string[] = [];
   for (let i = 0; i < n * 2; i++) {
@@ -33,9 +32,9 @@ const num = "block leading-[1.15] text-[15rem] md:text-[16.5rem] lg:text-[22rem]
 
 type Def = {
   id: Id;
-  box: string; // position + size per breakpoint
-  float: [number, number, number]; // drift x, y (rem) and duration (s)
-  rock?: [number, number, number]; // rotate from, to (deg), half-period (s)
+  box: string;
+  float: [number, number, number];
+  rock?: [number, number, number];
   origin?: string;
   body: React.ReactNode;
 };

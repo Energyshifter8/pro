@@ -3,9 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { fee } from "@/lib/olympiad";
 import Bubble from "../ui/Bubble";
 
-// Bank transfer details with per-row copy buttons, plus the yellow payment-reference box.
-// Shared by the fee section and the register modal's confirmation.
-
 function CopyButton({ value }: { value: string }) {
   const [done, setDone] = useState(false);
   const timer = useRef(0);
@@ -14,7 +11,6 @@ function CopyButton({ value }: { value: string }) {
     try {
       await navigator.clipboard.writeText(value);
     } catch {
-      // older browsers / insecure origins
       const ta = document.createElement("textarea");
       ta.value = value; ta.style.position = "fixed"; ta.style.opacity = "0";
       document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
@@ -31,7 +27,6 @@ function CopyButton({ value }: { value: string }) {
   );
 }
 
-// `compact` tightens the desktop rows (used inside the register modal).
 export function BankRows({ compact = false }: { compact?: boolean }) {
   return (
     <dl className={`flex flex-col gap-[8rem] ${compact ? "lg:gap-[8rem]" : "lg:gap-[12rem]"}`}>
@@ -40,7 +35,6 @@ export function BankRows({ compact = false }: { compact?: boolean }) {
           <div className="min-w-0">
             <dt className="text-[11rem] font-semibold uppercase tracking-[0.06em] text-ink/50 md:text-[13rem] lg:text-[15rem]">{r.label}</dt>
             <dd className={`mt-[3rem] text-[16rem] font-bold leading-[1.2] [overflow-wrap:anywhere] md:text-[22rem] lg:mt-[5rem] ${compact ? "lg:text-[22rem]" : "lg:text-[26rem]"} ${"mono" in r ? "font-mono tracking-[-0.02em]" : ""}`}>
-              {/* account numbers read in groups of four; the copy button copies the raw value */}
               {"mono" in r ? r.value.replace(/(.{4})(?=.)/g, "$1 ") : r.value}
             </dd>
           </div>

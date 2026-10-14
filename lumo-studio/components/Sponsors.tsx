@@ -6,9 +6,6 @@ import { outQuint } from "@/lib/ease";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import { fitSpacing } from "./ui/GlyphText";
 
-// Sponsor cards plus the organizer card, whose logo sits in a slowly turning ring of text.
-// The heading rises through the line mask; the cards fade up once on entering view.
-
 function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const reduce = useReducedMotion();
   return (
@@ -19,7 +16,6 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
   );
 }
 
-// Sponsor logo; falls back to the name when the file is missing (also if it failed before hydration).
 function SponsorLogo({ src, name }: { src: string; name: string }) {
   const img = useRef<HTMLImageElement>(null);
   const [failed, setFailed] = useState(false);
@@ -29,7 +25,6 @@ function SponsorLogo({ src, name }: { src: string; name: string }) {
   return <img ref={img} src={src} alt={name} onError={() => setFailed(true)} className="block max-h-full max-w-full object-contain" />;
 }
 
-// Text ring stretched to the exact circumference so it closes on itself.
 function RingLogo({ className = "" }: { className?: string }) {
   return (
     <div className={`relative aspect-square shrink-0 ${className}`}>

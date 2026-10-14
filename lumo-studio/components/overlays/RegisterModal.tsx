@@ -8,15 +8,9 @@ import Bubble from "../ui/Bubble";
 import { BankRows, Reference } from "../olympiad/BankInfo";
 import { Face, Select, field, fieldLabel } from "./ModalParts";
 
-// Registration modal, opened by the window event REGISTER_EVENT ("open-register"). Opening:
-// backdrop blurs, the violet card scales in with a soft overshoot while the white and lime
-// layers fan out, then the title, fields and close button rise in. Two columns on desktop.
-// With `register.endpoint` set the form is POSTed as JSON; without one, submitting goes
-// straight to the success screen (fee + bank details + payment reference).
 type Status = "form" | "sending" | "done" | "error";
 type Key = keyof typeof r.fields;
 const EMPTY: Record<Key, string> = { lastName: "", firstName: "", email: "", studentCode: "", phone: "" };
-// Keep the 8 local digits, also when a number is pasted as "+976 8909-9473".
 const phoneDigits = (s: string) => {
   const d = s.replace(/\D/g, "");
   return (d.length > 8 && d.startsWith("976") ? d.slice(3) : d).slice(0, 8);
@@ -44,7 +38,6 @@ export default function RegisterModal() {
     window.addEventListener(REGISTER_EVENT, show);
     return () => window.removeEventListener(REGISTER_EVENT, show);
   }, []);
-  // after a finished registration, reopening starts a fresh form
   useEffect(() => {
     if (open || status !== "done") return;
     setStatus("form"); setTried(false); setValues(EMPTY); setCourse(""); setMajor("");

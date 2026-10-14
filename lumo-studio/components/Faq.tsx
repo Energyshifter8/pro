@@ -5,9 +5,6 @@ import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import { fitSpacing } from "./ui/GlyphText";
 import Wave from "./Wave";
 
-// FAQ accordion on lilac, under a wave lifted over the ink band above. One answer open at a
-// time; it unfolds by animating its grid row (0fr → 1fr) while the lime plus turns into a pink
-// cross. Empty answers show `faq.pending` with a link to the club's Facebook page.
 export default function Faq() {
   const [open, setOpen] = useState(-1);
   const title = useRef<HTMLHeadingElement>(null);

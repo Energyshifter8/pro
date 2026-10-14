@@ -6,10 +6,6 @@ import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import ArrowButton from "./ui/ArrowButton";
 import Image from "next/image";
 
-// Desktop: 110svh wrapper, sticky stage. While the wrapper's top travels from mid-viewport
-// to the top, the mascot scales 0→1 and the title / button slide out from the centre by half
-// the mascot column (linear scrub; vertical when stacked below 992px). The mascot column also
-// follows the pointer (±25rem).
 function line(text: string) {
   return text.split(/(\[[^\]]+\])/).map((part, i) =>
     part.startsWith("[") ? <span key={i} className="highlight is-green">{part.slice(1, -1)}</span> : part,
@@ -41,12 +37,10 @@ export default function Trust() {
       const q = 1 - pS;
       const t = titleBox.current!, b = button.current!, m = mascot.current!;
       if (desktop.matches) {
-        // spread horizontally by half the mascot column
         const half = (m.offsetWidth / 2) * q;
         t.style.transform = q ? `translate3d(${half}px,0,0)` : "";
         b.style.transform = q ? `translate3d(${-half}px,0,0)` : "";
       } else {
-        // stacked: title and button meet in the middle of the gap the mascot fills
         const half = ((b.offsetTop - (t.offsetTop + t.offsetHeight)) / 2) * q;
         t.style.transform = q ? `translate3d(0,${half}px,0)` : "";
         b.style.transform = q ? `translate3d(0,${-half}px,0)` : "";
@@ -77,7 +71,6 @@ export default function Trust() {
             </div>
             <div ref={mascot} className="relative z-[1] w-[240rem] shrink-0 md:w-[300rem] lg:w-auto lg:flex-[0_0_33%]" style={{ transform: "scale(0)" }}>
               <div ref={follow} className="flex justify-center">
-                {/* the character's height is capped on desktop so it stays clear of the floating dock (≤ ~420px wide) */}
                 <Image src="/illustrations/green.svg" alt="" width={2752} height={3871} className="block h-auto w-full lg:h-[min(590px,62vh)] lg:w-auto" />
               </div>
             </div>

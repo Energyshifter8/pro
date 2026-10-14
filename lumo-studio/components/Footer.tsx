@@ -5,7 +5,7 @@ import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import { GlyphText } from "./ui/GlyphText";
 import Roll from "./ui/Roll";
 
-const SPEED = 118; // rem per second, leftward
+const SPEED = 118;
 
 function Mark() {
   return (
@@ -16,7 +16,6 @@ function Mark() {
 }
 
 function Social({ label, href, d }: { label: string; href: string; d: string }) {
-  // icon + name; the icon fills lime from below on hover
   const icon = (cls: string) => <svg viewBox="0 0 64 64" className={`block h-full w-full ${cls}`} aria-hidden><circle cx="32" cy="32" r="32" fill="#150734" /><path d={d} fill="currentColor" fillRule="evenodd" /></svg>;
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" data-cursor="pointer" className="group flex items-center gap-[10rem] md:gap-[14rem]">
@@ -36,8 +35,6 @@ const FB = "M36.2 47V33.6h4.5l.7-5.2h-5.2v-3.3c0-1.5.4-2.5 2.6-2.5h2.8v-4.7c-.5-
 const YT = "M44.6 24.4c1.4.4 2.4 1.5 2.8 2.8.6 2.4.6 4.8.6 4.8s0 2.4-.6 4.8c-.4 1.4-1.4 2.4-2.8 2.8-2.4.6-12.6.6-12.6.6s-10.2 0-12.6-.6c-1.4-.4-2.4-1.4-2.8-2.8C16 34.4 16 32 16 32s0-2.4.6-4.8c.4-1.3 1.4-2.4 2.8-2.8 2.4-.6 12.6-.6 12.6-.6s10.2 0 12.6.6zM29 27.2v9.6l8.4-4.8z";
 const ICON: Record<string, string> = { Facebook: FB, Instagram: IG, YouTube: YT };
 
-// Purple band with the brand name drifting left (118rem/s, seamless loop), then the contact
-// heading with the big email / phone links, and the menu · social · address columns.
 export default function Footer() {
   const inner = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);

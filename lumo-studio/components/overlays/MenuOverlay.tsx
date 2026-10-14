@@ -5,14 +5,6 @@ import { ui, useUI } from "@/lib/store";
 import { usePresence } from "@/lib/usePresence";
 import Bubble from "../ui/Bubble";
 
-// Full-screen menu listing the nav links. Opening: the page blurs, three ringed balls roll in
-// from the left (0.9s each, right ball first) and the links, close button and side badges pop
-// in from 1.2s. Closing reverses: content fades (0.4s), balls roll out left-first, blur clears.
-// Below 992px only the middle ball remains and the content stacks.
-
-// Round link badge: a disc with an arrow (swapped for a second arrow on hover) and its
-// label curved along the bottom. `exit` is the hover direction of the arrow (-1 up-left,
-// +1 down-right); colours are tailwind fill classes.
 function Badge({ id, label, href, delay, exit, disc, ink, text, className = "" }: {
   id: string; label: string; href: string; delay: number; exit: 1 | -1; disc: string; ink: string; text: string; className?: string;
 }) {
@@ -51,7 +43,6 @@ export default function MenuOverlay() {
   const { mounted, on } = usePresence(open, 1600, close);
   if (!mounted) return null;
 
-  // every nav link, in both layouts
   const stacked = typeof window !== "undefined" && window.innerWidth < 992;
   const [left, right] = copy.menuBadges;
 

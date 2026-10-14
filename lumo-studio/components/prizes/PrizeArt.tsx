@@ -1,5 +1,3 @@
-// Prize visual (original artwork): the place colour with faint rays, an ink medal carrying
-// the place number, the place label and the amount. Fills its box (slice) from the centre.
 function medal(n: number, r1: number, r2: number) {
   let d = "";
   for (let i = 0; i < n * 2; i++) {

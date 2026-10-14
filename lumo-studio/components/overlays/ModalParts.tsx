@@ -1,9 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-// Pieces of the register modal: card silhouette, field style, custom select.
-
-// Original card silhouette: a rounded panel with a tab on top and one below.
 const WIDE = "M60 120H230C270 120 290 0 340 0H800C850 0 870 120 910 120H1698Q1758 120 1758 180V740Q1758 800 1698 800H1350C1310 800 1290 919 1240 919H860C810 919 790 800 750 800H60Q0 800 0 740V180Q0 120 60 120Z";
 const TALL = "M40 90H110C140 90 155 0 190 0H520C555 0 570 90 600 90H746Q786 90 786 130V1270Q786 1310 746 1310H660C630 1310 615 1400 580 1400H330C295 1400 280 1310 250 1310H40Q0 1310 0 1270V130Q0 90 40 90Z";
 
@@ -18,11 +15,8 @@ export function Face({ fill, className = "", style }: { fill: string; className?
 
 export const field = "h-[44rem] w-full rounded-[900rem] bg-white px-[18rem] text-[13rem] font-bold leading-[1.2] text-ink outline-none placeholder:text-ink/[.32] focus-visible:shadow-[0_0_0_3rem_#c2ec40] md:h-[84rem] md:px-[57rem] md:text-[19rem]";
 
-// Small field name shown inside a pill, before its value.
 export const fieldLabel = "shrink-0 text-ink/45";
 
-// `invalid` rings the closed select in red (used for required selects left empty); `label`
-// prefixes the value with the field's name.
 export function Select({ placeholder, options, value, onChange, invalid = false, label }: { placeholder: string; options: readonly string[]; value: string; onChange: (v: string) => void; invalid?: boolean; label?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

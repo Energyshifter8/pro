@@ -1,21 +1,3 @@
-// Export every sticker / badge / icon / decorative illustration of the site into design-assets/
-// for the designer. Reads the *rendered* page, so colours, sizes and text are exactly what ships.
-//
-//   npm run build && npm start            # in lumo-studio/ (any port; see ASSETS_URL)
-//   cd scripts && npm install             # once: playwright-core (reuses the cached Chromium), fontkit
-//   ASSETS_URL=http://localhost:3000 node export-assets.mjs
-//
-// Output: ../design-assets/{svg,svg/editable,png/@2x,png/@4x,logos}, colors.md, manifest.json,
-// index.html (contact sheet) and ../design-assets.zip. The site itself is not modified.
-//
-// How it works: the page is loaded at 1440px with prefers-reduced-motion and every animation
-// paused/finished (looping spins reset to 0° so shapes are upright). Each asset is serialised to
-// a standalone SVG: inline <svg> elements are cloned with their computed colours written as
-// attributes; HTML-built stickers (a shape + an HTML label) are rebuilt as SVG from layout boxes.
-// Text is converted to outlines with the site's own font files: Chromium supplies every glyph's
-// position (incl. text on a path), fontkit supplies the outline. PNGs are rendered from those
-// SVGs on a transparent page, so PNG and SVG always match.
-
 import { chromium } from "playwright-core";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -24,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const fontkit = require("fontkit"); // the CommonJS build registers all font formats
+const fontkit = require("fontkit");
 const wawoff2 = require("wawoff2");
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -33,11 +15,9 @@ const OUT = path.join(ROOT, "design-assets");
 const ZIP = path.join(ROOT, "design-assets.zip");
 const URL_ = process.env.ASSETS_URL || "http://localhost:3000";
 const WIDTH = 1440;
-const PNG_MIN = 48; // PNG base size = on-page size, longest side clamped to [PNG_MIN, PNG_MAX] css px
+const PNG_MIN = 48;
 const PNG_MAX = 1200;
 
-// ---------------------------------------------------------------------------------------------
-// Palette names (tailwind.config.ts + literal colours used in the artwork)
 const NAMES = {
   "#150734": "ink", "#D3C5F6": "lilac", "#C2EC40": "lime", "#097140": "brandgreen", "#F04C8A": "pink",
   "#EA3323": "red", "#3D71FF": "blue", "#4E00FF": "violet", "#11B04C": "green", "#FFFFFF": "white",
@@ -47,9 +27,6 @@ const NAMES = {
 };
 const colorName = (hex) => NAMES[hex?.toUpperCase()] || hex?.replace("#", "").toLowerCase();
 
-// ---------------------------------------------------------------------------------------------
-// Asset list. `find` runs in the page (helpers on window.X) and returns the element(s).
-// kind: "svg" (an inline <svg>), "html" (an HTML subtree rebuilt as SVG), "file" (copied as is).
 const C = {
   stickers: "components/hero/Stickers.tsx", pen: "components/hero/PenLine.tsx", glyph: "components/Glyph.tsx + lib/glyphs.ts",
   wave: "components/Wave.tsx, components/Goals.tsx", tiles: "components/about/TileArt.tsx (About.tsx)",
@@ -75,23 +52,18 @@ const TILES = [
 function assetSpecs() {
   const S = [];
   const add = (o) => S.push({ state: "page", opts: {}, ...o });
-  // Hero floating badges: composite (shape + label) and the bare shape.
   STICKERS.forEach(([name, label, part, partKind]) => {
     add({ name, kind: "html", usedIn: "Hero — floating badge", component: C.stickers, parts: [part], find: `() => X.sticker(${JSON.stringify(label)}).root`, rotation: `() => X.sticker(${JSON.stringify(label)}).rot` });
     add({ name: part, kind: partKind, usedIn: "Hero — floating badge (shape only)", component: C.stickers, partOf: name, find: `() => X.sticker(${JSON.stringify(label)}).shape` });
   });
-  // Hero lime line with anchor dots and the fountain-pen nib.
   const line = `() => X.svgs("-8500 -600 15500 3800")[0]`;
   add({ name: "hero-line", kind: "svg", usedIn: "Hero — lime line drawn behind the title, with dots and pen", component: C.pen, parts: ["hero-line-path", "pen-icon"], find: line, opts: { fit: true } });
   add({ name: "hero-line-path", kind: "svg", usedIn: "Hero — the line and its dots (no pen)", component: C.pen, partOf: "hero-line", find: line, opts: { fit: true, remove: ":scope > g" } });
   add({ name: "pen-icon", kind: "svg", usedIn: "Hero — pen nib at the end of the line (shown upright here)", component: C.pen, partOf: "hero-line", find: line, opts: { fit: true, keepOnly: ":scope > g", clearTransform: ":scope > g" } });
-  // Stretched decorative letters of the hero title.
   add({ name: "hero-glyph-o-wide", kind: "svg", usedIn: "Hero title — stretched decorative «о» in «олимпиад»", component: C.glyph, find: `() => X.visible(X.svgs("47 -528 466 540"))[0]` });
   add({ name: "hero-glyph-zero", kind: "svg", usedIn: "Hero title — the «0» of the year", component: C.glyph, find: `() => X.visible(X.svgs("47 -528 466 540"))[1]` });
-  // Wavy section dividers (one profile, three colours).
   for (const [c, where] of [["#D3C5F6", "hero→about, fee→faq"], ["#C2EC40", "top of the fee section"], ["#150734", "below the fee section, goals background"]])
     add({ name: `wave-divider-${colorName(c)}`, kind: "svg", usedIn: `Section divider — ${where}`, component: C.wave, find: `() => X.svgs("0 0 2315 160").find((s) => X.hex(getComputedStyle(s.querySelector("path")).fill).v === "${c}")` });
-  // About tiles: two icon states per tile, plus shape and icons.
   TILES.forEach(([color, shape, a, b], i) => {
     const tile = `X.tiles()[${i}]`;
     add({ name: `tile-${color}-${a}`, kind: "html", usedIn: "About — icon tile (state 1)", component: C.tiles, parts: [`tile-shape-${color}-${shape}`, `icon-${a}`], find: `() => ${tile}` });
@@ -114,9 +86,7 @@ function assetSpecs() {
   add({ name: "social-icons", kind: "many", usedIn: "Footer — social links", component: C.footer, find: `() => X.socials()` });
   add({ name: "nav-tag-shape", kind: "svg", usedIn: "Header — translucent tag behind the nav (12% opacity)", component: C.header, find: `() => X.svgs("0 0 538 52")[0]` });
   add({ name: "cursor-icons", kind: "many", usedIn: "Custom cursor", component: C.cursor, find: `() => X.cursors()` });
-  // FAQ open state (after clicking the first question).
   add({ name: "faq-toggle-open", kind: "html", state: "faq", usedIn: "FAQ — open question toggle (rotated 45°)", component: C.faq, find: `() => X.svgs("0 0 24 24")[0].parentElement`, opts: { keepRootTransform: true } });
-  // Menu overlay.
   add({ name: "menu-badge-left", kind: "svg", state: "menu", usedIn: "Menu overlay — round link badge (left)", component: C.menu, find: `() => X.visible([...document.querySelectorAll(".mnu-badge.l svg")])[0]` });
   add({ name: "menu-badge-right", kind: "svg", state: "menu", usedIn: "Menu overlay — round link badge (right)", component: C.menu, find: `() => X.visible([...document.querySelectorAll(".mnu-badge.r svg")])[0]` });
   add({ name: "menu-close-cross", kind: "svg", state: "menu", usedIn: "Menu overlay — close button", component: C.menu, find: `() => X.visible([...document.querySelectorAll(".mnu-close svg")])[0]` });
@@ -124,7 +94,6 @@ function assetSpecs() {
     add({ name: `menu-ball-${n}`, kind: "html", state: "menu", usedIn: "Menu overlay — rolling ball", component: C.menu, partOf: `menu-ball-${n}-ringed`, find: `() => document.querySelectorAll(".mnu-ball.c")[${i}]` });
     add({ name: `menu-ball-${n}-ringed`, kind: "ring", state: "menu", usedIn: "Menu overlay — rolling ball on its white ball (as on screen)", component: C.menu, parts: [`menu-ball-${n}`], find: `() => document.querySelectorAll(".mnu-ball.c")[${i}]`, white: `() => document.querySelectorAll(".mnu-ball.w")[${i}]` });
   });
-  // Register modal.
   add({ name: "register-card-stack", kind: "html", state: "modal", usedIn: "Register modal — violet card on fanned white + lime layers", component: C.modal, parts: ["register-card-shape-wide"], find: `() => X.modalCard()`, opts: { include: "(el) => !!el.querySelector('svg[viewBox=\"0 0 1758 919\"]')" } });
   add({ name: "register-card-shape-wide", kind: "svg", state: "modal", usedIn: "Register modal — card silhouette (desktop)", component: C.modal, partOf: "register-card-stack", find: `() => X.svgs("0 0 1758 919").find((s) => X.hex(getComputedStyle(s.querySelector("path")).fill).v === "#4E00FF")` });
   add({ name: "register-card-shape-tall", kind: "svg", state: "modal", usedIn: "Register modal — card silhouette (mobile)", component: C.modal, find: `() => X.svgs("0 0 786 1400").find((s) => X.hex(getComputedStyle(s.querySelector("path")).fill).v === "#4E00FF")`, opts: { size: [393, 700] } });
@@ -133,8 +102,6 @@ function assetSpecs() {
   return S;
 }
 
-// ---------------------------------------------------------------------------------------------
-// In-page library: serialisers + finders. Installed with page.evaluate(installLib).
 function installLib() {
   const NS = "http://www.w3.org/2000/svg", XL = "http://www.w3.org/1999/xlink";
   const r2 = (n) => Math.round(n * 100) / 100;
@@ -157,11 +124,9 @@ function installLib() {
   const metrics = (st, size) => { ctx.font = `${st.fontStyle} ${st.fontWeight} ${size}px ${st.fontFamily}`; return ctx.measureText("H"); };
   const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-  // --- transforms -----------------------------------------------------------------------------
   const TPROPS = ["transform", "rotate", "scale", "translate"];
   const strip = (el) => { const saved = TPROPS.map((p) => [p, el.style.getPropertyValue(p), el.style.getPropertyPriority(p)]); TPROPS.forEach((p) => el.style.setProperty(p, "none", "important")); return () => saved.forEach(([p, v, pr]) => (v ? el.style.setProperty(p, v, pr) : el.style.removeProperty(p))); };
   const stripChain = (el) => { const undo = []; for (let n = el; n && n.nodeType === 1; n = n.parentElement) undo.push(strip(n)); return () => undo.reverse().forEach((u) => u()); };
-  // full CSS transform of an element as a DOMMatrix around its transform-origin (box in root space)
   const cssMatrix = (st, box) => {
     let m = new DOMMatrix();
     const pct = (v, len) => (v.endsWith("%") ? (parseFloat(v) / 100) * len : parseFloat(v));
@@ -176,7 +141,6 @@ function installLib() {
   };
   const mstr = (m) => `matrix(${[m.a, m.b, m.c, m.d, m.e, m.f].map((n) => r2(n)).join(" ")})`;
 
-  // --- shapes -----------------------------------------------------------------------------------
   const radii = (st, w, h) => {
     const one = (v, len) => { const p = v.split(" ")[0]; return p.endsWith("%") ? (parseFloat(p) / 100) * len : parseFloat(p) || 0; };
     let r = [one(st.borderTopLeftRadius, w), one(st.borderTopRightRadius, w), one(st.borderBottomRightRadius, w), one(st.borderBottomLeftRadius, w)];
@@ -187,7 +151,6 @@ function installLib() {
     `M${r2(x + tl)} ${r2(y)}H${r2(x + w - tr)}${tr ? `A${r2(tr)} ${r2(tr)} 0 0 1 ${r2(x + w)} ${r2(y + tr)}` : ""}V${r2(y + h - br)}${br ? `A${r2(br)} ${r2(br)} 0 0 1 ${r2(x + w - br)} ${r2(y + h)}` : ""}H${r2(x + bl)}${bl ? `A${r2(bl)} ${r2(bl)} 0 0 1 ${r2(x)} ${r2(y + h - bl)}` : ""}V${r2(y + tl)}${tl ? `A${r2(tl)} ${r2(tl)} 0 0 1 ${r2(x + tl)} ${r2(y)}` : ""}Z`;
   let uid = 0;
   const id = (p) => `${p}${++uid}`;
-  // repeating-linear-gradient with hard stops → <pattern>
   const gradientPattern = (bgImage, box, defs) => {
     const m = bgImage.match(/repeating-linear-gradient\((-?[\d.]+)deg,(.*)\)$/);
     if (!m) return null;
@@ -215,7 +178,6 @@ function installLib() {
     return `url(#${fid})`;
   };
 
-  // --- glyph runs (positions for text → outline conversion, done in Node) ----------------------
   const svgTextRun = (o, runs) => {
     const st = getComputedStyle(o);
     const tp = o.querySelector("textPath");
@@ -237,9 +199,6 @@ function installLib() {
     return run;
   };
 
-  // --- SVG element → standalone SVG ------------------------------------------------------------
-  // opts: fit (viewBox = content bbox), remove / keepOnly / clearTransform (selectors on the clone),
-  //       size [w,h] fallback for elements without layout.
   X.serializeSvg = (o, opts = {}, runs = []) => {
     const undo = opts.noStrip ? () => {} : stripChain(o);
     try {
@@ -253,7 +212,7 @@ function installLib() {
         const inDefs = !!oe.closest("defs,clipPath,mask,pattern,symbol,linearGradient,radialGradient,marker,filter");
         if (inDefs || oe === o) return;
         if (st.display === "none" || st.visibility === "hidden") { drop.push(ce); return; }
-        ce.removeAttribute("visibility"); ce.removeAttribute("display"); // the page un-hides these with inline styles
+        ce.removeAttribute("visibility"); ce.removeAttribute("display");
         if (!SHAPES.includes(tag)) return;
         const paint = (prop, v, op) => {
           const h = X.hex(v);
@@ -263,15 +222,12 @@ function installLib() {
           if (a < 1) ce.setAttribute(`${prop}-opacity`, r2(a)); else ce.removeAttribute(`${prop}-opacity`);
           return true;
         };
-        // groups need no paint of their own: every child gets its computed fill/stroke below
         if (tag === "g") { if (parseFloat(st.opacity) < 1) ce.setAttribute("opacity", r2(parseFloat(st.opacity))); return; }
         paint("fill", st.fill, st.fillOpacity);
-        // stroke-only line art (e.g. "M12 4v16M4 12h16") inherits SVG's default black fill, which
-        // covers no area; write fill="none" so the black does not look like a palette colour
         if (!oe.hasAttribute("fill") && st.stroke !== "none" && X.hex(st.fill).v === "#000000" && oe.isPointInFill) {
           const bb = oe.getBBox();
           let inside = false;
-          for (let i = 0; i <= 10 && !inside; i++) for (let j = 0; j <= 10 && !inside; j++) inside = oe.isPointInFill(new DOMPoint(bb.x + (bb.width * (i + 0.37)) / 11, bb.y + (bb.height * (j + 0.61)) / 11)); // offsets keep samples off straight and diagonal strokes
+          for (let i = 0; i <= 10 && !inside; i++) for (let j = 0; j <= 10 && !inside; j++) inside = oe.isPointInFill(new DOMPoint(bb.x + (bb.width * (i + 0.37)) / 11, bb.y + (bb.height * (j + 0.61)) / 11));
           if (!inside) ce.setAttribute("fill", "none");
         }
         if (paint("stroke", st.stroke, st.strokeOpacity)) {
@@ -297,7 +253,6 @@ function installLib() {
           if (st.dominantBaseline !== "auto") ce.setAttribute("dominant-baseline", st.dominantBaseline);
           if (ce.hasAttribute("href")) ce.setAttributeNS(XL, "xlink:href", ce.getAttribute("href"));
         }
-        // CSS transforms (inline style / animations) baked into the transform attribute
         if (!oe.hasAttribute("transform") && st.transform !== "none") {
           const m = new DOMMatrix(st.transform);
           if (!m.isIdentity) {
@@ -311,14 +266,12 @@ function installLib() {
       if (opts.remove) c.querySelectorAll(opts.remove).forEach((e) => e.remove());
       if (opts.keepOnly) { const keep = new Set(c.querySelectorAll(opts.keepOnly)); [...c.children].forEach((e) => { if (!keep.has(e) && e.tagName !== "defs") e.remove(); }); }
       if (opts.clearTransform) c.querySelectorAll(opts.clearTransform).forEach((e) => e.removeAttribute("transform"));
-      // root size & viewBox
       const st = getComputedStyle(o), r = o.getBoundingClientRect();
       let vb = (o.getAttribute("viewBox") || `0 0 ${r.width} ${r.height}`).split(/[\s,]+/).map(Number);
       let w = r.width, h = r.height;
       if (!(w > 0 && h > 0)) [w, h] = opts.size || [vb[2], vb[3]];
       const pxPerUnit = w / vb[2];
       if (opts.fit) {
-        // measure the remaining content in the live element: temporarily mirror removals
         const tmp = c.cloneNode(true);
         tmp.setAttribute("style", "position:fixed;left:0;top:0;visibility:hidden");
         document.body.appendChild(tmp);
@@ -333,7 +286,6 @@ function installLib() {
       c.setAttribute("viewBox", vb.map(r2).join(" "));
       c.setAttribute("width", r2(w)); c.setAttribute("height", r2(h));
       c.removeAttribute("overflow");
-      // CSS background / rounding of the <svg> box itself
       const defs = [], pre = [];
       const k = vb[2] / w;
       const rad = radii(st, w, h).map((v) => v * k);
@@ -350,8 +302,6 @@ function installLib() {
     } finally { undo(); }
   };
 
-  // --- HTML subtree → SVG ---------------------------------------------------------------------
-  // opts: include (fn source; filters the root's children), keepRootTransform
   X.serializeHtml = async (root, opts = {}) => {
     const undo = stripChain(root);
     const runs = [], defs = [], undos = [];
@@ -416,10 +366,8 @@ function installLib() {
           const st = getComputedStyle(n);
           if (st.display === "none" || st.visibility === "hidden" || parseFloat(st.opacity) === 0) continue;
           if (/^inset\(100%/.test(st.clipPath)) continue;
-          // measure with the element's own transform removed; re-apply it as a <g transform>
           const preM = n.getBoundingClientRect();
           if (preM.width * preM.height === 0 && n.tagName !== "BR" && st.display !== "inline" && st.display !== "contents") continue;
-          // getComputedStyle is live: snapshot the transform before removing it
           const T = { transform: st.transform, rotate: st.rotate, scale: st.scale, translate: st.translate, transformOrigin: st.transformOrigin };
           const un = strip(n);
           const b = rel(n.getBoundingClientRect());
@@ -457,7 +405,7 @@ function installLib() {
       let body = box(rst, { x: 0, y: 0, w: R.width, h: R.height }) + (await walk(root, true));
       let vb = [0, 0, R.width, R.height];
       if (opts.keepRootTransform) {
-        undo(); // re-measure the root's own transform
+        undo();
         const stR = getComputedStyle(root);
         const m = cssMatrix(stR, { x: 0, y: 0, w: R.width, h: R.height });
         if (m) {
@@ -467,7 +415,6 @@ function installLib() {
           vb = [Math.min(...xs), Math.min(...ys), Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)];
         }
       }
-      // grow the viewBox to everything drawn (e.g. rotated layers, drop shadows)
       const tmp = document.createElementNS(NS, "svg");
       tmp.setAttribute("style", "position:fixed;left:0;top:0;visibility:hidden;overflow:visible");
       tmp.innerHTML = `${defs.length ? `<defs>${defs.join("")}</defs>` : ""}<g>${body}</g>`;
@@ -483,7 +430,6 @@ function installLib() {
     } finally { undos.forEach((u) => u()); undo(); }
   };
 
-  // --- finders ---------------------------------------------------------------------------------
   X.sticker = (label) => {
     const hero = document.querySelector("main section");
     const p = [...hero.querySelectorAll("p")].find((e) => e.textContent.includes(label) && e.className.includes("-translate-x-1/2"));
@@ -538,7 +484,6 @@ function installLib() {
     return { ratio: w.width / c.width, white: X.hex(getComputedStyle(white).backgroundColor).v };
   };
 
-  // --- animation freeze --------------------------------------------------------------------------
   X.freeze = () => {
     if (!document.getElementById("x-freeze")) {
       const s = document.createElement("style");
@@ -548,14 +493,12 @@ function installLib() {
     }
     for (const a of document.getAnimations()) {
       const t = a.effect?.getComputedTiming?.();
-      if (t && t.iterations === Infinity) { a.pause(); a.currentTime = 0; } // looping spin → upright start
+      if (t && t.iterations === Infinity) { a.pause(); a.currentTime = 0; }
       else { try { a.finish(); } catch { a.pause(); } }
     }
   };
 }
 
-// ---------------------------------------------------------------------------------------------
-// Fonts → glyph outlines (Node)
 const FONT_DIRS = {
   sans: { dir: "node_modules/@fontsource-variable/manrope/files", re: /^manrope-(latin|latin-ext|cyrillic|cyrillic-ext)-wght-normal\.woff2$/, variable: true },
   display: { dir: "node_modules/@fontsource/fira-sans-extra-condensed/files", re: /^fira-sans-extra-condensed-(latin|latin-ext|cyrillic|cyrillic-ext)-900-normal\.woff2$/ },
@@ -565,7 +508,6 @@ async function loadFonts() {
   for (const [key, f] of Object.entries(FONT_DIRS)) {
     const dir = path.join(ROOT, f.dir);
     fonts[key] = [];
-    // one at a time: the wasm decoder is not re-entrant
     for (const n of fs.readdirSync(dir).filter((n) => f.re.test(n)).sort())
       fonts[key].push({ file: n, variable: !!f.variable, font: fontkit.create(Buffer.from(await wawoff2.decompress(fs.readFileSync(path.join(dir, n))))), byWeight: new Map() });
   }
@@ -597,7 +539,6 @@ function outline(svg, runs, fonts) {
       const g = glyphFor(fonts, run.key, run.weight, c.ch.codePointAt(0));
       if (!g) { missing.push(c.ch); continue; }
       const k = s / g.upm, th = (c.rot * Math.PI) / 180, cos = Math.cos(th), sin = Math.sin(th);
-      // M = T(x,y)·R(rot)·T(0,shift)·S(k,-k)
       const ox = c.x + -sin * run.shift, oy = c.y + cos * run.shift;
       const d = g.glyph.path.transform(k * cos, k * sin, k * sin, -k * cos, ox, oy).toSVG();
       if (d) paths.push(`<path d="${round(d)}"/>`);
@@ -609,24 +550,20 @@ function outline(svg, runs, fonts) {
 const stripRuns = (svg) => svg.replace(/ data-run="\d+"/g, "");
 const xmlEsc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-// ---------------------------------------------------------------------------------------------
 async function main() {
   const fonts = await loadFonts();
   fs.rmSync(OUT, { recursive: true, force: true });
   for (const d of ["svg/editable", "png/@2x", "png/@4x", "logos"]) fs.mkdirSync(path.join(OUT, d), { recursive: true });
 
-  // unhinted font metrics: on Linux, hinting rounds glyph advances to whole pixels, which would
-  // leave uneven letter gaps in the outlined text; designers' tools lay text out unhinted
   const browser = await chromium.launch({ args: ["--font-render-hinting=none"] });
   const page = await browser.newPage({ viewport: { width: WIDTH, height: 900 }, reducedMotion: "reduce" });
   console.log(`Loading ${URL_} at ${WIDTH}px…`);
   await page.goto(URL_, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
-  // scroll once through the page so lazy / in-view content mounts, then back to the top
   const H = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < H; y += 700) { await page.evaluate((y) => window.scrollTo(0, y), y); await page.waitForTimeout(120); }
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.mouse.move(700, 450); // mounts the custom cursor
+  await page.mouse.move(700, 450);
   await page.waitForTimeout(2500);
   await page.evaluate(installLib);
   await page.evaluate((names) => { X.cname = (h) => names[h?.toUpperCase()] || h?.replace("#", "").toLowerCase(); }, NAMES);
@@ -684,7 +621,6 @@ async function main() {
     }
   }
 
-  // @font-face rules of the site, aliased to the real family names (for QA of editable SVGs)
   const fontCss = await page.evaluate((origin) => {
     const css = [];
     for (const sh of document.styleSheets) { let rules; try { rules = sh.cssRules; } catch { continue; }
@@ -696,7 +632,6 @@ async function main() {
     return css.join("\n");
   }, new URL(URL_).origin);
 
-  // ---- write SVGs -----------------------------------------------------------------------------
   const ok = results.filter((r) => !r.error);
   for (const r of ok) {
     r.file = `svg/${r.name}.svg`;
@@ -717,7 +652,6 @@ async function main() {
     fs.writeFileSync(path.join(OUT, r.file), `<?xml version="1.0" encoding="UTF-8"?>\n${r.markup}\n`);
   }
 
-  // ---- PNGs: render each SVG on a transparent page --------------------------------------------
   for (const dsf of [2, 4]) {
     const p = await browser.newPage({ deviceScaleFactor: dsf });
     for (const r of ok) {
@@ -738,10 +672,8 @@ async function main() {
     await p.close();
   }
 
-  // ---- logos ----------------------------------------------------------------------------------
   for (const n of ["syscotech.png", "nasha-tech.png"]) fs.copyFileSync(path.join(ROOT, "public/logos", n), path.join(OUT, "logos", n));
 
-  // ---- colours, manifest ----------------------------------------------------------------------
   const hex6 = (r, g, b) => "#" + [r, g, b].map((n) => (+n).toString(16).padStart(2, "0")).join("").toUpperCase();
   const colorsOf = (svg) => [...new Set([...svg.matchAll(/(?:fill|stroke|flood-color|stop-color)(?:="|:\s*)(?:(#[0-9A-Fa-f]{6})|rgb\((\d+),\s*(\d+),\s*(\d+)\))/g)].map((m) => (m[1] ? m[1].toUpperCase() : hex6(m[2], m[3], m[4]))))];
   for (const r of ok) r.colors = colorsOf(r.kind === "file" ? r.markup : r.markup);
@@ -804,15 +736,12 @@ async function main() {
   ].join("\n");
   fs.writeFileSync(path.join(OUT, "colors.md"), md);
 
-  // ---- contact sheet --------------------------------------------------------------------------
   fs.writeFileSync(path.join(OUT, "index.html"), contactSheet(manifest));
 
-  // ---- QA -------------------------------------------------------------------------------------
   const qa = await verify(browser, ok, fontCss);
   fs.writeFileSync(path.join(OUT, "qa.json"), JSON.stringify(qa, null, 2) + "\n");
   await browser.close();
 
-  // ---- zip ------------------------------------------------------------------------------------
   fs.rmSync(ZIP, { force: true });
   try { execFileSync("zip", ["-qr", ZIP, path.basename(OUT)], { cwd: ROOT }); } catch (e) { console.warn("zip failed:", e.message); }
 
@@ -822,11 +751,9 @@ async function main() {
   console.log(`Zip: ${ZIP} (${(fs.statSync(ZIP).size / 1024 / 1024).toFixed(1)} MB)`);
 }
 
-// ---------------------------------------------------------------------------------------------
 async function verify(browser, ok, fontCss) {
   const problems = [], report = {};
   const p = await browser.newPage({ deviceScaleFactor: 1 });
-  // a blank page on the site's origin (no app code) that can still load the site's font files
   await p.route(`${URL_}/__qa`, (route) => route.fulfill({ contentType: "text/html", body: "<!doctype html><html><head><meta charset=utf-8></head><body></body></html>" }));
   await p.goto(`${URL_}/__qa`);
   await p.addStyleTag({ content: fontCss + "html,body{margin:0;background:transparent}" });
@@ -838,11 +765,9 @@ async function verify(browser, ok, fontCss) {
   if (fontsOk.length) problems.push(`QA could not load site fonts: ${fontsOk.join(", ")} (outline comparison unreliable)`);
   for (const r of ok) {
     const rep = (report[r.name] = {});
-    // SVG parses as XML
     const svg = fs.readFileSync(path.join(OUT, r.file), "utf8");
     rep.svgValid = await p.evaluate((s) => !new DOMParser().parseFromString(s, "image/svg+xml").querySelector("parsererror"), svg);
     if (!rep.svgValid) problems.push(`${r.name}: SVG does not parse`);
-    // PNGs: non-blank, transparent background
     for (const e of r.pngErrors || []) problems.push(`${r.name}: PNG ${e}`);
     for (const [k, file] of Object.entries(r.png || {})) {
       const b64 = fs.readFileSync(path.join(OUT, file)).toString("base64");
@@ -859,8 +784,6 @@ async function verify(browser, ok, fontCss) {
       rep[k] = s;
       if (s.inkPct === 0) problems.push(`${r.name} ${k}: blank PNG`);
     }
-    // outlined text vs. live <text> rendered with the site's own fonts (inline, same size):
-    // share of differing pixels among the pixels either version paints
     if (r.editable) {
       const k = Math.min(2, 700 / Math.max(r.w, r.h));
       const shot = async (markup) => {
@@ -889,7 +812,6 @@ async function verify(browser, ok, fontCss) {
     }
   }
   await p.close();
-  // second, independent renderer (librsvg) — skipped when rsvg-convert is not installed
   let rsvg = true;
   try { execFileSync("rsvg-convert", ["--version"], { stdio: "ignore" }); } catch { rsvg = false; }
   if (rsvg) for (const r of ok) {
@@ -899,7 +821,6 @@ async function verify(browser, ok, fontCss) {
   return { problems, report };
 }
 
-// ---------------------------------------------------------------------------------------------
 function contactSheet(manifest) {
   const groups = new Map();
   for (const a of manifest) { const g = a.usedIn.split(" — ")[0]; groups.set(g, [...(groups.get(g) || []), a]); }

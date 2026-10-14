@@ -7,7 +7,6 @@ import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import { GlyphText, capMarkGap, fitSpacing, plain, type GlyphSlot } from "./ui/GlyphText";
 import { ICONS, TileShape, type Shape } from "./about/TileArt";
 
-// Tiles in row order; `slot` is the index of the sentence slot each one lands in.
 const TILES: { shape: Shape; color: string; a: string; b: string; slot: number }[] = [
   { shape: "square", color: "#F04C8A", a: "cursor", b: "star", slot: 3 },
   { shape: "square", color: "#C2EC40", a: "heart", b: "smile", slot: 1 },
@@ -16,38 +15,30 @@ const TILES: { shape: Shape; color: string; a: string; b: string; slot: number }
   { shape: "circle", color: "#EA3323", a: "bolt", b: "note", slot: 2 },
 ];
 
-// Scroll timeline, in px of scroll for a 900px-tall viewport (scaled by viewport height),
-// measured from the moment the pinned stage reaches the top of the viewport.
-const INTRO_FADE = [[0, 88], [15, 103], [30, 118]]; // subtitle, title, description: -60px, fade, power1.in
-const GATHER = { start: [42, 56, 71, 88, 101], dur: 118 }; // shrink into a centred row (power2.inOut)
-const DROP: [number, number, (t: number) => number][] = [ // move to the slot's line
+const INTRO_FADE = [[0, 88], [15, 103], [30, 118]];
+const GATHER = { start: [42, 56, 71, 88, 101], dur: 118 };
+const DROP: [number, number, (t: number) => number][] = [
   [310, 420, power2InOut], [243, 345, (t) => backOut(t)], [262, 380, (t) => backOut(t)], [205, 290, power2Out], [222, 320, power2Out],
 ];
-const SLIDE = [[470, 625], [355, 505], [470, 625], [315, 445], [415, 565]]; // into the slot (sine.inOut)
+const SLIDE = [[470, 625], [355, 505], [470, 625], [315, 445], [415, 565]];
 const SENTENCE_ON = 210;
-const WORDS = { start: 397, step: 60, dur: 103 }; // per line, ±50px, power1.out
+const WORDS = { start: 397, step: 60, dur: 103 };
 const ROW_GAP_REM = 125;
-const SCRUB_TAU = 0.25; // seconds; ~1s catch-up like a GSAP scrub: 1
+const SCRUB_TAU = 0.25;
 
 const seg = (u: number, a: number, b: number) => Math.min(1, Math.max(0, (u - a) / (b - a)));
 
-// Decorative glyph slots ({x} in the copy, keyed by the Cyrillic letter they stand in for).
-// Values: advance, ink x, ascent above baseline, ink width/height — all in em of the
-// surrounding text — plus the line-height used there.
 const TITLE_GLYPHS: Record<string, GlyphSlot> = {
   "о": { k: "o", adv: 0.8, ix: 0.014, asc: 0.72, iw: 0.78, ih: 0.69 },
 };
 const SENTENCE_GLYPHS: Record<string, GlyphSlot> = {
   "о": { k: "o", adv: 0.8, ix: 0.012, asc: 0.625, iw: 0.78, ih: 0.752 },
 };
-// every other pinned line is drawn in outline
 const OUTLINE: React.CSSProperties = { color: "transparent", WebkitTextStroke: "0.028em #150734" };
 
 function Tile({ t, i, tileRef }: { t: (typeof TILES)[number]; i: number; tileRef: (n: HTMLLIElement | null) => void }) {
   const [showB, setShowB] = useState(false);
   useEffect(() => {
-    // icons alternate every 3s, staggered 0.4s per tile; old icon shrinks (0.3s ease-in),
-    // then the new one grows (0.35s ease-out)
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let iv = 0;
     const to = window.setTimeout(() => { setShowB((v) => !v); iv = window.setInterval(() => setShowB((v) => !v), 3000); }, 2200 + i * 400);

@@ -3,8 +3,6 @@ import Stickers from "./hero/Stickers";
 import Sub from "./hero/Sub";
 import Wave from "./Wave";
 
-// Desktop: 101vh (min 1240rem) flex column, headline box 840rem tall centred between
-// 220rem / 170rem padding. Tablet: 100vh with an 885rem stage centred; mobile: 700rem.
 export default function Hero() {
   return (
     <>

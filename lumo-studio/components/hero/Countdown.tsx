@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { hero } from "@/lib/olympiad";
 
-// Days / hours / minutes / seconds to `hero.startsAt`; a "date coming soon" pill while it is
-// null. Ticks only on the client, so the server markup shows dashes.
 export default function Countdown({ className = "" }: { className?: string }) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {

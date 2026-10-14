@@ -9,13 +9,6 @@ import { fitSpacing } from "./ui/GlyphText";
 import Bubble from "./ui/Bubble";
 import PrizeArt from "./prizes/PrizeArt";
 
-// The prize fund as an open book, one page per place. Desktop: tap the right / left page to
-// turn to the next / previous prize, or drag it across the spine (0.1875°/px at 1440 wide) —
-// a 20° drag or a flick completes the turn, anything less falls back. Below 992px the book is
-// vertical and pages turn upward as you scroll a sticky stage (scaled to fit short screens).
-// Ten page edges (five per side) frame the book and slide out on hover; a large star turns
-// 180° while the section crosses the viewport.
-
 const P = prizes.places;
 const N = P.length;
 const rowLabel = (k: number) => `${P[k % N].place} — ${P[k % N].amount}`;
@@ -63,7 +56,6 @@ const art = (k: number) => {
   return <PrizeArt n={(k % N) + 1} place={c.place} amount={c.amount} color={c.color} className="block h-full w-full rounded-[16rem]" />;
 };
 
-// ---------- desktop: drag-to-turn ----------
 function DesktopBook() {
   const book = useRef<HTMLOListElement>(null);
   const pages = useRef<(HTMLLIElement | null)[]>([]);
@@ -71,8 +63,6 @@ function DesktopBook() {
   useEffect(() => {
     const el = book.current!;
     const angle = Array(N - 1).fill(0) as number[];
-    // where each page is headed (0 = lying on the right, -180 = turned to the left); taps and
-    // drags pick their page from this, so quick repeated taps keep turning the next page
     const target = Array(N - 1).fill(0) as number[];
     const anims: ({ stop: () => void } | null)[] = Array(N - 1).fill(null);
     const set = (k: number, a: number, z?: number) => {
@@ -100,7 +90,6 @@ function DesktopBook() {
       const k = right ? target.indexOf(0) : target.lastIndexOf(-180);
       if (k < 0) return;
       anims[k]?.stop();
-      // a tap on the register button inside a page is a click, not a page turn
       const tap = !(e.target as Element).closest("a,button");
       drag = { k, x: e.clientX, base: angle[k], moved: false, tap, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
     };
@@ -110,7 +99,7 @@ function DesktopBook() {
       if (!drag.moved && Math.abs(dx) < 4) return;
       drag.moved = true;
       const dt = e.timeStamp - drag.lastT;
-      if (dt > 0) drag.v = 0.7 * ((e.clientX - drag.lastX) / dt) + 0.3 * drag.v; // px/ms, smoothed
+      if (dt > 0) drag.v = 0.7 * ((e.clientX - drag.lastX) / dt) + 0.3 * drag.v;
       drag.lastX = e.clientX; drag.lastT = e.timeStamp;
       set(drag.k, Math.max(-180, Math.min(0, drag.base + dx * degPerPx())), 100);
     };
@@ -120,13 +109,10 @@ function DesktopBook() {
       drag = null;
       const onRight = target[k] === 0;
       if (!moved) {
-        // one tap turns the page: right half → next prize, left half → previous
         if (tap && e.type === "pointerup") turn(k, onRight ? -180 : 0);
         else turn(k, target[k]);
         return;
       }
-      // a short drag or a flick is enough: past 20° in the turning direction, or released
-      // while moving faster than 0.3 px/ms that way
       suppressClick = true;
       setTimeout(() => (suppressClick = false), 0);
       const fling = Math.abs(v) > 0.3 ? Math.sign(v) : 0;
@@ -182,13 +168,10 @@ function DesktopBook() {
   );
 }
 
-// ---------- below 992px: scroll-to-turn ----------
 function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
   const pages = useRef<(HTMLLIElement | null)[]>([]);
   const wrap = useRef<HTMLDivElement>(null);
 
-  // The page content fills each half, so on short screens the whole book is scaled down to
-  // fit the sticky stage (leaving 8% for the page edges to peek out above and below).
   useEffect(() => {
     const w = wrap.current!, stage = w.closest<HTMLElement>(".sticky")!;
     const fit = () => {
@@ -213,7 +196,6 @@ function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
       const s = section.current;
       if (s) {
         const vh = window.innerHeight;
-        // scroll since the stage stuck (its natural top sits right under the heading's margin)
         const h2 = s.querySelector("h2")!;
         const stick = h2.offsetTop + h2.offsetHeight + mb;
         const off = (-s.getBoundingClientRect().top - stick) / vh;
@@ -248,7 +230,6 @@ function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
   const half = "h-[468rem] md:h-[434rem]";
   return (
     <div ref={wrap} className="relative mx-auto w-full max-w-[680rem] select-none [zoom:0.8] md:[zoom:1]">
-      {/* z-0 keeps the edges behind the book (their own z-index 1–3 would otherwise paint over it) */}
       <div className="absolute inset-0 z-0">
         {[0, 1, 2].map((i) => edge(i, i, false))}
         {[3, 4, 5].map((k, i) => edge(k, i, true))}

@@ -6,8 +6,6 @@ import { power2Out } from "@/lib/ease";
 import { useDesktop } from "@/lib/useMedia";
 import Countdown from "./Countdown";
 
-// Tagline and countdown. Desktop: beside the year on the last headline line; below 992px:
-// under the stacked title. Rises in once the headline lines have landed.
 export default function Sub() {
   const ready = useIntroReady();
   const desktop = useDesktop();

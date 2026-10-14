@@ -1,6 +1,5 @@
 import type Lenis from "lenis";
 
-// Shared handle so overlays can pause smooth scrolling while they are open.
 let instance: Lenis | null = null;
 export const setLenis = (l: Lenis | null) => { instance = l; };
 export const getLenis = () => instance;
