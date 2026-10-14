@@ -59,7 +59,7 @@ export const hero = {
   lines: ["Прогр{а}ммчлалын", "{о}лимпиад", zeroGlyph(year)],
   // Below 992px the long word is split over two rows.
   mobileLines: ["Программ-", "чл{а}лын", "{о}лимпиад", zeroGlyph(year)],
-  sub: "Авьяасаа дэлгэрүүлж, мэдлэгээ батлах боломж.",
+  sub: "Авьяасаа дэлгэрүүлж, мэдлэгээ бататгах боломж.",
   // Start time as an ISO date, e.g. "2026-11-21T09:00:00+08:00". While null the countdown is
   // replaced by `dateSoon`.
   startsAt: null as string | null,
