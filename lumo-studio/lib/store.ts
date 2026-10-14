@@ -1,9 +1,9 @@
 "use client";
 import { useSyncExternalStore } from "react";
 
-// Tiny global UI store: which overlay (menu / contact modal / register modal) is open.
-type State = { menu: boolean; contact: boolean; register: boolean };
-let state: State = { menu: false, contact: false, register: false };
+// Tiny global UI store: which overlay (menu / register modal) is open.
+type State = { menu: boolean; register: boolean };
+let state: State = { menu: false, register: false };
 const subs = new Set<() => void>();
 
 export const ui = {
@@ -12,7 +12,7 @@ export const ui = {
   subscribe(f: () => void) { subs.add(f); return () => { subs.delete(f); }; },
 };
 
-const server: State = { menu: false, contact: false, register: false };
+const server: State = { menu: false, register: false };
 export function useUI<T>(pick: (s: State) => T): T {
   return useSyncExternalStore(ui.subscribe, () => pick(state), () => pick(server));
 }

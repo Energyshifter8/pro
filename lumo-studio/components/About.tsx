@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { about, aboutMetrics } from "@/lib/content";
+import { about } from "@/lib/olympiad";
 import { backOut, power1In, power1Out, power2InOut, power2Out, sineInOut } from "@/lib/ease";
 import { useDesktop } from "@/lib/useMedia";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
-import { GlyphText, capMarkGap, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
+import { GlyphText, capMarkGap, fitSpacing, plain, type GlyphSlot } from "./ui/GlyphText";
 import { ICONS, TileShape, type Shape } from "./about/TileArt";
 
 // Tiles in row order; `slot` is the index of the sentence slot each one lands in.
@@ -35,13 +35,13 @@ const seg = (u: number, a: number, b: number) => Math.min(1, Math.max(0, (u - a)
 // Values: advance, ink x, ascent above baseline, ink width/height — all in em of the
 // surrounding text — plus the line-height used there.
 const TITLE_GLYPHS: Record<string, GlyphSlot> = {
-  "т": { k: "T", adv: 0.66, ix: 0.04, asc: 0.72, iw: 0.6, ih: 0.69 },
+  "о": { k: "o", adv: 0.8, ix: 0.014, asc: 0.72, iw: 0.78, ih: 0.69 },
 };
 const SENTENCE_GLYPHS: Record<string, GlyphSlot> = {
-  "а": { k: "a", adv: 0.785, ix: 0.012, asc: 0.625, iw: 0.8, ih: 0.752 },
+  "о": { k: "o", adv: 0.8, ix: 0.012, asc: 0.625, iw: 0.78, ih: 0.752 },
 };
-
-const plain = (t: string) => t.replace(/[{}]/g, "");
+// every other pinned line is drawn in outline
+const OUTLINE: React.CSSProperties = { color: "transparent", WebkitTextStroke: "0.028em #150734" };
 
 function Tile({ t, i, tileRef }: { t: (typeof TILES)[number]; i: number; tileRef: (n: HTMLLIElement | null) => void }) {
   const [showB, setShowB] = useState(false);
@@ -152,17 +152,19 @@ export default function About() {
             {about.label}
           </h3>
           <h2 ref={(n) => { fades.current[1] = n; }} aria-label={about.title.map(plain).join(" ")}
-            style={fitSpacing()} className="display flex flex-col items-stretch text-[60rem] leading-none md:mt-[85rem] md:text-[96rem] md:leading-[1.02] lg:text-[170rem] lg:leading-[0.85]">
-            <Frag p={l1} d={0.919} off={0.3} className="block"><GlyphText text={about.title[0]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
-            <Frag p={l2} d={0.919} off={0.3} className={`block text-right lg:mt-[4rem] lg:whitespace-nowrap ${capMarkGap(about.title[1], 1)}`}><GlyphText text={about.title[1]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
+            style={fitSpacing()} className="display flex flex-col items-stretch text-[44rem] leading-none md:mt-[85rem] md:text-[86rem] md:leading-[1.02] lg:text-[156rem] lg:leading-[0.85]">
+            <Frag p={l1} d={0.919} off={0.3} className="block"><GlyphText text={about.title[0]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} /></Frag>
+            <Frag p={l2} d={0.919} off={0.3} className={`block text-right lg:mt-[10rem] lg:whitespace-nowrap ${capMarkGap(about.title[1], 1)}`}><GlyphText text={about.title[1]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} /></Frag>
           </h2>
           <div ref={(n) => { fades.current[2] = n; }} className="mt-[20rem] text-[12rem] leading-[1.2] md:mt-[45rem] md:text-[16rem] lg:pl-[591rem] lg:text-[19rem]">
-            <p className="mb-[14rem] font-medium md:mb-[18rem] lg:mb-[20rem]">{about.lead}</p>
-            <p className="font-light">
-              {about.statsIntro} {aboutMetrics.map((m, i) => (
-                <span key={m.label}>{m.label} {m.value}{i < aboutMetrics.length - 1 ? "," : "."}{i < aboutMetrics.length - 1 && <br />}</span>
+            <p className="mb-[14rem] max-w-[760rem] font-medium md:mb-[18rem] lg:mb-[22rem]">{about.text}</p>
+            <ul className="flex flex-wrap gap-[8rem] md:gap-[12rem]">
+              {about.metrics.map((m) => (
+                <li key={m.label} className="flex items-baseline gap-[6rem] rounded-[14rem] bg-ink px-[12rem] py-[8rem] text-lilac md:rounded-[18rem] md:px-[16rem] md:py-[10rem] lg:gap-[10rem] lg:px-[20rem] lg:py-[12rem]">
+                  <b className="display text-[22rem] leading-none text-lime md:text-[30rem] lg:text-[36rem]">{m.value}</b>{m.label}
+                </li>
               ))}
-            </p>
+            </ul>
           </div>
         </div>
 
@@ -189,7 +191,7 @@ export default function About() {
                     const w = wi++;
                     const dir = seenSlot ? 1 : -1;
                     return (
-                      <span key={pi} ref={(n) => { words.current[w] = { el: n, line: li, dir }; }} className="inline-block opacity-0 will-change-transform">
+                      <span key={pi} ref={(n) => { words.current[w] = { el: n, line: li, dir }; }} className="inline-block opacity-0 will-change-transform" style={li % 2 ? OUTLINE : undefined}>
                         <GlyphText text={part} glyphs={SENTENCE_GLYPHS} lh={0.92} extra={0.109} />
                       </span>
                     );

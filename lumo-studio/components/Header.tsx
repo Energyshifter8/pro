@@ -1,10 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
-import { brand, nav, ui as copy } from "@/lib/content";
+import { brand, nav, ui as copy } from "@/lib/olympiad";
 import { INTRO, INTRO_ADAPTIVE, useIntroReady } from "@/lib/intro";
 import { backOut, power2Out } from "@/lib/ease";
 import { useDesktop } from "@/lib/useMedia";
-import { ui } from "@/lib/store";
+import { openRegister, ui } from "@/lib/store";
 import Bubble from "./ui/Bubble";
 import Roll from "./ui/Roll";
 
@@ -53,7 +53,7 @@ export default function Header() {
           <a href="#" aria-label={`${brand.full} — ${copy.home}`} className="flex" data-cursor="pointer">
             <Logo />
           </a>
-          <ul className="hidden gap-[26rem] text-[13rem] leading-[1.5] md:flex lg:gap-[55rem] lg:text-[15rem]">
+          <ul className="hidden gap-[16rem] text-[12rem] leading-[1.5] md:flex lg:gap-[44rem] lg:text-[15rem]">
             {nav.map((n) => (
               <li key={n.href} className="flex">
                 <a href={n.href} className="roll-host flex items-center lowercase" data-cursor="pointer"><Roll>{n.label}</Roll></a>
@@ -66,9 +66,9 @@ export default function Header() {
           </button>
         </motion.nav>
         <motion.div key={desktop ? "bd" : "bm"} {...enter} className="pointer-events-auto hidden md:block">
-          <Bubble onClick={() => ui.set({ contact: true })}
+          <Bubble onClick={openRegister}
             className="inline-flex h-[52rem] items-center whitespace-nowrap rounded-[40rem] bg-lilac px-[26rem] text-[14rem] font-bold lowercase leading-[1.52] text-ink lg:h-auto lg:rounded-[90rem] lg:px-[30rem] lg:py-[14rem] lg:text-[15rem]">
-            {copy.talk}
+            {copy.register}
           </Bubble>
         </motion.div>
       </div>

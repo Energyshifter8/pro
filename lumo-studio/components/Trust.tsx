@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { trust } from "@/lib/content";
-import { ui } from "@/lib/store";
+import { trust } from "@/lib/olympiad";
+import { openRegister } from "@/lib/store";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import ArrowButton from "./ui/ArrowButton";
 import Mascot from "./trust/Mascot";
@@ -81,7 +81,7 @@ export default function Trust() {
               </div>
             </div>
             <div ref={button} className="flex shrink-0 justify-center lg:flex-[0_0_33%] lg:justify-start">
-              <ArrowButton onClick={() => ui.set({ contact: true })}
+              <ArrowButton onClick={openRegister}
                 className="text-[22rem] font-bold leading-[0.92] tracking-[-0.03em] [--arrow-size:59.4rem] md:text-[40rem] md:[--arrow-size:108rem] lg:text-[65rem] lg:[--arrow-size:125.5rem]"
                 pillClass="rounded-[210rem] bg-lime px-[32rem] py-[22rem] leading-[0.7] md:px-[54rem] md:py-[40rem]"
                 arrowClass="bg-ink text-lilac">

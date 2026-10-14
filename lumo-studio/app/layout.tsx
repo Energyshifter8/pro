@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import "@fontsource-variable/ibm-plex-sans";
+import "@fontsource-variable/manrope";
 import "./globals.css";
 import { display } from "@/lib/fonts";
+import { site } from "@/lib/olympiad";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollBar from "@/components/ScrollBar";
 import Cursor from "@/components/Cursor";
 
-export const metadata: Metadata = {
-  title: "Sys&CoTech клуб — Программчлалын олимпиад 2025",
-  description: "Sys&CoTech клуб: итгэл төрүүлж, ашиг авчирдаг вэбсайт. Программчлалын олимпиад 2025 — авьяасаа дэлгэрүүлж, мэдлэгээ батлах боломж.",
-};
+export const metadata: Metadata = { title: site.title, description: site.description };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

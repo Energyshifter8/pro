@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { olympiad as o } from "@/lib/olympiad";
+import { fee } from "@/lib/olympiad";
 import Bubble from "../ui/Bubble";
 
 // Bank transfer details with per-row copy buttons, plus the yellow payment-reference box.
-// Shared by the olympiad fee card and the register modal's confirmation.
+// Shared by the fee section and the register modal's confirmation.
 
 function CopyButton({ value }: { value: string }) {
   const [done, setDone] = useState(false);
@@ -26,25 +26,23 @@ function CopyButton({ value }: { value: string }) {
   return (
     <Bubble onClick={copy} circle="bg-pink"
       className={`shrink-0 rounded-full px-[14rem] py-[9rem] text-[12rem] font-bold lowercase leading-none transition-colors md:px-[20rem] md:py-[12rem] md:text-[15rem] lg:px-[24rem] lg:py-[14rem] lg:text-[17rem] ${done ? "bg-lime text-ink" : "bg-ink text-lilac hover:text-white"}`}>
-      <span aria-live="polite">{done ? o.fee.copied : o.fee.copy}</span>
+      <span aria-live="polite">{done ? fee.copied : fee.copy}</span>
     </Bubble>
   );
 }
 
-export function BankRows() {
-  const rows = [
-    { label: o.fee.labels.bank, value: o.fee.bank },
-    // shown in groups of four for reading; the copy button still copies the raw number
-    { label: o.fee.labels.account, value: o.fee.account, shown: o.fee.account.replace(/(.{4})(?=.)/g, "$1 ") },
-    { label: o.fee.labels.holder, value: o.fee.holder },
-  ];
+// `compact` tightens the desktop rows (used inside the register modal).
+export function BankRows({ compact = false }: { compact?: boolean }) {
   return (
-    <dl className="flex flex-col gap-[8rem] lg:gap-[12rem]">
-      {rows.map((r) => (
-        <div key={r.label} className="flex items-center justify-between gap-[12rem] rounded-[22rem] bg-white px-[16rem] py-[11rem] text-ink md:px-[24rem] md:py-[16rem] lg:rounded-[28rem] lg:px-[30rem] lg:py-[20rem]">
+    <dl className={`flex flex-col gap-[8rem] ${compact ? "lg:gap-[8rem]" : "lg:gap-[12rem]"}`}>
+      {fee.rows.map((r) => (
+        <div key={r.label} className={`flex items-center justify-between gap-[12rem] rounded-[22rem] bg-white px-[16rem] py-[11rem] text-ink md:px-[24rem] md:py-[16rem] lg:rounded-[28rem] lg:px-[30rem] ${compact ? "lg:py-[11rem]" : "lg:py-[18rem]"}`}>
           <div className="min-w-0">
             <dt className="text-[11rem] font-semibold uppercase tracking-[0.06em] text-ink/50 md:text-[13rem] lg:text-[15rem]">{r.label}</dt>
-            <dd className="mt-[3rem] text-[16rem] [overflow-wrap:anywhere] font-bold leading-[1.2] [font-variant-numeric:tabular-nums] md:text-[22rem] lg:mt-[5rem] lg:text-[28rem]">{"shown" in r ? r.shown : r.value}</dd>
+            <dd className={`mt-[3rem] text-[16rem] font-bold leading-[1.2] [overflow-wrap:anywhere] md:text-[22rem] lg:mt-[5rem] ${compact ? "lg:text-[22rem]" : "lg:text-[26rem]"} ${"mono" in r ? "font-mono tracking-[-0.02em]" : ""}`}>
+              {/* account numbers read in groups of four; the copy button copies the raw value */}
+              {"mono" in r ? r.value.replace(/(.{4})(?=.)/g, "$1 ") : r.value}
+            </dd>
           </div>
           <CopyButton value={r.value} />
         </div>
@@ -54,5 +52,5 @@ export function BankRows() {
 }
 
 export function Reference({ className = "" }: { className?: string }) {
-  return <p className={`rounded-[22rem] bg-[#FBD402] p-[16rem] text-[14rem] font-bold leading-[1.35] text-ink md:p-[24rem] md:text-[18rem] lg:rounded-[28rem] lg:px-[30rem] lg:text-[22rem] ${className}`}>{o.fee.reference}</p>;
+  return <p className={`rounded-[22rem] bg-[#FBD402] p-[16rem] text-[14rem] font-bold leading-[1.35] text-ink md:p-[24rem] md:text-[18rem] lg:rounded-[28rem] lg:px-[30rem] lg:text-[22rem] ${className}`}>{fee.reference}</p>;
 }

@@ -1,13 +1,13 @@
 "use client";
 import { useCallback } from "react";
-import { nav, ui as copy } from "@/lib/content";
+import { nav, ui as copy } from "@/lib/olympiad";
 import { ui, useUI } from "@/lib/store";
 import { usePresence } from "@/lib/usePresence";
 import Bubble from "../ui/Bubble";
 
-// Full-screen menu. Opening: the page blurs, three ringed balls roll in from the left
-// (0.9s each, right ball first) and the links, close button and side badges pop in from
-// 1.2s. Closing reverses: content fades (0.4s), balls roll out left-first, blur clears.
+// Full-screen menu listing the nav links. Opening: the page blurs, three ringed balls roll in
+// from the left (0.9s each, right ball first) and the links, close button and side badges pop
+// in from 1.2s. Closing reverses: content fades (0.4s), balls roll out left-first, blur clears.
 // Below 992px only the middle ball remains and the content stacks.
 
 // Round link badge: a disc with an arrow (swapped for a second arrow on hover) and its
@@ -51,23 +51,9 @@ export default function MenuOverlay() {
   const { mounted, on } = usePresence(open, 1600, close);
   if (!mounted) return null;
 
-  // desktop shows five links; "Төслүүд" only appears in the stacked layout. "вэбсайт захиалах"
-  // keeps the website-order contact form reachable.
-  const link = (href: string) => nav.find((n) => n.href === href)!;
-  const items = [
-    { label: copy.home, href: "#", only: false },
-    { ...link("#about"), only: false },
-    { ...link("#cases"), only: true },
-    { ...link("#services"), only: false },
-    { ...link("#olympiad"), only: false },
-    { label: copy.order, href: "#contact", only: false },
-  ];
+  // every nav link, in both layouts
   const stacked = typeof window !== "undefined" && window.innerWidth < 992;
-  const desktopDelays = [1.2, 1.3, 0, 1.4, 1.5, 1.6];
-  const go = (href: string) => (e: React.MouseEvent) => {
-    if (href === "#contact") { e.preventDefault(); ui.set({ menu: false, contact: true }); return; }
-    ui.set({ menu: false });
-  };
+  const [left, right] = copy.menuBadges;
 
   return (
     <div id="menu" className={`mnu ${on ? "on" : ""}`} role="dialog" aria-modal="true" aria-label={copy.menuLabel}>
@@ -81,14 +67,14 @@ export default function MenuOverlay() {
         <div className="mnu-ball c bg-blue" />
       </div>
       <div className="absolute inset-0 flex max-h-[100svh] flex-col items-center justify-start overflow-y-auto py-[20rem] [scrollbar-width:none] md:py-[16rem] lg:max-h-none lg:flex-row lg:justify-between lg:overflow-visible lg:px-[42rem] lg:py-0">
-        <Badge id="b-blogs" label={copy.viewBlogs} href="#blog" delay={1.25} exit={-1} disc="fill-ink" ink="fill-pink" text="fill-white" className="max-lg:hidden" />
-        <Badge id="b-blogs-s" label={copy.viewBlogs} href="#blog" delay={1.15} exit={1} disc="fill-white" ink="fill-ink" text="fill-ink" className="mb-[34rem] mt-auto md:mb-[28rem] lg:hidden" />
+        <Badge id="b-left" label={left.label} href={left.href} delay={1.25} exit={-1} disc="fill-ink" ink="fill-pink" text="fill-white" className="max-lg:hidden" />
+        <Badge id="b-left-s" label={left.label} href={left.href} delay={1.15} exit={1} disc="fill-white" ink="fill-ink" text="fill-ink" className="mb-[34rem] mt-auto md:mb-[28rem] lg:hidden" />
         <nav className="relative flex w-full flex-col items-center lg:w-auto">
           <ul className="flex flex-col items-center gap-y-[20rem] md:gap-y-[12rem] lg:gap-[20rem]">
-            {items.map((it, i) => (
-              <li key={it.label} className={`mnu-pop flex ${it.only ? "lg:hidden" : ""}`}
-                style={{ "--d": `${stacked ? 1.2 + 0.09 * i : desktopDelays[i]}s` } as React.CSSProperties}>
-                <Bubble href={it.href} onClick={go(it.href)} circle="bg-ink"
+            {nav.map((it, i) => (
+              <li key={it.href} className="mnu-pop flex"
+                style={{ "--d": `${1.2 + (stacked ? 0.09 : 0.08) * i}s` } as React.CSSProperties}>
+                <Bubble href={it.href} onClick={close} circle="bg-ink"
                   className="rounded-[80rem] bg-white px-[40rem] py-[19rem] text-[20.3rem] font-bold lowercase leading-[0.69] text-ink hover:text-lime md:px-[66rem] md:py-[21rem] md:text-[55rem] lg:py-[35rem]">
                   {it.label}
                 </Bubble>
@@ -97,13 +83,13 @@ export default function MenuOverlay() {
           </ul>
           <button type="button" onClick={close} data-cursor="pointer"
             className="mnu-pop mnu-close arrow-btn mt-[40rem] flex min-h-[56.5rem] items-center gap-[20rem] rounded-[120rem] bg-ink py-[6rem] pl-[31rem] pr-[8rem] text-[25rem] font-bold lowercase leading-[1.3] text-lime [--arrow-size:44rem] md:mt-[28rem] md:min-h-[88rem] md:text-[50rem] md:[--arrow-size:76rem] lg:absolute lg:bottom-[-130rem] lg:left-1/2 lg:mt-0 lg:px-[8rem]"
-            style={{ "--d": stacked ? "1.78s" : "1.75s" } as React.CSSProperties}>
+            style={{ "--d": stacked ? "1.78s" : "1.7s" } as React.CSSProperties}>
             <Cross className="max-lg:!hidden" />
             <span>{copy.close}</span>
             <Cross />
           </button>
         </nav>
-        <Badge id="b-cases" label={copy.viewCases} href="#cases" delay={stacked ? 1.9 : 1.4} exit={1} disc="fill-white max-lg:fill-violet" ink="fill-violet max-lg:fill-white" text="fill-violet max-lg:fill-white" className="max-lg:mb-auto max-lg:mt-[34rem] md:max-lg:mt-[28rem]" />
+        <Badge id="b-right" label={right.label} href={right.href} delay={stacked ? 1.9 : 1.4} exit={1} disc="fill-white max-lg:fill-violet" ink="fill-violet max-lg:fill-white" text="fill-violet max-lg:fill-white" className="max-lg:mb-auto max-lg:mt-[34rem] md:max-lg:mt-[28rem]" />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ui as copy } from "@/lib/content";
+import { ui as copy } from "@/lib/olympiad";
 
 type Mode = "default" | "pointer" | "drag";
 

@@ -1,5 +1,5 @@
 {
-  "name": "lumo-studio",
+  "name": "syscotech-olympiad",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource/fira-sans-extra-condensed": "^5.3.0",
     "@vercel/analytics": "^2.0.1",
     "framer-motion": "11.11.9",

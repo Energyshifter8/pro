@@ -1,25 +1,32 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { brand, ui as copy } from "@/lib/content";
-import { olympiad } from "@/lib/olympiad";
+import { register as r, ui as copy } from "@/lib/olympiad";
 import { REGISTER_EVENT, ui, useUI } from "@/lib/store";
 import { usePresence } from "@/lib/usePresence";
 import { fitSpacing } from "../ui/GlyphText";
 import Bubble from "../ui/Bubble";
 import { BankRows, Reference } from "../olympiad/BankInfo";
-import { Face, Select, field } from "./ModalParts";
+import { Face, Select, field, fieldLabel } from "./ModalParts";
 
-// Olympiad registration modal, opened by the window event REGISTER_EVENT ("open-register").
-// Same card and motion as the contact modal (violet face over white / lime layers). With an
-// endpoint set the form is POSTed as JSON and success shows the fee + bank details; without
-// one, submitting explains that online registration is not open yet.
-const r = olympiad.register;
-type Status = "form" | "sending" | "done" | "closed" | "error";
-const EMPTY = { lastName: "", firstName: "", email: "", phone: "", studentCode: "" };
+// Registration modal, opened by the window event REGISTER_EVENT ("open-register"). Opening:
+// backdrop blurs, the violet card scales in with a soft overshoot while the white and lime
+// layers fan out, then the title, fields and close button rise in. Two columns on desktop.
+// With `register.endpoint` set the form is POSTed as JSON; without one, submitting goes
+// straight to the success screen (fee + bank details + payment reference).
+type Status = "form" | "sending" | "done" | "error";
+type Key = keyof typeof r.fields;
+const EMPTY: Record<Key, string> = { lastName: "", firstName: "", email: "", studentCode: "", phone: "" };
 // Keep the 8 local digits, also when a number is pasted as "+976 8909-9473".
 const phoneDigits = (s: string) => {
   const d = s.replace(/\D/g, "");
   return (d.length > 8 && d.startsWith("976") ? d.slice(3) : d).slice(0, 8);
+};
+const INPUT: Record<Key, React.InputHTMLAttributes<HTMLInputElement>> = {
+  lastName: { autoComplete: "family-name" },
+  firstName: { autoComplete: "given-name" },
+  email: { type: "email", autoComplete: "email" },
+  studentCode: { autoComplete: "off" },
+  phone: { type: "tel", inputMode: "numeric", autoComplete: "tel-national", pattern: "\\d{8}", title: r.phoneHint },
 };
 
 export default function RegisterModal() {
@@ -33,27 +40,24 @@ export default function RegisterModal() {
   const [status, setStatus] = useState<Status>("form");
 
   useEffect(() => {
-    const show = () => ui.set({ register: true, menu: false, contact: false });
+    const show = () => ui.set({ register: true, menu: false });
     window.addEventListener(REGISTER_EVENT, show);
     return () => window.removeEventListener(REGISTER_EVENT, show);
   }, []);
-  // after a finished submission, reopening starts a fresh form
+  // after a finished registration, reopening starts a fresh form
   useEffect(() => {
-    if (open || (status !== "done" && status !== "closed")) return;
-    setStatus("form"); setTried(false);
-    if (status === "done") { setValues(EMPTY); setCourse(""); setMajor(""); }
+    if (open || status !== "done") return;
+    setStatus("form"); setTried(false); setValues(EMPTY); setCourse(""); setMajor("");
   }, [open, status]);
   if (!mounted) return null;
 
   const d = (s: number) => ({ "--d": `${s}s` }) as React.CSSProperties;
-  const set = (k: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setValues((v) => ({ ...v, [k]: k === "phone" ? phoneDigits(e.target.value) : e.target.value }));
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status === "sending") return;
     setTried(true);
     if (!course || !major) return;
-    if (!r.endpoint) { setStatus("closed"); return; }
+    if (!r.endpoint) { setStatus("done"); return; }
     setStatus("sending");
     try {
       const res = await fetch(r.endpoint, {
@@ -66,10 +70,13 @@ export default function RegisterModal() {
       setStatus("error");
     }
   };
-  const fb = brand.socials.find((x) => x.label === "Facebook")!;
-  const input = (k: keyof typeof EMPTY, delay: number, extra: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
-    <input required name={k} placeholder={r.fields[k]} aria-label={r.fields[k]} value={values[k]} onChange={set(k)}
-      className={`dsc-in ${field}`} style={d(delay)} {...extra} />
+  const input = (k: Key, delay: number) => (
+    <label className={`dsc-in ${field} flex items-center gap-[10rem] focus-within:shadow-[0_0_0_3rem_#c2ec40] md:gap-[16rem] lg:h-[76rem]`} style={d(delay)}>
+      <span className={fieldLabel}>{r.fields[k].label}</span>
+      <input required name={k} placeholder={r.fields[k].placeholder} value={values[k]} {...INPUT[k]}
+        onChange={(e) => { const v = e.target.value; setValues((x) => ({ ...x, [k]: k === "phone" ? phoneDigits(v) : v })); }}
+        className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-ink/[.32]" />
+    </label>
   );
   const missing = tried && (!course || !major);
 
@@ -87,45 +94,41 @@ export default function RegisterModal() {
           <svg viewBox="0 0 88 88" aria-hidden className="block h-[60%] w-[60%]"><path d="M22 22l44 44M66 22L22 66" stroke="#c2ec40" strokeWidth="12" strokeLinecap="round" /></svg>
         </button>
 
-        <h2 id="reg-title" style={fitSpacing(800)}
-          className="dsc-title display mt-[36rem] w-full text-center text-[50rem] leading-[0.8] text-white md:mt-0 md:text-[130rem] lg:absolute lg:left-[146rem] lg:top-[150rem] lg:w-auto lg:whitespace-nowrap lg:text-left lg:text-[210rem]">
+        <h2 id="reg-title" style={fitSpacing()}
+          className="dsc-title display mt-[36rem] w-full text-center text-[50rem] leading-[0.8] text-white md:mt-0 md:text-[130rem] lg:absolute lg:left-[146rem] lg:top-[150rem] lg:w-auto lg:whitespace-nowrap lg:text-left lg:text-[200rem]">
           {r.title}
         </h2>
 
-        {status === "done" || status === "closed" ? (
-          <div className="dsc-in mt-[24rem] flex flex-col gap-[16rem] text-white md:mt-[48rem] lg:absolute lg:left-[146rem] lg:top-[360rem] lg:mt-0 lg:grid lg:w-[1463rem] lg:grid-cols-[5fr_7fr] lg:gap-[40rem]" style={d(0)}>
+        {status === "done" ? (
+          <div className="dsc-in mt-[24rem] flex flex-col gap-[16rem] text-white md:mt-[48rem] lg:absolute lg:left-[146rem] lg:top-[330rem] lg:mt-0 lg:grid lg:w-[1463rem] lg:grid-cols-[5fr_7fr] lg:gap-[40rem]" style={d(0)}>
             <div>
-              <p className="text-[22rem] font-bold leading-[1.2] md:text-[32rem] lg:text-[44rem]">{status === "done" ? r.success : r.closed}</p>
-              {status === "done"
-                ? <p className="mt-[12rem] text-[14rem] leading-[1.4] text-lilac md:text-[19rem] lg:mt-[20rem] lg:text-[22rem]">{r.successNote}</p>
-                : <Bubble href={fb.href} external circle="bg-ink" className="mt-[20rem] inline-flex rounded-[90rem] bg-lime px-[24rem] py-[14rem] text-[14rem] font-bold text-ink hover:text-lime md:text-[18rem] lg:mt-[32rem] lg:px-[32rem] lg:py-[20rem] lg:text-[20rem]">{r.facebook} ↗</Bubble>}
+              <p className="text-[24rem] font-bold leading-[1.15] md:text-[34rem] lg:text-[48rem]">{r.success}</p>
+              <p className="mt-[12rem] text-[14rem] leading-[1.4] text-lilac md:text-[19rem] lg:mt-[20rem] lg:text-[22rem]">{r.successNote}</p>
             </div>
-            {status === "done" && (
-              <div className="rounded-[28rem] bg-lilac p-[12rem] md:p-[20rem] lg:p-[24rem]">
-                <BankRows />
-                <Reference className="mt-[8rem] lg:mt-[12rem]" />
-              </div>
-            )}
+            <div>
+              <BankRows compact />
+              <Reference className="mt-[8rem]" />
+            </div>
           </div>
         ) : (
           <>
-            <p className="dsc-in mt-[14rem] text-center text-[14rem] leading-[1.35] text-lilac md:mt-[28rem] md:text-[20rem] lg:absolute lg:left-[150rem] lg:top-[350rem] lg:mt-0 lg:text-left lg:text-[24rem]" style={d(0.18)}>{r.intro}</p>
+            <p className="dsc-in mt-[14rem] text-center text-[14rem] leading-[1.35] text-lilac md:mt-[28rem] md:text-[20rem] lg:absolute lg:left-[150rem] lg:top-[332rem] lg:mt-0 lg:text-left lg:text-[24rem]" style={d(0.18)}>{r.intro}</p>
             <form onSubmit={submit}
-              className="mt-[18rem] flex flex-col gap-[10rem] md:mt-[40rem] lg:absolute lg:left-[146rem] lg:top-[418rem] lg:mt-0 lg:grid lg:w-[1463rem] lg:grid-cols-3 lg:gap-[13rem]">
-              {input("lastName", 0.22, { autoComplete: "family-name" })}
-              {input("firstName", 0.24, { autoComplete: "given-name" })}
-              {input("email", 0.26, { type: "email", autoComplete: "email" })}
-              {input("phone", 0.28, { type: "tel", inputMode: "numeric", autoComplete: "tel-national", pattern: "\\d{8}", title: r.phoneHint })}
-              <div className="dsc-in" style={d(0.3)}><Select placeholder={r.fields.course} options={r.courses} value={course} onChange={setCourse} invalid={tried && !course} /></div>
-              <div className="dsc-in" style={d(0.32)}><Select placeholder={r.fields.major} options={r.majors} value={major} onChange={setMajor} invalid={tried && !major} /></div>
-              {input("studentCode", 0.34, { autoComplete: "off" })}
-              <div className="dsc-in mt-[10rem] flex md:mt-[30rem] lg:col-span-2 lg:mt-0" style={d(0.38)}>
-                <Bubble type="submit" circle="bg-ink" className="h-[60rem] w-full rounded-[210rem] bg-lime text-[19rem] font-bold text-ink hover:text-white md:h-[96rem] lg:h-[84rem]">
+              className="mt-[18rem] flex flex-col gap-[10rem] md:mt-[40rem] lg:absolute lg:left-[146rem] lg:top-[392rem] lg:mt-0 lg:grid lg:w-[1463rem] lg:grid-cols-2 lg:gap-[12rem]">
+              {input("lastName", 0.22)}
+              <div className="dsc-in" style={d(0.24)}><Select placeholder={r.course.placeholder} options={r.course.options} value={course} onChange={setCourse} invalid={tried && !course} /></div>
+              {input("firstName", 0.26)}
+              <div className="dsc-in" style={d(0.28)}><Select label={r.major.label} placeholder={r.major.placeholder} options={r.major.options} value={major} onChange={setMajor} invalid={tried && !major} /></div>
+              {input("email", 0.3)}
+              {input("studentCode", 0.32)}
+              {input("phone", 0.34)}
+              <div className="dsc-in mt-[10rem] flex md:mt-[30rem] lg:mt-0" style={d(0.38)}>
+                <Bubble type="submit" circle="bg-ink" className="h-[60rem] w-full rounded-[210rem] bg-lime text-[19rem] font-bold text-ink hover:text-white md:h-[96rem] lg:h-[76rem]">
                   {status === "sending" ? r.sending : r.button}
                 </Bubble>
               </div>
               {(missing || status === "error") && (
-                <p role="alert" className="text-center text-[13rem] font-bold text-[#ffd2cc] md:text-[17rem] lg:col-span-3 lg:text-left lg:text-[19rem]">
+                <p role="alert" className="text-center text-[13rem] font-bold text-[#ffd2cc] md:text-[17rem] lg:col-span-2 lg:text-left lg:text-[19rem]">
                   {status === "error" ? r.error : r.selectHint}
                 </p>
               )}

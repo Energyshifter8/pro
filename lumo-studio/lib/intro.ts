@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 export const INTRO = {
   heroLines: [0, 0.3, 0.6], // headline lines: 1s power4.out each
   pen: 0.06,
-  stickers: { rating: 0.81, built: 1.86, support: 2.08, response: 3.36, audit: 3.88, years: 4.48 },
+  stickers: { participants: 0.81, fund: 1.86, club: 2.08, itpark: 3.36, fee: 3.88, first: 4.48 },
+  sub: 1.45, // tagline + countdown: 0.6s rise once the headline has landed
   header: 2.67, // 0.45s power2.out from scale 0.5
   bottomNav: 5.0, // 0.5s ease-in-out
 };
@@ -15,7 +16,8 @@ export const INTRO = {
 export const INTRO_ADAPTIVE = {
   heroLines: [0, 0.3, 0.6, 0.9, 1.2],
   header: 0.61,
-  stickers: { rating: 0.85, response: 0.97, audit: 1.09, support: 1.21, built: 1.33, years: 1.45 },
+  stickers: { participants: 0.85, itpark: 0.97, fee: 1.09, club: 1.21, fund: 1.33, first: 1.45 },
+  sub: 1.55,
   bottomNav: 0.06,
 };
 

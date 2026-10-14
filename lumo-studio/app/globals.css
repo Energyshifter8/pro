@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "IBM Plex Sans Variable";
+  --font-sans: "Manrope Variable";
   color-scheme: dark;
 }
 
@@ -68,6 +68,9 @@ body {
   .arrow-btn:hover .arrow-icon:first-child { width: var(--arrow-size, 70rem); height: var(--arrow-size, 70rem); transform: rotate(0deg); }
   .arrow-btn:hover .arrow-icon:last-child { width: 0; height: 0; transform: rotate(90deg); }
 
+  /* Lime pill behind a phrase in a display heading ([..] in the copy). */
+  .pill-mark { display: inline-block; padding: 0 0.12em; border-radius: 999px; background: #c2ec40; color: #150734; }
+
   /* Lime marker behind a phrase. */
   .highlight { position: relative; display: inline-flex; isolation: isolate; }
   .highlight::before {
@@ -110,7 +113,7 @@ body {
 }
 @media (max-width: 743px) { .mnu-ball.c:nth-child(2) { flex-basis: 195%; } }
 
-/* ---------- Contact modal (components/overlays/ContactModal.tsx) ---------- */
+/* ---------- Register modal card (components/overlays/RegisterModal.tsx) ---------- */
 .dsc-backdrop { position: fixed; inset: 0; background: rgba(21, 7, 52, 0.55); opacity: 0; backdrop-filter: blur(0); transition: opacity 0.26s ease-in-out, backdrop-filter 0.26s ease-in-out; }
 .dsc.on .dsc-backdrop { opacity: 1; backdrop-filter: blur(14rem); transition-duration: 0.4s; }
 .dsc-card { opacity: 0; scale: 0.82; transition: opacity 0.22s ease-in, scale 0.24s cubic-bezier(0.55, 0, 0.7, 0.6); }
