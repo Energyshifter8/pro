@@ -25,7 +25,7 @@ npm run build && npm start   # production
 - `About` — олимпиадын тухай, scroll-оор хөдлөх үгс
 - `Trust`, `Goals` — тэмцээний зорилго (3 карт)
 - `Prizes` — шагналын сан (эргэдэг ном)
-- `Sponsors`, `Fee` (дансны мэдээлэл, хуулах товч), `Feel`, `Faq`, `Footer`
+- `Sponsors`, `Fee` (дансны мэдээлэл, хуулах товч), `Faq`, `Footer`
 - `overlays/RegisterModal` — бүртгэлийн форм (`open-register` window event-ээр нээгдэнэ)
 
 Фонт: Fira Sans Extra Condensed 900 (гарчиг), Manrope (үндсэн текст) — @fontsource, локалаар.

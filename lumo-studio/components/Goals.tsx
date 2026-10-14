@@ -14,13 +14,13 @@ type Card = (typeof goals.cards)[number];
 
 // Original card icons (256rem square).
 function CardIcon({ variant }: { variant: Color }) {
-  const c = variant === "lav" ? "#4e00ff" : "#150734";
+  const c = "#150734";
   return (
     <svg viewBox="0 0 256 256" className="inline h-auto w-full align-baseline" aria-hidden>
       {variant === "lime" && (
         <g fill={c}>{Array.from({ length: 8 }, (_, i) => <rect key={i} x="110" y="8" width="36" height="120" rx="18" transform={`rotate(${i * 45} 128 128)`} />)}</g>
       )}
-      {variant === "lav" && (
+      {variant === "red" && (
         <g fill={c}>{Array.from({ length: 6 }, (_, i) => <ellipse key={i} cx="128" cy="62" rx="34" ry="58" transform={`rotate(${i * 60} 128 128)`} />)}<circle cx="128" cy="128" r="30" /></g>
       )}
       {variant === "sun" && (
@@ -32,7 +32,7 @@ function CardIcon({ variant }: { variant: Color }) {
 
 const CARD = {
   lime: { box: "bg-lime text-ink", btn: "bg-ink text-lime hover:text-white", circle: "bg-pink" },
-  lav: { box: "bg-[#d9ccff] text-ink", btn: "bg-ink text-[#d9ccff] hover:text-white", circle: "bg-violet" },
+  red: { box: "bg-red text-ink", btn: "bg-ink text-red hover:text-white", circle: "bg-violet" },
   sun: { box: "bg-[#fbd402] text-ink", btn: "bg-ink text-[#fbd402] hover:text-white", circle: "bg-pink" },
 } as const;
 
