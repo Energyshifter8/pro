@@ -63,7 +63,7 @@ export const hero = {
   // Start time as an ISO date, e.g. "2026-11-21T09:00:00+08:00". While null the countdown is
   // replaced by `dateSoon`.
   startsAt: null as string | null,
-  dateSoon: "Огноо удахгүй зарлагдана",
+  dateSoon: "Огноо : 11.14",
   started: "Олимпиад эхэллээ!",
   units: ["өдөр", "цаг", "мин", "сек"],
   // Floating badges; `id` picks the sticker's shape and position.
