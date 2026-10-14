@@ -71,7 +71,7 @@ export const hero = {
     { id: "participants", value: "1000+", label: "оролцогч" },
     { id: "fund", value: "600'000₮", label: "Шагналын сан" },
     { id: "first", value: "300'000₮", label: "1-р байр" },
-    { id: "fee", value: "8,000₮", label: "Бүртгэл" },
+    { id: "fee", value: "5–15,000₮", label: "Бүртгэл" },
     { id: "itpark", value: "IT Park", label: "сургалтын эрх" },
     { id: "club", value: "Sys&CoTech", label: "клуб" },
   ],
@@ -84,7 +84,7 @@ export const about = {
   metrics: [
     { value: "1000+", label: "оролцогч" },
     { value: "3", label: "шагналт байр" },
-    { value: "8,000₮", label: "бүртгэлийн хураамж" },
+    { value: "5,000–15,000₮", label: "бүртгэлийн хураамж" },
   ],
   // The pinned words the icon tiles fly into (`slot` = where a tile lands); every other line
   // is drawn in outline.
@@ -145,7 +145,12 @@ export const sponsors = {
 };
 
 export const fee = {
-  title: ["Бүртгэлийн", "хураамж", "[8,000₮]"],
+  title: ["Бүртгэлийн", "хураамж"],
+  // Fee per year of study, shown as pills under the title.
+  tiers: [
+    { who: "1–2-р курс", amount: "5,000₮" },
+    { who: "3–4-р курс", amount: "15,000₮" },
+  ],
   notes: [
     "Төлбөрийг дансаар шилжүүлсний дараа бүртгэл баталгаажна.",
     "Гүйлгээ хийхдээ зөв мэдээллээ оруулна уу.",
@@ -156,7 +161,8 @@ export const fee = {
     { label: "Банк", value: "Төрийн банк" },
     { label: "Дансны дугаар", value: "MN170034220700072362", mono: true },
     { label: "Данс эзэмшигч", value: "Мөнхтулга Элбэгсайхан" },
-    { label: "Гүйлгээний дүн", value: "8,000₮" },
+    { label: "Дүн · 1–2-р курс", value: "5,000₮" },
+    { label: "Дүн · 3–4-р курс", value: "15,000₮" },
   ],
   reference: "Гүйлгээний утга: Овог, нэр, оюутны код, утасны дугаар",
   // Path to a QR image under /public (e.g. "/logos/fee-qr.png"); the QR block shows only when set.
@@ -208,6 +214,6 @@ export const register = {
   button: "ИЛГЭЭХ",
   sending: "Илгээж байна…",
   success: "Мэдээлэл хүлээн авлаа!",
-  successNote: "Бүртгэлийн хураамж 8,000₮-ийг доорх дансанд шилжүүлснээр бүртгэл баталгаажна.",
+  successNote: "Бүртгэлийн хураамжаа (1–2-р курс 5,000₮, 3–4-р курс 15,000₮) доорх дансанд шилжүүлснээр бүртгэл баталгаажна.",
   error: "Илгээж чадсангүй. Дахин оролдоно уу.",
 };

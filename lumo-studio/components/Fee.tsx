@@ -10,13 +10,13 @@ import ArrowButton from "./ui/ArrowButton";
 import Wave from "./Wave";
 import { BankRows, Reference } from "./olympiad/BankInfo";
 
-// Registration fee: a lime band between two waves. The title lines rise on view (the amount
-// sits in an ink pill), then the notes and the ink bank card — every row with a copy button —
-// fade up, followed by the register button.
+// Registration fee: a lime band between two waves. The title lines rise on view, then the
+// per-course amounts (ink pills), the notes and the ink bank card — every row with a copy
+// button — fade up, followed by the register button.
 export default function Fee() {
   const title = useRef<HTMLHeadingElement>(null);
   const seen = useInViewToggle(title);
-  const lines = [useLineProgress(seen, 0), useLineProgress(seen, 0.3), useLineProgress(seen, 0.6)];
+  const lines = [useLineProgress(seen, 0), useLineProgress(seen, 0.3)];
   const reduce = useReducedMotion();
   const rise = (delay: number) => ({
     initial: reduce ? false : { opacity: 0, y: "60rem" },
@@ -33,11 +33,19 @@ export default function Fee() {
           <h2 ref={title} aria-label={fee.title.map(plain).join(" ")} style={fitSpacing()}
             className="display text-center text-[70rem] leading-[0.8] md:text-[138rem] lg:text-[250rem]">
             {fee.title.map((l, i) => (
-              <Frag key={i} p={lines[i]} d={0.92} off={0.3} className={`block ${i === 2 ? "mt-[0.08em]" : ""} ${capMarkGap(l, i)}`}>
+              <Frag key={i} p={lines[i]} d={0.92} off={0.3} className={`block ${capMarkGap(l, i)}`}>
                 <GlyphText text={l} lh={0.8} mark="inline-block rounded-full bg-ink px-[0.14em] text-lime" />
               </Frag>
             ))}
           </h2>
+          <motion.ul {...rise(0)} className="mt-[28rem] flex flex-col items-center gap-[10rem] md:mt-[40rem] md:gap-[14rem] lg:mt-[64rem] lg:flex-row lg:gap-[40rem]">
+            {fee.tiers.map((t) => (
+              <li key={t.who} className="flex items-center gap-[14rem] rounded-full bg-ink px-[28rem] py-[12rem] md:gap-[20rem] md:px-[40rem] md:py-[16rem] lg:gap-[26rem] lg:px-[56rem] lg:py-[22rem]">
+                <span className="text-[15rem] font-bold text-lilac md:text-[22rem] lg:text-[28rem]">{t.who}</span>
+                <span className="display text-[44rem] leading-none text-lime md:text-[64rem] lg:text-[100rem]">{t.amount}</span>
+              </li>
+            ))}
+          </motion.ul>
           <div className="mt-[40rem] grid w-full max-w-[1520rem] gap-[24rem] md:mt-[64rem] lg:mt-[110rem] lg:grid-cols-[5fr_7fr] lg:items-center lg:gap-[60rem]">
             <motion.ul {...rise(0)} className="flex flex-col gap-[12rem] text-[16rem] font-semibold leading-[1.35] md:text-[21rem] lg:gap-[20rem] lg:text-[28rem]">
               {fee.notes.map((n) => (
