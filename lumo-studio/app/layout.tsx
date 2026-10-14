@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "@fontsource-variable/ibm-plex-sans";
 import "./globals.css";
 import { display } from "@/lib/fonts";
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <ScrollBar />
         <Cursor />
+        <Analytics />
       </body>
     </html>
   );
