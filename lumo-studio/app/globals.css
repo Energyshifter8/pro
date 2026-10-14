@@ -4,6 +4,7 @@
 
 :root {
   --font-sans: "Manrope Variable";
+  --green: #097140; /* main green of public/illustrations/green.svg (tailwind: brandgreen) */
   color-scheme: dark;
 }
 
@@ -77,6 +78,7 @@ body {
     content: ""; position: absolute; z-index: -1; top: 57%; left: calc(50% - 5rem); width: 105%; height: 120%;
     border-radius: 15rem; background: #c2ec40; transform: translate(-50%, -50%);
   }
+  .highlight.is-green::before { background: var(--green); }
 }
 
 /* ---------- Menu overlay (components/overlays/MenuOverlay.tsx) ---------- */

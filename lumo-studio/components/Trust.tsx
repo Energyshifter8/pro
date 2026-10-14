@@ -4,7 +4,7 @@ import { trust } from "@/lib/olympiad";
 import { openRegister } from "@/lib/store";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import ArrowButton from "./ui/ArrowButton";
-import Mascot from "./trust/Mascot";
+import Image from "next/image";
 
 // Desktop: 110svh wrapper, sticky stage. While the wrapper's top travels from mid-viewport
 // to the top, the mascot scales 0→1 and the title / button slide out from the centre by half
@@ -12,7 +12,7 @@ import Mascot from "./trust/Mascot";
 // follows the pointer (±25rem).
 function line(text: string) {
   return text.split(/(\[[^\]]+\])/).map((part, i) =>
-    part.startsWith("[") ? <span key={i} className="highlight">{part.slice(1, -1)}</span> : part,
+    part.startsWith("[") ? <span key={i} className="highlight is-green">{part.slice(1, -1)}</span> : part,
   );
 }
 
@@ -75,15 +75,16 @@ export default function Trust() {
                 ))}
               </h2>
             </div>
-            <div ref={mascot} className="relative z-[1] w-[300rem] shrink-0 md:w-[400rem] lg:w-auto lg:flex-[0_0_33%]" style={{ transform: "scale(0)" }}>
-              <div ref={follow}>
-                <Mascot className="inline h-auto w-full align-baseline" />
+            <div ref={mascot} className="relative z-[1] w-[240rem] shrink-0 md:w-[300rem] lg:w-auto lg:flex-[0_0_33%]" style={{ transform: "scale(0)" }}>
+              <div ref={follow} className="flex justify-center">
+                {/* the character's height is capped on desktop so it stays clear of the floating dock (≤ ~420px wide) */}
+                <Image src="/illustrations/green.svg" alt="" width={2752} height={3871} className="block h-auto w-full lg:h-[min(590px,62vh)] lg:w-auto" />
               </div>
             </div>
             <div ref={button} className="flex shrink-0 justify-center lg:flex-[0_0_33%] lg:justify-start">
               <ArrowButton onClick={openRegister}
                 className="text-[22rem] font-bold leading-[0.92] tracking-[-0.03em] [--arrow-size:59.4rem] md:text-[40rem] md:[--arrow-size:108rem] lg:text-[65rem] lg:[--arrow-size:125.5rem]"
-                pillClass="rounded-[210rem] bg-lime px-[32rem] py-[22rem] leading-[0.7] md:px-[54rem] md:py-[40rem]"
+                pillClass="rounded-[210rem] bg-brandgreen px-[32rem] py-[22rem] leading-[0.7] md:px-[54rem] md:py-[40rem]"
                 arrowClass="bg-ink text-lilac">
                 {trust.cta}
               </ArrowButton>

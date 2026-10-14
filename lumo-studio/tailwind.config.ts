@@ -17,6 +17,7 @@ const config: Config = {
         ink: "#150734",
         lilac: "#d3c5f6",
         lime: "#c2ec40",
+        brandgreen: "#097140", // main green of public/illustrations/green.svg
         pink: "#f04c8a",
         red: "#ea3323",
         blue: "#3d71ff",
