@@ -1,7 +1,7 @@
 "use client";
 import { animate } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { cases, testimonials } from "@/lib/content";
+import { cases, casesCopy, testimonials } from "@/lib/content";
 import { sineInOut } from "@/lib/ease";
 import Bubble from "./ui/Bubble";
 import CaseArt from "./cases/CaseArt";
@@ -31,10 +31,10 @@ function Review({ i }: { i: number }) {
     <>
       <p className="text-center text-[12rem] font-bold">{pad2(i + 1)} / {pad2(N)}</p>
       <div className="flex flex-col items-center">
-        <blockquote className="display m-0 text-center text-[40rem] leading-[0.82] tracking-[-0.015em]">
+        <blockquote className="display m-0 text-center text-[40rem] leading-[0.94] tracking-[-0.015em]">
           “{t.quote}”
           <Bubble href="#cases" className="mx-auto mt-[0.75em] flex w-max max-w-full rounded-[10rem] bg-[#222] px-[0.32em] pb-[0.01em] pt-[0.26em] leading-[0.72] text-lime hover:text-ink">
-            view case
+            {casesCopy.viewCase}
           </Bubble>
         </blockquote>
         <div className="mt-[22rem] flex items-center gap-[12rem]">
@@ -120,7 +120,7 @@ function DesktopBook() {
         {[0, 1, 2, 3, 4].map((i) => block(i, "left", i))}
         {[0, 1, 2, 3, 4].map((i) => block(9 - i, "right", i))}
       </div>
-      <ol ref={book} data-cursor="drag" aria-label="Client reviews" className="relative z-[1] flex h-[600rem] justify-center [perspective:1431px] [touch-action:pan-y]">
+      <ol ref={book} data-cursor="drag" aria-label={casesCopy.reviews} className="relative z-[1] flex h-[600rem] justify-center [perspective:1431px] [touch-action:pan-y]">
         <li className="relative flex h-full w-[450rem] translate-x-1/2 flex-row-reverse">
           <div className={`h-full w-full shrink-0 rounded-r-[16rem] px-[28rem] py-[18rem] ${front}`}><Review i={N - 1} /></div>
           <div className={`h-full w-full shrink-0 rounded-l-[16rem] ${back}`}>{art(0)}</div>
@@ -182,7 +182,7 @@ function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
         {[0, 1, 2].map((i) => edge(i, i, false))}
         {[3, 4, 5].map((k, i) => edge(k, i, true))}
       </div>
-      <ol aria-label="Client reviews" className="relative z-[1] [perspective:1200rem]">
+      <ol aria-label={casesCopy.reviews} className="relative z-[1] [perspective:1200rem]">
         <li className="flex flex-col-reverse">
           <div className={`${half} rounded-b-[16rem] px-[28rem] pb-[34rem] pt-[28rem] shadow-[0_16rem_34rem_rgba(20,9,58,0.15)] ${front}`}><Review i={N - 1} /></div>
           <div className={`${half} rounded-t-[16rem] ${back}`}>{art(0)}</div>
@@ -217,7 +217,7 @@ export default function Cases() {
 
   return (
     <section ref={section} id="cases" className="relative z-[1] min-h-[calc(220rem+265svh)] bg-ink pb-[100rem] pt-[120rem] md:min-h-[calc(320rem+280svh)] md:pb-[140rem] md:pt-[180rem] lg:z-0 lg:min-h-0 lg:py-[367rem]">
-      <h2 className="sr-only">Cases</h2>
+      <h2 className="sr-only">{casesCopy.title}</h2>
       <div className="sticky top-0 flex h-[calc(100svh-87rem)] items-center justify-center px-[16rem] md:h-[calc(100svh-175rem)] md:px-[24rem] lg:relative lg:h-auto lg:max-w-[1920rem] lg:px-[80rem]">
         <div ref={star} aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 z-[-1] w-[620rem] md:w-[900rem] lg:w-[1100rem]"><Star /></div>
         <div className="hidden w-full lg:block"><DesktopBook /></div>

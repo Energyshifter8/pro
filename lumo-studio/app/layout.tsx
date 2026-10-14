@@ -8,13 +8,13 @@ import ScrollBar from "@/components/ScrollBar";
 import Cursor from "@/components/Cursor";
 
 export const metadata: Metadata = {
-  title: "Lumo Studio — Design & Web Development That Sells",
-  description: "Websites people trust. Designed to sell.",
+  title: "Sys&CoTech клуб — Программчлалын олимпиад 2025",
+  description: "Sys&CoTech клуб: итгэл төрүүлж, ашиг авчирдаг вэбсайт. Программчлалын олимпиад 2025 — авьяасаа дэлгэрүүлж, мэдлэгээ батлах боломж.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={display.variable}>
+    <html lang="mn" className={display.variable}>
       <body>
         <SmoothScroll />
         {children}

@@ -24,7 +24,7 @@ const config: Config = {
         green: "#11b04c",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Impact", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "Impact", "sans-serif"],
         sans: ["var(--font-sans)", "Verdana", "sans-serif"],
       },
       transitionTimingFunction: {

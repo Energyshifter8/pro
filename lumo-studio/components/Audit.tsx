@@ -5,12 +5,13 @@ import { audit } from "@/lib/content";
 import { ui } from "@/lib/store";
 import { power2Out } from "@/lib/ease";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
-import { GlyphText, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
+import { GlyphText, capMarkGap, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
 import ArrowButton from "./ui/ArrowButton";
 
+// Cyrillic в / а drawn as the stretched Plex B / a.
 const GLYPHS: Record<string, GlyphSlot> = {
-  g: { k: "G", adv: 1.043, ix: 0.027, asc: 0.741, iw: 0.992, ih: 0.752 },
-  e: { k: "e", adv: 0.814, ix: 0.011, asc: 0.741, iw: 0.795, ih: 0.752 },
+  "в": { k: "B", adv: 0.62, ix: 0.03, asc: 0.741, iw: 0.56, ih: 0.752 },
+  "а": { k: "a", adv: 0.83, ix: 0.011, asc: 0.741, iw: 0.81, ih: 0.752 },
 };
 
 // Cards in DOM order; positions per breakpoint relative to the title box (the stacked
@@ -101,9 +102,9 @@ export default function Audit() {
       <div className="relative flex flex-col items-center justify-center px-[16rem] md:px-[24rem] lg:px-[80rem]">
         <div className="relative pb-[63rem] pt-[189rem] md:p-0">
           <h2 ref={title} aria-label={audit.title.join(" ").replace(/[{}]/g, "")} style={fitSpacing()}
-            className="display text-center text-[80rem] leading-[0.8] text-lilac md:text-[145rem] lg:text-[250rem]">
+            className="display text-center text-[74rem] leading-[0.8] text-lilac md:text-[145rem] lg:text-[250rem]">
             {audit.title.map((l, i) => (
-              <Frag key={i} p={lines[i]} d={0.92} off={0.3} className="block"><GlyphText text={l} glyphs={GLYPHS} lh={0.8} fit /></Frag>
+              <Frag key={i} p={lines[i]} d={0.92} off={0.3} className={`block ${capMarkGap(l, i)}`}><GlyphText text={l} glyphs={GLYPHS} lh={0.8} fit /></Frag>
             ))}
           </h2>
           <div ref={deco} aria-hidden className="pointer-events-none absolute inset-y-0 left-1/2 ml-[-195rem] w-[390rem] [perspective:1000px] md:ml-[-372rem] md:w-[744rem] lg:inset-0 lg:ml-0 lg:w-auto">

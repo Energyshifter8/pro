@@ -1,7 +1,7 @@
 "use client";
 import { animate, useMotionValue, useMotionValueEvent } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { viewAll } from "@/lib/content";
+import { viewAll, viewAllLabel } from "@/lib/content";
 import { backOut } from "@/lib/ease";
 import { GlyphText, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
 
@@ -9,7 +9,7 @@ import { GlyphText, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
 // (until it has left the top), the signs swing open to ±45° (back.out(1.7), 1s, right sign 0.1s later); they
 // swing shut when the section leaves. Each sign has an arrow tip and a side face that
 // gives it thickness; hovering pushes the tip outward (padding, 0.8s).
-const GLYPHS: Record<string, GlyphSlot> = { s: { k: "S", adv: 1.16, ix: 0.017, asc: 0.73, iw: 1.127, ih: 0.73 } };
+const GLYPHS: Record<string, GlyphSlot> = { "т": { k: "T", adv: 0.66, ix: 0.04, asc: 0.73, iw: 0.6, ih: 0.73 } };
 const sign = "relative block whitespace-nowrap px-[21rem] py-[33rem] text-[42rem] uppercase [transform-style:preserve-3d] transition-[padding] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:px-[40rem] md:py-[62rem] md:text-[80rem] lg:px-[50rem] lg:py-[70rem] lg:text-[100rem]";
 
 function Sparkle() {
@@ -51,7 +51,7 @@ export default function ViewAll() {
 
   const [cases, blogs] = viewAll;
   return (
-    <section ref={sec} aria-label="View all" className="relative mt-[135rem] flex h-[340rem] items-center justify-center overflow-hidden md:mt-0 md:h-[788rem] lg:h-[max(1320rem,110svh)]">
+    <section ref={sec} aria-label={viewAllLabel} className="relative mt-[135rem] flex h-[340rem] items-center justify-center overflow-hidden md:mt-0 md:h-[788rem] lg:h-[max(1320rem,110svh)]">
       <div className="relative flex h-[100svh] min-w-0 flex-[0_0_50%] flex-row-reverse items-center justify-start [perspective:403rem] md:[perspective:775rem] lg:flex-[0_1_50%] lg:[perspective:2000rem]">
         <div aria-hidden className="pointer-events-none absolute -left-[480rem] right-0 top-[120rem] h-[960rem] border-[2px] border-r-0 border-[#d9d9d9] opacity-[.04] [transform:rotateY(-1deg)]" />
         <a ref={left} href={blogs.href} data-cursor="pointer" style={{ ...fitSpacing(), transform: "translateY(50%)", transformOrigin: "100% 100%" }}

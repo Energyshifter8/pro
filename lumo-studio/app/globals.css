@@ -37,8 +37,9 @@ body {
 .lenis.lenis-stopped { overflow: hidden; }
 
 @layer components {
-  /* Display face: the fitted Anton (see lib/fonts.ts). */
-  .display { font-family: var(--font-display), Impact, sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: -0.022em; }
+  /* Display face: the fitted Fira Sans Extra Condensed Black (see lib/fonts.ts); the body face
+     after it supplies glyphs Fira lacks (₮). */
+  .display { font-family: var(--font-display), var(--font-sans), Impact, sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.022em; }
 
   /* Two-line text roll used on nav links and menu buttons (0.4s, shifts one 1.35em line). */
   .roll { display: inline-block; overflow: hidden; vertical-align: top; height: 1.35em; }

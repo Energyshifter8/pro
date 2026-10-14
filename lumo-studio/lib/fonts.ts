@@ -1,21 +1,22 @@
 import localFont from "next/font/local";
 
-// Anton, re-fitted so it occupies the same box as the reference display face:
-// size-adjust matches cap height (0.711em), the overrides reproduce its ascent/descent
-// (0.722em / 0.2em), and `.display` adds -0.022em tracking to match its advance widths.
-// The overrides are divided by size-adjust because Chrome scales them by it.
+// Fira Sans Extra Condensed Black (from @fontsource/fira-sans-extra-condensed), fitted to the
+// box the display glyph slots were measured in: its cap height already matches (0.703em), so
+// only ascent/descent are overridden to 0.722em / 0.2em — the line box the inline glyphs and
+// line reveals assume (baseline = line-height / 2 + 0.261em). Latin + Cyrillic (incl. Ө Ү from
+// cyrillic-ext); the face has no ₮, which falls back to the body face (see `.display`).
 export const display = localFont({
   src: [
-    { path: "../app/fonts/anton-latin-400-normal.woff2", weight: "400" },
-    { path: "../app/fonts/anton-latin-ext-400-normal.woff2", weight: "400" },
+    { path: "../node_modules/@fontsource/fira-sans-extra-condensed/files/fira-sans-extra-condensed-latin-900-normal.woff2", weight: "900" },
+    { path: "../node_modules/@fontsource/fira-sans-extra-condensed/files/fira-sans-extra-condensed-cyrillic-900-normal.woff2", weight: "900" },
+    { path: "../node_modules/@fontsource/fira-sans-extra-condensed/files/fira-sans-extra-condensed-cyrillic-ext-900-normal.woff2", weight: "900" },
   ],
   variable: "--font-display",
   display: "block",
   adjustFontFallback: false,
   declarations: [
-    { prop: "size-adjust", value: "81.72%" },
-    { prop: "ascent-override", value: "88.35%" },
-    { prop: "descent-override", value: "24.47%" },
+    { prop: "ascent-override", value: "72.2%" },
+    { prop: "descent-override", value: "20%" },
     { prop: "line-gap-override", value: "0%" },
   ],
 });

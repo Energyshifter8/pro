@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "@fontsource/fira-sans-extra-condensed": "^5.3.0",
     "@vercel/analytics": "^2.0.1",
     "framer-motion": "11.11.9",
     "lenis": "1.1.14",

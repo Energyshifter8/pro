@@ -1,6 +1,6 @@
 "use client";
 import { useCallback } from "react";
-import { nav } from "@/lib/content";
+import { nav, ui as copy } from "@/lib/content";
 import { ui, useUI } from "@/lib/store";
 import { usePresence } from "@/lib/usePresence";
 import Bubble from "../ui/Bubble";
@@ -51,24 +51,26 @@ export default function MenuOverlay() {
   const { mounted, on } = usePresence(open, 1600, close);
   if (!mounted) return null;
 
-  // desktop shows four links; "Cases" and "Blog" only appear in the stacked layout
+  // desktop shows five links; "Төслүүд" only appears in the stacked layout. "вэбсайт захиалах"
+  // keeps the website-order contact form reachable.
+  const link = (href: string) => nav.find((n) => n.href === href)!;
   const items = [
-    { label: "Main page", href: "#", only: false },
-    { label: nav[0].label, href: nav[0].href, only: false },
-    ...nav.slice(2).filter((n) => n.label === "Cases").map((n) => ({ ...n, only: true })),
-    { label: nav[1].label, href: nav[1].href, only: false },
-    ...nav.filter((n) => n.label === "Blog").map((n) => ({ ...n, only: true })),
-    { label: "Contact us", href: "#contact", only: false },
+    { label: copy.home, href: "#", only: false },
+    { ...link("#about"), only: false },
+    { ...link("#cases"), only: true },
+    { ...link("#services"), only: false },
+    { ...link("#olympiad"), only: false },
+    { label: copy.order, href: "#contact", only: false },
   ];
   const stacked = typeof window !== "undefined" && window.innerWidth < 992;
-  const desktopDelays = [1.2, 1.3, 0, 1.4, 0, 1.5];
+  const desktopDelays = [1.2, 1.3, 0, 1.4, 1.5, 1.6];
   const go = (href: string) => (e: React.MouseEvent) => {
     if (href === "#contact") { e.preventDefault(); ui.set({ menu: false, contact: true }); return; }
     ui.set({ menu: false });
   };
 
   return (
-    <div id="menu" className={`mnu ${on ? "on" : ""}`} role="dialog" aria-modal="true" aria-label="Main menu">
+    <div id="menu" className={`mnu ${on ? "on" : ""}`} role="dialog" aria-modal="true" aria-label={copy.menuLabel}>
       <div className="mnu-backdrop" onClick={close} />
       <div aria-hidden className="mnu-row pointer-events-none">
         <div className="mnu-ball w" /><div className="mnu-ball w" /><div className="mnu-ball w" />
@@ -79,8 +81,8 @@ export default function MenuOverlay() {
         <div className="mnu-ball c bg-blue" />
       </div>
       <div className="absolute inset-0 flex max-h-[100svh] flex-col items-center justify-start overflow-y-auto py-[20rem] [scrollbar-width:none] md:py-[16rem] lg:max-h-none lg:flex-row lg:justify-between lg:overflow-visible lg:px-[42rem] lg:py-0">
-        <Badge id="b-blogs" label="View Blogs" href="#blog" delay={1.25} exit={-1} disc="fill-ink" ink="fill-pink" text="fill-white" className="max-lg:hidden" />
-        <Badge id="b-blogs-s" label="View Blogs" href="#blog" delay={1.15} exit={1} disc="fill-white" ink="fill-ink" text="fill-ink" className="mb-[34rem] mt-auto md:mb-[28rem] lg:hidden" />
+        <Badge id="b-blogs" label={copy.viewBlogs} href="#blog" delay={1.25} exit={-1} disc="fill-ink" ink="fill-pink" text="fill-white" className="max-lg:hidden" />
+        <Badge id="b-blogs-s" label={copy.viewBlogs} href="#blog" delay={1.15} exit={1} disc="fill-white" ink="fill-ink" text="fill-ink" className="mb-[34rem] mt-auto md:mb-[28rem] lg:hidden" />
         <nav className="relative flex w-full flex-col items-center lg:w-auto">
           <ul className="flex flex-col items-center gap-y-[20rem] md:gap-y-[12rem] lg:gap-[20rem]">
             {items.map((it, i) => (
@@ -95,13 +97,13 @@ export default function MenuOverlay() {
           </ul>
           <button type="button" onClick={close} data-cursor="pointer"
             className="mnu-pop mnu-close arrow-btn mt-[40rem] flex min-h-[56.5rem] items-center gap-[20rem] rounded-[120rem] bg-ink py-[6rem] pl-[31rem] pr-[8rem] text-[25rem] font-bold lowercase leading-[1.3] text-lime [--arrow-size:44rem] md:mt-[28rem] md:min-h-[88rem] md:text-[50rem] md:[--arrow-size:76rem] lg:absolute lg:bottom-[-130rem] lg:left-1/2 lg:mt-0 lg:px-[8rem]"
-            style={{ "--d": stacked ? "1.78s" : "1.65s" } as React.CSSProperties}>
+            style={{ "--d": stacked ? "1.78s" : "1.75s" } as React.CSSProperties}>
             <Cross className="max-lg:!hidden" />
-            <span>Close</span>
+            <span>{copy.close}</span>
             <Cross />
           </button>
         </nav>
-        <Badge id="b-cases" label="View Cases" href="#cases" delay={stacked ? 1.9 : 1.4} exit={1} disc="fill-white max-lg:fill-violet" ink="fill-violet max-lg:fill-white" text="fill-violet max-lg:fill-white" className="max-lg:mb-auto max-lg:mt-[34rem] md:max-lg:mt-[28rem]" />
+        <Badge id="b-cases" label={copy.viewCases} href="#cases" delay={stacked ? 1.9 : 1.4} exit={1} disc="fill-white max-lg:fill-violet" ink="fill-violet max-lg:fill-white" text="fill-violet max-lg:fill-white" className="max-lg:mb-auto max-lg:mt-[34rem] md:max-lg:mt-[28rem]" />
       </div>
     </div>
   );

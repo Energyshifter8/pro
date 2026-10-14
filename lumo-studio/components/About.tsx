@@ -4,7 +4,7 @@ import { about, aboutMetrics } from "@/lib/content";
 import { backOut, power1In, power1Out, power2InOut, power2Out, sineInOut } from "@/lib/ease";
 import { useDesktop } from "@/lib/useMedia";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
-import { GlyphText, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
+import { GlyphText, capMarkGap, fitSpacing, type GlyphSlot } from "./ui/GlyphText";
 import { ICONS, TileShape, type Shape } from "./about/TileArt";
 
 // Tiles in row order; `slot` is the index of the sentence slot each one lands in.
@@ -31,15 +31,14 @@ const SCRUB_TAU = 0.25; // seconds; ~1s catch-up like a GSAP scrub: 1
 
 const seg = (u: number, a: number, b: number) => Math.min(1, Math.max(0, (u - a) / (b - a)));
 
-// Decorative glyph slots ({x} in the copy). Values: advance, ink x, ascent above baseline,
-// ink width/height — all in em of the surrounding text — plus the line-height used there.
+// Decorative glyph slots ({x} in the copy, keyed by the Cyrillic letter they stand in for).
+// Values: advance, ink x, ascent above baseline, ink width/height — all in em of the
+// surrounding text — plus the line-height used there.
 const TITLE_GLYPHS: Record<string, GlyphSlot> = {
-  r: { k: "R", adv: 0.843, ix: 0.047, asc: 0.729, iw: 0.785, ih: 0.682 },
-  s: { k: "S", adv: 1.049, ix: 0.015, asc: 0.714, iw: 1.02, ih: 0.659 },
+  "т": { k: "T", adv: 0.66, ix: 0.04, asc: 0.72, iw: 0.6, ih: 0.69 },
 };
 const SENTENCE_GLYPHS: Record<string, GlyphSlot> = {
-  b: { k: "B", adv: 0.539, ix: 0.012, asc: 0.612, iw: 0.558, ih: 0.752 },
-  a: { k: "a", adv: 0.785, ix: 0.012, asc: 0.625, iw: 0.8, ih: 0.752 },
+  "а": { k: "a", adv: 0.785, ix: 0.012, asc: 0.625, iw: 0.8, ih: 0.752 },
 };
 
 const plain = (t: string) => t.replace(/[{}]/g, "");
@@ -155,7 +154,7 @@ export default function About() {
           <h2 ref={(n) => { fades.current[1] = n; }} aria-label={about.title.map(plain).join(" ")}
             style={fitSpacing()} className="display flex flex-col items-stretch text-[60rem] leading-none md:mt-[85rem] md:text-[96rem] md:leading-[1.02] lg:text-[170rem] lg:leading-[0.85]">
             <Frag p={l1} d={0.919} off={0.3} className="block"><GlyphText text={about.title[0]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
-            <Frag p={l2} d={0.919} off={0.3} className="block text-right lg:mt-[4rem] lg:whitespace-nowrap"><GlyphText text={about.title[1]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
+            <Frag p={l2} d={0.919} off={0.3} className={`block text-right lg:mt-[4rem] lg:whitespace-nowrap ${capMarkGap(about.title[1], 1)}`}><GlyphText text={about.title[1]} glyphs={TITLE_GLYPHS} lh={desktop ? 0.85 : 1} fit /></Frag>
           </h2>
           <div ref={(n) => { fades.current[2] = n; }} className="mt-[20rem] text-[12rem] leading-[1.2] md:mt-[45rem] md:text-[16rem] lg:pl-[591rem] lg:text-[19rem]">
             <p className="mb-[14rem] font-medium md:mb-[18rem] lg:mb-[20rem]">{about.lead}</p>

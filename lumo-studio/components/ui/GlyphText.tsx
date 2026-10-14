@@ -20,6 +20,11 @@ export function Fit({ t, wt = 700 }: { t: string; wt?: 700 | 800 }) {
 // Word spacing that turns our space (0.1915em) into the reference's (0.170em at 700, 0.165em at 800).
 export const fitSpacing = (wt: 700 | 800 = 700): React.CSSProperties => ({ letterSpacing: 0, wordSpacing: wt === 800 ? "-0.0265em" : "-0.0215em" });
 
+// Display lines set at 0.8–0.85 leading leave ~0.1em between lines, but the breve of Й (and
+// the dots of Ё) rise ~0.24em above cap height. A heading line after the first that holds
+// one gets this extra top margin so the mark clears the line above.
+export const capMarkGap = (line: string, i: number) => (i > 0 && /[ЙйЁё]/.test(line) ? "mt-[0.14em]" : "");
+
 // Copy with {x} markers rendered as stretched glyphs. A word holding a glyph never breaks
 // around it. With `fit`, plain word parts get reference advances (display face only).
 export function GlyphText({ text, glyphs = {}, lh = 1, extra = 0, fit = false, wt = 700 }: { text: string; glyphs?: Record<string, GlyphSlot>; lh?: number; extra?: number; fit?: boolean; wt?: 700 | 800 }) {

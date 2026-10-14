@@ -2,11 +2,12 @@
 import { motion } from "framer-motion";
 import { INTRO, INTRO_ADAPTIVE, useIntroReady } from "@/lib/intro";
 import { useDesktop, useMedia } from "@/lib/useMedia";
-import { ui } from "@/lib/store";
+import { openRegister, ui } from "@/lib/store";
+import { ui as copy } from "@/lib/content";
 import Bubble from "../ui/Bubble";
 import Roll from "../ui/Roll";
 
-// Floating glass dock: "Open: Menu" · get my website · "View: Cases". Docks in from
+// Floating glass dock: "Нээх: Цэс" · бүртгүүлэх (olympiad register modal) · "Үзэх: Төслүүд". Docks in from
 // scale 0.5 (0.5s ease-in-out) at +5s on desktop, right away below 744px.
 const btn = "roll-host group flex h-[33rem] items-center gap-x-[5rem] text-[11rem] md:h-[62rem] md:gap-[8rem] md:text-[21rem] lg:text-[19rem]";
 const label = "inline-flex items-center gap-[10rem] text-lilac transition-colors duration-[250ms] group-hover:text-white md:gap-[16rem] before:block before:h-[6rem] before:w-[6rem] before:rounded-full before:bg-lime before:transition-transform before:duration-[350ms] before:ease-[cubic-bezier(0.34,1.86,0.64,1)] group-hover:before:scale-150 md:before:h-[10rem] md:before:w-[10rem]";
@@ -25,18 +26,18 @@ export default function Dock() {
       animate={ready ? { opacity: 1, scale: 1 } : undefined}
       transition={{ delay, duration: 0.5, ease: [0.42, 0, 0.58, 1] }}>
       <button type="button" onClick={() => ui.set({ menu: true })} className={btn} data-cursor="pointer">
-        <span className={label}>Open:</span>
-        <span className="font-bold text-white"><Roll>Menu</Roll></span>
+        <span className={label}>{copy.open}</span>
+        <span className="font-bold text-white"><Roll>{copy.menu}</Roll></span>
       </button>
       {line}
-      <Bubble onClick={() => ui.set({ contact: true })}
+      <Bubble onClick={openRegister}
         className="inline-flex h-[33rem] items-center whitespace-nowrap rounded-[90rem] bg-lilac px-[16rem] text-[11rem] font-bold lowercase text-ink md:h-[62rem] md:px-[31rem] md:text-[20rem] lg:h-auto lg:px-[30rem] lg:py-[14rem] lg:text-[15rem] lg:leading-[1.52]">
-        get my website
+        {copy.register}
       </Bubble>
       {line}
       <a href="#cases" className={btn} data-cursor="pointer">
-        <span className={label}>View:</span>
-        <span className="font-bold text-white"><Roll>Cases</Roll></span>
+        <span className={label}>{copy.view}</span>
+        <span className="font-bold text-white"><Roll>{copy.viewCasesShort}</Roll></span>
       </a>
     </motion.div>
   );

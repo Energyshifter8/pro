@@ -35,13 +35,14 @@ function FaceArt({ face }: { face: Face }) {
 
 export default function Sticker({ label, face, color, className = "" }: { label: string; face: Face; color: string; className?: string }) {
   const id = `ring-${face}`;
+  // two repeats spaced to exactly the ring circumference (2π·79), so every label closes the circle
   const text = `${label.toUpperCase()} • ${label.toUpperCase()} • `;
   return (
     <svg viewBox="0 0 200 200" className={className} aria-hidden>
       <circle cx="100" cy="100" r="96" fill={color} stroke={INK} strokeWidth="4" />
       <defs><path id={id} d="M100 100m-79 0a79 79 0 1 1 158 0a79 79 0 1 1-158 0" /></defs>
       <text fontSize="14.5" fontWeight="700" fill={INK} letterSpacing="1.5" style={{ fontFamily: "var(--font-sans)" }}>
-        <textPath href={`#${id}`}>{text}</textPath>
+        <textPath href={`#${id}`} textLength={496} lengthAdjust="spacing">{text}</textPath>
       </text>
       <FaceArt face={face} />
     </svg>

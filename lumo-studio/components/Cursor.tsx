@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { ui as copy } from "@/lib/content";
 
 type Mode = "default" | "pointer" | "drag";
 
@@ -68,15 +69,15 @@ export default function Cursor() {
       <div ref={block} className="absolute left-0 top-0">
         <div className={`transition-opacity duration-200 ease-in-out ${mode === "default" ? "opacity-100 delay-[125ms]" : "opacity-0"}`}>
           <Arrow fill="#c2ec40" />
-          <p className={`${label} border-ink bg-lime text-ink`}>You</p>
+          <p className={`${label} border-ink bg-lime text-ink`}>{copy.cursor.idle}</p>
         </div>
         <div className={`absolute left-0 top-0 transition-opacity duration-200 ease-in-out ${mode === "pointer" ? "opacity-100" : "opacity-0"}`}>
           <Tap />
-          <p className={`${label} border-white bg-pink text-white`}>Click</p>
+          <p className={`${label} border-white bg-pink text-white`}>{copy.cursor.click}</p>
         </div>
         <div className={`absolute left-0 top-0 transition-opacity duration-200 ease-in-out ${mode === "drag" ? "opacity-100" : "opacity-0"}`}>
           <Arrow fill="#3d71ff" stroke="#fff" />
-          <p className={`${label} border-white bg-blue text-white`}>Drag</p>
+          <p className={`${label} border-white bg-blue text-white`}>{copy.cursor.drag}</p>
         </div>
       </div>
     </div>

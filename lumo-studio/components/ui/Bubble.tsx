@@ -8,11 +8,12 @@ type Props = {
   circle?: string; // fill colour class of the rising ellipse
   children: React.ReactNode;
   type?: "button" | "submit";
+  external?: boolean; // links only: open in a new tab
 };
 
 // Pill button with the rising-ellipse hover fill. On leave the ellipse exits upward
 // (0.4s) and then resets below without a transition, like the reference.
-export default function Bubble({ href, onClick, className = "", circle = "bg-lime", children, type = "button" }: Props) {
+export default function Bubble({ href, onClick, className = "", circle = "bg-lime", children, type = "button", external = false }: Props) {
   const ref = useRef<HTMLElement | null>(null);
   const timer = useRef(0);
   const onLeave = () => {
@@ -40,7 +41,7 @@ export default function Bubble({ href, onClick, className = "", circle = "bg-lim
   const cls = `bubble ${className}`;
   if (href)
     return (
-      <a ref={(n) => { ref.current = n; }} href={href} onClick={onClick} onMouseEnter={onEnter} onMouseLeave={onLeave} className={cls} data-cursor="pointer">
+      <a ref={(n) => { ref.current = n; }} href={href} onClick={onClick} {...(external && { target: "_blank", rel: "noopener noreferrer" })} onMouseEnter={onEnter} onMouseLeave={onLeave} className={cls} data-cursor="pointer">
         {inner}
       </a>
     );

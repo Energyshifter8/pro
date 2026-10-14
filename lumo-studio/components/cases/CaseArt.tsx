@@ -1,3 +1,5 @@
+import { casesCopy } from "@/lib/content";
+
 // Placeholder case visual (original artwork): a coloured panel with a browser mock showing
 // the project name. Replace with real project screenshots via next/image when available.
 export default function CaseArt({ name, tag, color, className = "" }: { name: string; tag: string; color: string; className?: string }) {
@@ -12,7 +14,7 @@ export default function CaseArt({ name, tag, color, className = "" }: { name: st
         {Array.from({ length: 12 }, (_, i) => <rect key={i} x="197" y="-60" width="20" height="560" rx="10" transform={`rotate(${i * 15} 207 280)`} opacity=".9" />)}
       </g>
       <circle cx="207" cy="280" r="120" fill="#150734" />
-      <text x="30" y="70" fill="#fff" style={{ fontFamily: "var(--font-display)", fontSize: 30, letterSpacing: "0.02em" }}>{tag.toUpperCase()} · WEB</text>
+      <text x="30" y="70" fill="#fff" style={{ fontFamily: "var(--font-display)", fontSize: 30, letterSpacing: "0.02em" }}>{tag.toUpperCase()} · {casesCopy.web.toUpperCase()}</text>
       <circle cx="368" cy="58" r="20" fill={color} stroke="#150734" strokeWidth="4" />
       {/* laptop */}
       <rect x="34" y="180" width="346" height="234" rx="16" fill="#150734" />

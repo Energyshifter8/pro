@@ -11,6 +11,9 @@ importers:
       '@fontsource-variable/ibm-plex-sans':
         specifier: ^5.3.0
         version: 5.3.0
+      '@fontsource/fira-sans-extra-condensed':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -64,6 +67,9 @@ packages:
 
   '@fontsource-variable/ibm-plex-sans@5.3.0':
     resolution: {integrity: sha512-agG8tXFEo0hD9+J7npa4vbbWult52eMLVaQ6WQRlhs/iCAojrMAoejru85W9HTVXHfyUj96KM7gp/KGAS87XaQ==}
+
+  '@fontsource/fira-sans-extra-condensed@5.3.0':
+    resolution: {integrity: sha512-AiwnJulSkWNY0SYSOmdf3oFO9G8Soc3FYyYS81BWXVUSLqj2V/YXf4vC9xTohLOPIbXnDbpeelje692zLT5O6w==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -630,6 +636,8 @@ snapshots:
   '@darkroom.engineering/tempus@0.0.46': {}
 
   '@fontsource-variable/ibm-plex-sans@5.3.0': {}
+
+  '@fontsource/fira-sans-extra-condensed@5.3.0': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

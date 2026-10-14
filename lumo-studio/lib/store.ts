@@ -1,9 +1,9 @@
 "use client";
 import { useSyncExternalStore } from "react";
 
-// Tiny global UI store: which overlay (menu / contact modal) is open.
-type State = { menu: boolean; contact: boolean };
-let state: State = { menu: false, contact: false };
+// Tiny global UI store: which overlay (menu / contact modal / register modal) is open.
+type State = { menu: boolean; contact: boolean; register: boolean };
+let state: State = { menu: false, contact: false, register: false };
 const subs = new Set<() => void>();
 
 export const ui = {
@@ -12,7 +12,11 @@ export const ui = {
   subscribe(f: () => void) { subs.add(f); return () => { subs.delete(f); }; },
 };
 
-const server: State = { menu: false, contact: false };
+const server: State = { menu: false, contact: false, register: false };
 export function useUI<T>(pick: (s: State) => T): T {
   return useSyncExternalStore(ui.subscribe, () => pick(state), () => pick(server));
 }
+
+// The olympiad register modal opens on this window event, so any script can trigger it.
+export const REGISTER_EVENT = "open-register";
+export const openRegister = () => window.dispatchEvent(new Event(REGISTER_EVENT));

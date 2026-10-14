@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { services, servicesTitle } from "@/lib/content";
 import { ui } from "@/lib/store";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
-import { GlyphText, fitSpacing } from "./ui/GlyphText";
+import { GlyphText, capMarkGap, fitSpacing } from "./ui/GlyphText";
 import Bubble from "./ui/Bubble";
 
 const WAVE =
@@ -90,7 +90,7 @@ export default function Services() {
         <h2 ref={title} aria-label={servicesTitle.join(" ")} style={fitSpacing()}
           className="display mx-auto max-w-[4.7em] text-center text-[40rem] leading-[0.85] text-ink md:text-[56rem] lg:text-[100rem]">
           {servicesTitle.map((l, i) => (
-            <Frag key={i} p={lines[i]} d={0.981} off={0.3} className="block"><GlyphText text={l} fit /></Frag>
+            <Frag key={i} p={lines[i]} d={0.981} off={0.3} className={`block ${capMarkGap(l, i)}`}><GlyphText text={l} fit /></Frag>
           ))}
         </h2>
         <ul ref={list} className="mt-[40rem] flex flex-col gap-[20rem] md:mt-[170rem] lg:mt-[500rem] lg:flex-row lg:justify-between lg:gap-[45rem] lg:[perspective:1600px]">
