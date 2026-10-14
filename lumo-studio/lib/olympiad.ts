@@ -158,9 +158,9 @@ export const fee = {
   cardTitle: "Дансны мэдээлэл",
   // `mono` rows are set in a monospace face and shown in groups of four.
   rows: [
-    { label: "Банк", value: "Төрийн банк" },
-    { label: "Дансны дугаар", value: "MN170034220700072362", mono: true },
-    { label: "Данс эзэмшигч", value: "Мөнхтулга Элбэгсайхан" },
+    { label: "Банк", value: "Хаан банк" },
+    { label: "Дансны дугаар", value: "MN070005005920847579", mono: true },
+    { label: "Данс эзэмшигч", value: "Бямбасүрэн Авирмэд" },
     { label: "Дүн · 1–2-р курс", value: "5,000₮" },
     { label: "Дүн · 3–4-р курс", value: "15,000₮" },
   ],
