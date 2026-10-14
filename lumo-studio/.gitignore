@@ -1,3 +1,7 @@
 node_modules
 .next
 *.tsbuildinfo
+
+# designer asset export (scripts/export-assets.mjs)
+design-assets/
+design-assets.zip

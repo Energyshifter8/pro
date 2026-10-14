@@ -1,0 +1,14 @@
+{
+  "name": "syscotech-olympiad-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Dev-only tooling (not part of the site build). Run `npm install` here once.",
+  "scripts": {
+    "export-assets": "node export-assets.mjs"
+  },
+  "devDependencies": {
+    "fontkit": "2.0.4",
+    "playwright-core": "1.63.0",
+    "wawoff2": "^2.0.1"
+  }
+}
