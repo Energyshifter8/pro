@@ -9,9 +9,10 @@ import { fitSpacing } from "./ui/GlyphText";
 import Bubble from "./ui/Bubble";
 import PrizeArt from "./prizes/PrizeArt";
 
-// The prize fund as an open book, one page per place. Desktop: drag a page across the spine
-// to turn it (0.1875°/px at 1440 wide; released past 90° it completes, otherwise it falls
-// back). Below 992px the book is vertical and pages turn upward as you scroll a sticky stage.
+// The prize fund as an open book, one page per place. Desktop: tap the right / left page to
+// turn to the next / previous prize, or drag it across the spine (0.1875°/px at 1440 wide) —
+// a 20° drag or a flick completes the turn, anything less falls back. Below 992px the book is
+// vertical and pages turn upward as you scroll a sticky stage (scaled to fit short screens).
 // Ten page edges (five per side) frame the book and slide out on hover; a large star turns
 // 180° while the section crosses the viewport.
 
@@ -70,41 +71,79 @@ function DesktopBook() {
   useEffect(() => {
     const el = book.current!;
     const angle = Array(N - 1).fill(0) as number[];
+    // where each page is headed (0 = lying on the right, -180 = turned to the left); taps and
+    // drags pick their page from this, so quick repeated taps keep turning the next page
+    const target = Array(N - 1).fill(0) as number[];
+    const anims: ({ stop: () => void } | null)[] = Array(N - 1).fill(null);
     const set = (k: number, a: number, z?: number) => {
       angle[k] = a;
       const li = pages.current[k]!;
       li.style.transform = `rotateY(${a}deg)`;
       li.style.zIndex = String(z ?? (a <= -90 ? 10 + k : N - 1 - k));
     };
-    let drag: { k: number; x: number; base: number; moved: boolean } | null = null;
+    const turn = (k: number, to: number) => {
+      target[k] = to;
+      anims[k]?.stop();
+      const from = angle[k];
+      anims[k] = animate(from, to, {
+        duration: 0.2 + 0.4 * (Math.abs(to - from) / 180), ease: [0.3, 0.3, 0.5, 1],
+        onUpdate: (v) => set(k, v, 100), onComplete: () => { anims[k] = null; set(k, to); },
+      });
+    };
+    let drag: { k: number; x: number; base: number; moved: boolean; tap: boolean; lastX: number; lastT: number; v: number } | null = null;
+    let suppressClick = false;
     const degPerPx = () => 180 / (1280 * parseFloat(getComputedStyle(document.documentElement).fontSize));
     const down = (e: PointerEvent) => {
       if (e.button !== 0) return;
       const r = el.getBoundingClientRect();
       const right = e.clientX > r.left + r.width / 2;
-      const k = right ? angle.findIndex((a) => a > -90) : angle.map((a, i) => (a <= -90 ? i : -1)).filter((i) => i >= 0).pop() ?? -1;
+      const k = right ? target.indexOf(0) : target.lastIndexOf(-180);
       if (k < 0) return;
-      drag = { k, x: e.clientX, base: angle[k] <= -90 ? -180 : 0, moved: false };
+      anims[k]?.stop();
+      // a tap on the register button inside a page is a click, not a page turn
+      const tap = !(e.target as Element).closest("a,button");
+      drag = { k, x: e.clientX, base: angle[k], moved: false, tap, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
     };
     const move = (e: PointerEvent) => {
       if (!drag) return;
       const dx = e.clientX - drag.x;
       if (!drag.moved && Math.abs(dx) < 4) return;
       drag.moved = true;
+      const dt = e.timeStamp - drag.lastT;
+      if (dt > 0) drag.v = 0.7 * ((e.clientX - drag.lastX) / dt) + 0.3 * drag.v; // px/ms, smoothed
+      drag.lastX = e.clientX; drag.lastT = e.timeStamp;
       set(drag.k, Math.max(-180, Math.min(0, drag.base + dx * degPerPx())), 100);
     };
-    const up = () => {
+    const up = (e: PointerEvent) => {
       if (!drag) return;
-      const { k, moved } = drag;
+      const { k, moved, tap, v } = drag;
       drag = null;
-      if (!moved) return;
-      const from = angle[k], to = from < -90 ? -180 : 0;
-      animate(from, to, { duration: 0.34, ease: [0.3, 0.3, 0.5, 1], onUpdate: (v) => set(k, v, 100), onComplete: () => set(k, to) });
+      const onRight = target[k] === 0;
+      if (!moved) {
+        // one tap turns the page: right half → next prize, left half → previous
+        if (tap && e.type === "pointerup") turn(k, onRight ? -180 : 0);
+        else turn(k, target[k]);
+        return;
+      }
+      // a short drag or a flick is enough: past 20° in the turning direction, or released
+      // while moving faster than 0.3 px/ms that way
+      suppressClick = true;
+      setTimeout(() => (suppressClick = false), 0);
+      const fling = Math.abs(v) > 0.3 ? Math.sign(v) : 0;
+      const done = onRight ? fling < 0 || (fling === 0 && angle[k] < -20) : fling > 0 || (fling === 0 && angle[k] > -160);
+      turn(k, done === onRight ? -180 : 0);
     };
+    const click = (e: MouseEvent) => { if (suppressClick) { e.preventDefault(); e.stopPropagation(); } };
     el.addEventListener("pointerdown", down);
+    el.addEventListener("click", click, true);
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
-    return () => { el.removeEventListener("pointerdown", down); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); };
+    window.addEventListener("pointercancel", up);
+    return () => {
+      el.removeEventListener("pointerdown", down); el.removeEventListener("click", click, true);
+      window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+      anims.forEach((a) => a?.stop());
+    };
   }, []);
 
   const block = (k: number, side: "left" | "right", i: number) => {
@@ -146,15 +185,40 @@ function DesktopBook() {
 // ---------- below 992px: scroll-to-turn ----------
 function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
   const pages = useRef<(HTMLLIElement | null)[]>([]);
+  const wrap = useRef<HTMLDivElement>(null);
+
+  // The page content fills each half, so on short screens the whole book is scaled down to
+  // fit the sticky stage (leaving 8% for the page edges to peek out above and below).
+  useEffect(() => {
+    const w = wrap.current!, stage = w.closest<HTMLElement>(".sticky")!;
+    const fit = () => {
+      w.style.transform = "";
+      const book = w.querySelector("ol")!.getBoundingClientRect().height;
+      const room = stage.clientHeight * 0.92;
+      if (book > room) w.style.transform = `scale(${(room / book).toFixed(4)})`;
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(stage);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     let raf = 0;
+    let mb = 0;
+    const measure = () => { const h2 = section.current?.querySelector("h2"); mb = h2 ? parseFloat(getComputedStyle(h2).marginBottom) : 0; };
+    measure();
+    window.addEventListener("resize", measure);
     const tick = () => {
       const s = section.current;
       if (s) {
         const vh = window.innerHeight;
-        const off = -s.getBoundingClientRect().top / vh;
+        // scroll since the stage stuck (its natural top sits right under the heading's margin)
+        const h2 = s.querySelector("h2")!;
+        const stick = h2.offsetTop + h2.offsetHeight + mb;
+        const off = (-s.getBoundingClientRect().top - stick) / vh;
         const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const p = pages.current.map((_, k) => sineInOut(Math.min(1, Math.max(0, (off - 0.232 - 0.563 * k) / 0.38))));
+        const p = pages.current.map((_, k) => sineInOut(Math.min(1, Math.max(0, (off - 0.025 - 0.563 * k) / 0.38))));
         pages.current.forEach((li, k) => {
           if (!li) return;
           const lift = p.slice(0, k).reduce((acc, pj) => acc + (1 - Math.min(1, pj * 2)), 0);
@@ -165,7 +229,7 @@ function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", measure); };
   }, [section]);
 
   const edge = (k: number, i: number, below: boolean) => {
@@ -183,8 +247,9 @@ function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
 
   const half = "h-[468rem] md:h-[434rem]";
   return (
-    <div className="relative mx-auto w-full max-w-[680rem] select-none [zoom:0.8] md:[zoom:1]">
-      <div className="absolute inset-0">
+    <div ref={wrap} className="relative mx-auto w-full max-w-[680rem] select-none [zoom:0.8] md:[zoom:1]">
+      {/* z-0 keeps the edges behind the book (their own z-index 1–3 would otherwise paint over it) */}
+      <div className="absolute inset-0 z-0">
         {[0, 1, 2].map((i) => edge(i, i, false))}
         {[3, 4, 5].map((k, i) => edge(k, i, true))}
       </div>
@@ -225,7 +290,7 @@ export default function Prizes() {
 
   return (
     <section ref={section} id="prizes" className="relative z-[1] min-h-[calc(320rem+210svh)] bg-ink pb-[100rem] pt-[110rem] md:min-h-[calc(420rem+225svh)] md:pb-[140rem] md:pt-[160rem] lg:z-0 lg:min-h-0 lg:pb-[367rem] lg:pt-[220rem]">
-      <h2 ref={title} style={fitSpacing()} className="display relative z-[2] mb-[10rem] text-center text-[54rem] leading-[0.85] text-lilac md:text-[100rem] lg:mb-[200rem] lg:text-[160rem]">
+      <h2 ref={title} style={fitSpacing()} className="display relative z-[2] mb-[76rem] text-center text-[54rem] leading-[0.85] text-lilac md:text-[100rem] md:mb-[90rem] lg:mb-[200rem] lg:text-[160rem]">
         <Frag p={tp} d={0.92} off={0.3} className="block">{prizes.title}</Frag>
       </h2>
       <div className="sticky top-0 flex h-[calc(100svh-87rem)] items-center justify-center px-[16rem] md:h-[calc(100svh-175rem)] md:px-[24rem] lg:relative lg:h-auto lg:max-w-[1920rem] lg:px-[80rem]">
