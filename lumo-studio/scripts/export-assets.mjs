@@ -86,7 +86,6 @@ function assetSpecs() {
   add({ name: "hero-line-path", kind: "svg", usedIn: "Hero — the line and its dots (no pen)", component: C.pen, partOf: "hero-line", find: line, opts: { fit: true, remove: ":scope > g" } });
   add({ name: "pen-icon", kind: "svg", usedIn: "Hero — pen nib at the end of the line (shown upright here)", component: C.pen, partOf: "hero-line", find: line, opts: { fit: true, keepOnly: ":scope > g", clearTransform: ":scope > g" } });
   // Stretched decorative letters of the hero title.
-  add({ name: "hero-glyph-a", kind: "svg", usedIn: "Hero title — stretched decorative «а» (IBM Plex Sans outline)", component: C.glyph, find: `() => X.visible(X.svgs("44 -528 461 540"))[0]` });
   add({ name: "hero-glyph-o-wide", kind: "svg", usedIn: "Hero title — stretched decorative «о» in «олимпиад»", component: C.glyph, find: `() => X.visible(X.svgs("47 -528 466 540"))[0]` });
   add({ name: "hero-glyph-zero", kind: "svg", usedIn: "Hero title — the «0» of the year", component: C.glyph, find: `() => X.visible(X.svgs("47 -528 466 540"))[1]` });
   // Wavy section dividers (one profile, three colours).
@@ -797,7 +796,7 @@ async function main() {
     "| --- | --- | --- | --- |",
     "| Display (headlines, prize cards, numbers) | **Fira Sans Extra Condensed** Black, uppercase, letter-spacing −0.022em | 900 | Google Fonts / @fontsource/fira-sans-extra-condensed |",
     "| Body, labels, badges, text rings | **Manrope** (variable) | 200–800 (site uses 500–800) | Google Fonts / @fontsource-variable/manrope |",
-    "| Stretched decorative letters (hero «а», «о», «0») | **IBM Plex Sans** Regular outlines (already paths) | 400 | SIL OFL 1.1 |",
+    "| Stretched decorative letters (hero «о», «0») | **IBM Plex Sans** Regular outlines (already paths) | 400 | SIL OFL 1.1 |",
     "",
     "The display face has no `₮`; the site falls back to Manrope for that glyph (the outlined SVGs do the same).",
     "All text in `svg/` is converted to outlines. `svg/editable/` keeps live `<text>` (install the fonts above to edit).",

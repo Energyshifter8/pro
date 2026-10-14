@@ -6,10 +6,9 @@ import { Frag, useLineProgress } from "../ui/LineReveal";
 import { GlyphText, type GlyphSlot } from "../ui/GlyphText";
 import PenLine from "./PenLine";
 
-// Decorative glyph slots, keyed by the letter they stand in for: Cyrillic а / о as the
-// stretched Plex a / o, and the year's 0 as a narrower o.
+// Decorative glyph slots, keyed by the letter they stand in for: Cyrillic о as the stretched
+// Plex o, and the year's 0 as a narrower o.
 const DESKTOP_GLYPHS: Record<string, GlyphSlot> = {
-  "а": { k: "a", adv: 0.6, ix: 0.015, asc: 0.761, iw: 0.57, ih: 0.763 },
   "о": { k: "o", adv: 1.045, ix: 0.014, asc: 0.761, iw: 1.026, ih: 0.763 },
   "0": { k: "o", adv: 0.66, ix: 0.02, asc: 0.761, iw: 0.62, ih: 0.763 },
 };

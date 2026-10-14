@@ -56,9 +56,9 @@ const zeroGlyph = (y: number) => String(y).replace("0", "{0}");
 export const hero = {
   label: `Программчлалын олимпиад ${year}`,
   // Desktop headline, three lines (the last one is lime).
-  lines: ["Прогр{а}ммчлалын", "{о}лимпиад", zeroGlyph(year)],
+  lines: ["Программчлалын", "{о}лимпиад", zeroGlyph(year)],
   // Below 992px the long word is split over two rows.
-  mobileLines: ["Программ-", "чл{а}лын", "{о}лимпиад", zeroGlyph(year)],
+  mobileLines: ["Программ-", "члалын", "{о}лимпиад", zeroGlyph(year)],
   sub: "Авьяасаа дэлгэрүүлж, мэдлэгээ бататгах боломж.",
   // Start time as an ISO date, e.g. "2026-11-21T09:00:00+08:00". While null the countdown is
   // replaced by `dateSoon`.
