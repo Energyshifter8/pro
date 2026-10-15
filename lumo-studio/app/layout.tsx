@@ -7,6 +7,7 @@ import { site } from "@/lib/olympiad";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollBar from "@/components/ScrollBar";
 import Cursor from "@/components/Cursor";
+import FirebaseAnalytics from "@/components/FirebaseAnalytics";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ScrollBar />
         <Cursor />
         <Analytics />
+        <FirebaseAnalytics />
       </body>
     </html>
   );

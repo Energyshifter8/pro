@@ -1,0 +1,9 @@
+# Install scripts pnpm (v10+) must approve explicitly. Neither is needed here:
+# @firebase/util's only reads FIREBASE_WEBAPP_CONFIG (App Hosting auto-config; we pass config via .env),
+# protobufjs's only prints a version warning.
+# packages: required by pnpm 9 whenever this file exists (single-package repo).
+packages:
+  - "."
+allowBuilds:
+  '@firebase/util': false
+  protobufjs: false

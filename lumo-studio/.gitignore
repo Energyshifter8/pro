@@ -4,3 +4,7 @@ node_modules
 
 design-assets/
 design-assets.zip
+
+# local env (Firebase config etc.) — never commit; .env.example documents the keys
+.env*
+!.env.example
