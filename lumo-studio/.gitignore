@@ -8,3 +8,9 @@ design-assets.zip
 # local env (Firebase config etc.) — never commit; .env.example documents the keys
 .env*
 !.env.example
+
+# static export + Firebase deploy artifacts
+out/
+.firebase/
+firebase-debug.log*
+firestore-debug.log*

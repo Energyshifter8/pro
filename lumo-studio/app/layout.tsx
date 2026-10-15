@@ -31,7 +31,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <ScrollBar />
         <Cursor />
-        <Analytics />
+        {/* Vercel Analytics' script only exists on Vercel; elsewhere (Firebase Hosting) it would 404 */}
+        {process.env.VERCEL ? <Analytics /> : null}
         <FirebaseAnalytics />
       </body>
     </html>

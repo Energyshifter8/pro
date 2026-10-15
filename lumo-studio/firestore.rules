@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Registration form (components/overlays/RegisterModal.tsx). The public site may only add
+    // well-formed entries; nobody can read, edit or delete them from the client.
+    // View registrations in the Firebase console (Firestore → registrations).
+    match /registrations/{id} {
+      allow create: if isRegistration(request.resource.data);
+    }
+
+    // Everything else stays locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function text(v, max) {
+      return v is string && v.size() > 0 && v.size() <= max;
+    }
+
+    function isRegistration(d) {
+      let fields = ['lastName', 'firstName', 'email', 'studentCode', 'phone', 'course', 'major', 'createdAt'];
+      return d.keys().hasAll(fields) && d.keys().hasOnly(fields)
+        && text(d.lastName, 80) && text(d.firstName, 80)
+        && text(d.email, 254) && d.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && text(d.studentCode, 40)
+        && d.phone is string && d.phone.matches('^[0-9]{8}$')
+        // course/major are only size-checked so editing the options in lib/olympiad.ts can't break signups
+        && text(d.course, 80) && text(d.major, 80)
+        && d.createdAt == request.time;
+    }
+  }
+}

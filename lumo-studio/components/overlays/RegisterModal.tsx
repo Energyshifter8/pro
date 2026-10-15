@@ -50,16 +50,13 @@ export default function RegisterModal() {
     if (status === "sending") return;
     setTried(true);
     if (!course || !major) return;
-    if (!r.endpoint) { setStatus("done"); return; }
     setStatus("sending");
     try {
-      const res = await fetch(r.endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, course, major, submittedAt: new Date().toISOString() }),
-      });
-      setStatus(res.ok ? "done" : "error");
-    } catch {
+      const { saveRegistration } = await import("@/lib/firebase");
+      await saveRegistration({ ...values, course, major });
+      setStatus("done");
+    } catch (err) {
+      console.error("Registration not saved", err);
       setStatus("error");
     }
   };

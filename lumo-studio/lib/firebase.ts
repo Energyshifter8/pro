@@ -17,6 +17,25 @@ export const app: FirebaseApp | null = config.apiKey && config.projectId && conf
   ? getApps()[0] ?? initializeApp(config)
   : null;
 
+export type Registration = Record<"lastName" | "firstName" | "email" | "studentCode" | "phone" | "course" | "major", string>;
+
+// Firestore Lite (plain REST, a fraction of the full SDK) is enough for one write; it's loaded on first submit.
+// Shape must match isRegistration() in firestore.rules.
+let lite: Promise<{ db: import("firebase/firestore/lite").Firestore; fs: typeof import("firebase/firestore/lite") }> | null = null;
+export async function saveRegistration(data: Registration) {
+  if (!app) throw new Error("Firebase env vars missing; see .env.example");
+  const firebaseApp = app;
+  lite ??= import("firebase/firestore/lite").then((fs) => {
+    const db = fs.getFirestore(firebaseApp);
+    const emulator = process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST;
+    if (emulator) { const [host, port] = emulator.split(":"); fs.connectFirestoreEmulator(db, host, Number(port)); }
+    return { db, fs };
+  });
+  const { db, fs } = await lite;
+  const clean = Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v.trim()]));
+  await fs.addDoc(fs.collection(db, "registrations"), { ...clean, createdAt: fs.serverTimestamp() });
+}
+
 export async function initAnalytics() {
   if (typeof window === "undefined") return null;
   if (!app) { console.warn("Firebase env vars missing; see .env.example"); return null; }

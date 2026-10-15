@@ -179,7 +179,6 @@ export const footer = {
 export const register = {
   title: "Бүртгүүлэх",
   intro: "Олимпиадад оролцохын тулд доорх мэдээллийг бөглөнө үү. ;3",
-  endpoint: null as string | null,
   fields: {
     lastName: { label: "Овог", placeholder: "" },
     firstName: { label: "Нэр", placeholder: "" },
