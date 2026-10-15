@@ -1,5 +1,4 @@
 "use client";
-import { animate } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { prizes } from "@/lib/olympiad";
 import { openRegister } from "@/lib/store";
@@ -56,81 +55,38 @@ const art = (k: number) => {
   return <PrizeArt n={(k % N) + 1} place={c.place} amount={c.amount} color={c.color} className="block h-full w-full rounded-[16rem]" />;
 };
 
-function DesktopBook() {
-  const book = useRef<HTMLOListElement>(null);
+// Pages turn as the sticky stage scrolls: page k flips over 0.38 viewport heights, starting 0.563·k
+// viewport heights after the stage sticks under the title. frame gets each page's 0→1 progress.
+function useScrollFlip(section: React.RefObject<HTMLElement>, frame: (p: number[]) => void) {
+  useEffect(() => {
+    let raf = 0;
+    let mb = 0;
+    const measure = () => { const h2 = section.current?.querySelector("h2"); mb = h2 ? parseFloat(getComputedStyle(h2).marginBottom) : 0; };
+    measure();
+    window.addEventListener("resize", measure);
+    const tick = () => {
+      const s = section.current;
+      if (s) {
+        const h2 = s.querySelector("h2")!;
+        const stick = h2.offsetTop + h2.offsetHeight + mb;
+        const off = (-s.getBoundingClientRect().top - stick) / window.innerHeight;
+        frame(Array.from({ length: N - 1 }, (_, k) => sineInOut(Math.min(1, Math.max(0, (off - 0.025 - 0.563 * k) / 0.38)))));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", measure); };
+  }, [section]); // frame only writes to refs, so the first render's copy is enough
+}
+
+function DesktopBook({ section }: { section: React.RefObject<HTMLElement> }) {
   const pages = useRef<(HTMLLIElement | null)[]>([]);
 
-  useEffect(() => {
-    const el = book.current!;
-    const angle = Array(N - 1).fill(0) as number[];
-    const target = Array(N - 1).fill(0) as number[];
-    const anims: ({ stop: () => void } | null)[] = Array(N - 1).fill(null);
-    const set = (k: number, a: number, z?: number) => {
-      angle[k] = a;
-      const li = pages.current[k]!;
-      li.style.transform = `rotateY(${a}deg)`;
-      li.style.zIndex = String(z ?? (a <= -90 ? 10 + k : N - 1 - k));
-    };
-    const turn = (k: number, to: number) => {
-      target[k] = to;
-      anims[k]?.stop();
-      const from = angle[k];
-      anims[k] = animate(from, to, {
-        duration: 0.2 + 0.4 * (Math.abs(to - from) / 180), ease: [0.3, 0.3, 0.5, 1],
-        onUpdate: (v) => set(k, v, 100), onComplete: () => { anims[k] = null; set(k, to); },
-      });
-    };
-    let drag: { k: number; x: number; base: number; moved: boolean; tap: boolean; lastX: number; lastT: number; v: number } | null = null;
-    let suppressClick = false;
-    const degPerPx = () => 180 / (1280 * parseFloat(getComputedStyle(document.documentElement).fontSize));
-    const down = (e: PointerEvent) => {
-      if (e.button !== 0) return;
-      const r = el.getBoundingClientRect();
-      const right = e.clientX > r.left + r.width / 2;
-      const k = right ? target.indexOf(0) : target.lastIndexOf(-180);
-      if (k < 0) return;
-      anims[k]?.stop();
-      const tap = !(e.target as Element).closest("a,button");
-      drag = { k, x: e.clientX, base: angle[k], moved: false, tap, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
-    };
-    const move = (e: PointerEvent) => {
-      if (!drag) return;
-      const dx = e.clientX - drag.x;
-      if (!drag.moved && Math.abs(dx) < 4) return;
-      drag.moved = true;
-      const dt = e.timeStamp - drag.lastT;
-      if (dt > 0) drag.v = 0.7 * ((e.clientX - drag.lastX) / dt) + 0.3 * drag.v;
-      drag.lastX = e.clientX; drag.lastT = e.timeStamp;
-      set(drag.k, Math.max(-180, Math.min(0, drag.base + dx * degPerPx())), 100);
-    };
-    const up = (e: PointerEvent) => {
-      if (!drag) return;
-      const { k, moved, tap, v } = drag;
-      drag = null;
-      const onRight = target[k] === 0;
-      if (!moved) {
-        if (tap && e.type === "pointerup") turn(k, onRight ? -180 : 0);
-        else turn(k, target[k]);
-        return;
-      }
-      suppressClick = true;
-      setTimeout(() => (suppressClick = false), 0);
-      const fling = Math.abs(v) > 0.3 ? Math.sign(v) : 0;
-      const done = onRight ? fling < 0 || (fling === 0 && angle[k] < -20) : fling > 0 || (fling === 0 && angle[k] > -160);
-      turn(k, done === onRight ? -180 : 0);
-    };
-    const click = (e: MouseEvent) => { if (suppressClick) { e.preventDefault(); e.stopPropagation(); } };
-    el.addEventListener("pointerdown", down);
-    el.addEventListener("click", click, true);
-    window.addEventListener("pointermove", move);
-    window.addEventListener("pointerup", up);
-    window.addEventListener("pointercancel", up);
-    return () => {
-      el.removeEventListener("pointerdown", down); el.removeEventListener("click", click, true);
-      window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
-      anims.forEach((a) => a?.stop());
-    };
-  }, []);
+  useScrollFlip(section, (p) => pages.current.forEach((li, k) => {
+    if (!li) return;
+    li.style.transform = `rotateY(${-180 * p[k]}deg)`;
+    li.style.zIndex = String(p[k] > 0.5 ? 10 + k : N - 1 - k);
+  }));
 
   const block = (k: number, side: "left" | "right", i: number) => {
     const pos = [0, 72, 145, 220, 290][i];
@@ -152,7 +108,7 @@ function DesktopBook() {
         {[0, 1, 2, 3, 4].map((i) => block(i, "left", i))}
         {[0, 1, 2, 3, 4].map((i) => block(9 - i, "right", i))}
       </div>
-      <ol ref={book} data-cursor="drag" aria-label={prizes.title} className="relative z-[1] flex h-[600rem] justify-center [perspective:1431px] [touch-action:pan-y]">
+      <ol aria-label={prizes.title} className="relative z-[1] flex h-[600rem] justify-center [perspective:1431px]">
         <li className="relative flex h-full w-[450rem] translate-x-1/2 flex-row-reverse">
           <div className={`h-full w-full shrink-0 rounded-r-[16rem] px-[28rem] py-[18rem] ${front}`}><Prize i={N - 1} /></div>
           <div className={`h-full w-full shrink-0 rounded-l-[16rem] ${back}`}>{art(0)}</div>
@@ -186,33 +142,15 @@ function StackedBook({ section }: { section: React.RefObject<HTMLElement> }) {
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => {
-    let raf = 0;
-    let mb = 0;
-    const measure = () => { const h2 = section.current?.querySelector("h2"); mb = h2 ? parseFloat(getComputedStyle(h2).marginBottom) : 0; };
-    measure();
-    window.addEventListener("resize", measure);
-    const tick = () => {
-      const s = section.current;
-      if (s) {
-        const vh = window.innerHeight;
-        const h2 = s.querySelector("h2")!;
-        const stick = h2.offsetTop + h2.offsetHeight + mb;
-        const off = (-s.getBoundingClientRect().top - stick) / vh;
-        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const p = pages.current.map((_, k) => sineInOut(Math.min(1, Math.max(0, (off - 0.025 - 0.563 * k) / 0.38))));
-        pages.current.forEach((li, k) => {
-          if (!li) return;
-          const lift = p.slice(0, k).reduce((acc, pj) => acc + (1 - Math.min(1, pj * 2)), 0);
-          li.style.transform = `translate3d(0, ${8 * rem * lift}px, 0) rotateX(${180 * p[k]}deg)`;
-          li.style.zIndex = String(p[k] > 0.5 ? 10 + k : N - 1 - k);
-        });
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", measure); };
-  }, [section]);
+  useScrollFlip(section, (p) => {
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    pages.current.forEach((li, k) => {
+      if (!li) return;
+      const lift = p.slice(0, k).reduce((acc, pj) => acc + (1 - Math.min(1, pj * 2)), 0);
+      li.style.transform = `translate3d(0, ${8 * rem * lift}px, 0) rotateX(${180 * p[k]}deg)`;
+      li.style.zIndex = String(p[k] > 0.5 ? 10 + k : N - 1 - k);
+    });
+  });
 
   const edge = (k: number, i: number, below: boolean) => {
     const inset = [48, 96, 144][i % 3];
@@ -270,13 +208,13 @@ export default function Prizes() {
   }, []);
 
   return (
-    <section ref={section} id="prizes" className="relative z-[1] min-h-[calc(320rem+210svh)] bg-ink pb-[100rem] pt-[110rem] md:min-h-[calc(420rem+225svh)] md:pb-[140rem] md:pt-[160rem] lg:z-0 lg:min-h-0 lg:pb-[367rem] lg:pt-[220rem]">
-      <h2 ref={title} style={fitSpacing()} className="display relative z-[2] mb-[76rem] text-center text-[54rem] leading-[0.85] text-lilac md:text-[100rem] md:mb-[90rem] lg:mb-[200rem] lg:text-[160rem]">
+    <section ref={section} id="prizes" className="relative z-[1] min-h-[calc(320rem+210svh)] bg-ink pb-[100rem] pt-[110rem] md:min-h-[calc(420rem+225svh)] md:pb-[140rem] md:pt-[160rem] lg:z-0 lg:min-h-[calc(410rem+215svh)] lg:pb-[200rem] lg:pt-[220rem]">
+      <h2 ref={title} style={fitSpacing()} className="display relative z-[2] mb-[76rem] text-center text-[54rem] leading-[0.85] text-lilac md:text-[100rem] md:mb-[90rem] lg:mb-0 lg:text-[160rem]">
         <Frag p={tp} d={0.92} off={0.3} className="block">{prizes.title}</Frag>
       </h2>
-      <div className="sticky top-0 flex h-[calc(100svh-87rem)] items-center justify-center px-[16rem] md:h-[calc(100svh-175rem)] md:px-[24rem] lg:relative lg:h-auto lg:max-w-[1920rem] lg:px-[80rem]">
+      <div className="sticky top-0 flex h-[calc(100svh-87rem)] items-center justify-center px-[16rem] md:h-[calc(100svh-175rem)] md:px-[24rem] lg:h-[calc(100svh-150rem)] lg:max-w-[1920rem] lg:px-[80rem]">
         <div ref={star} aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 z-[-1] w-[620rem] md:w-[900rem] lg:w-[1100rem]"><Star /></div>
-        <div className="hidden w-full lg:block"><DesktopBook /></div>
+        <div className="hidden w-full lg:block"><DesktopBook section={section} /></div>
         <div className="w-full lg:hidden"><StackedBook section={section} /></div>
       </div>
     </section>

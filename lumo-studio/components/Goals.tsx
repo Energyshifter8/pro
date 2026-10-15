@@ -2,10 +2,8 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { goals } from "@/lib/olympiad";
-import { openRegister } from "@/lib/store";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
 import { GlyphText, capMarkGap, fitSpacing, plain } from "./ui/GlyphText";
-import Bubble from "./ui/Bubble";
 
 const WAVE =
   "M0 6C83.3 16.2 166.7 25.7 250 36.5C333.3 47.3 416.7 60.3 500 71C550 77.5 600 83.2 650 89C683.3 92.9 716.7 97 750 100.4C816.7 107.1 883.3 113.8 950 118C983.3 120.1 1016.7 121.8 1050 121.8C1083.3 121.8 1116.7 118 1150 114.7C1200 109.8 1250 102.5 1300 95.7C1333.3 91.2 1366.7 86.1 1400 81.2C1450 73.8 1500 66 1550 58.5C1583.3 53.5 1616.7 48.4 1650 43.5C1683.3 38.6 1716.7 33.5 1750 29.1C1800 22.5 1850 15.7 1900 11C1933.3 7.9 1966.7 6.1 2000 4.4C2033.3 2.7 2066.7 1.6 2100 0.9C2133.3 0.2 2166.7 0.2 2200 0.2C2238.3 0.2 2276.7 1.1 2315 1.6V160H0Z";
@@ -14,9 +12,9 @@ type Card = (typeof goals.cards)[number];
 
 // w/h are the character SVGs' cropped viewBox dimensions
 const CARD = {
-  purple: { box: "bg-char-purple text-white", btn: "bg-ink text-lilac hover:text-white", circle: "bg-pink", w: 2667, h: 4509 },
-  red: { box: "bg-char-red text-white", btn: "bg-ink text-char-red hover:text-white", circle: "bg-violet", w: 636, h: 870 },
-  yellow: { box: "bg-char-yellow text-char-ink", btn: "bg-ink text-char-yellow hover:text-white", circle: "bg-pink", w: 2154, h: 4651 },
+  purple: { box: "bg-char-purple text-white", w: 2667, h: 4509 },
+  red: { box: "bg-char-red text-white", w: 636, h: 870 },
+  yellow: { box: "bg-char-yellow text-char-ink", w: 2154, h: 4651 },
 } as const;
 
 const pad = "px-[30rem] pb-[40rem] pt-[50rem] md:px-[40rem] md:pb-[60rem] md:pt-[50rem] lg:px-[50rem] lg:py-[78rem]";
@@ -32,10 +30,6 @@ function CardBody({ s }: { s: Card }) {
         <Image src={`/characters/${s.color}.svg`} alt="" width={v.w} height={v.h}
           className="block h-[160rem] w-auto [filter:drop-shadow(0_10px_12px_rgba(0,0,0,.25))] md:h-[200rem] lg:h-[293rem]" />
       </div>
-      <Bubble onClick={openRegister} circle={v.circle}
-        className={`mt-[28rem] rounded-[90rem] px-[24rem] py-[16rem] text-[12rem] font-bold leading-[1.5] md:mt-[43rem] md:px-[30rem] md:py-[20rem] md:text-[15rem] ${v.btn}`}>
-        {goals.cta}
-      </Bubble>
     </>
   );
 }
