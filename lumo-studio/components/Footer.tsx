@@ -61,8 +61,9 @@ export default function Footer() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // bottom padding keeps the last row clear of the fixed Dock (components/overlays/Dock.tsx)
   return (
-    <footer id="contact" className="bg-lilac pb-[90rem] text-ink md:pb-[140rem] lg:pb-[220rem]">
+    <footer id="contact" className="bg-lilac pb-[106rem] text-ink md:pb-[194rem] lg:pb-[184rem]">
       <div aria-hidden className="relative h-[130rem] overflow-hidden bg-[#b380ff] text-[100rem] uppercase leading-none text-[#4c3487] md:h-[264rem] md:text-[200rem] lg:h-[308rem] lg:text-[300rem]">
         <div className="flex h-full">
           <div ref={inner} className="flex gap-[36rem] lg:gap-[56rem]">
@@ -76,7 +77,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="relative mx-auto mt-[60rem] max-w-[1920rem] px-[16rem] md:px-[80rem] lg:mt-[100rem]">
+      <div className="relative mx-auto mt-[48rem] max-w-[1920rem] px-[16rem] md:mt-[60rem] md:px-[80rem] lg:mt-[80rem]">
         <div className="flex flex-col gap-[36rem] lg:flex-row lg:items-end lg:justify-between lg:gap-[60rem]">
           <div className="max-w-[860rem]">
             <h2 ref={titleRef} className="text-[34rem] font-bold leading-[0.92] tracking-[-0.03em] md:text-[60rem] lg:text-[90rem]">
@@ -95,7 +96,7 @@ export default function Footer() {
             </a>
           </address>
         </div>
-        <div className="mt-[50rem] grid grid-cols-2 gap-x-[16rem] gap-y-[36rem] border-t-[2rem] border-ink/15 pt-[30rem] text-[15rem] md:mt-[80rem] md:grid-cols-4 md:pt-[40rem] md:text-[20rem] lg:mt-[120rem] lg:pt-[56rem] lg:text-[22rem]">
+        <div className="mt-[40rem] grid grid-cols-2 gap-x-[16rem] gap-y-[28rem] border-t-[2rem] border-ink/15 pt-[28rem] text-[15rem] md:mt-[56rem] md:grid-cols-3 md:gap-x-[32rem] md:gap-y-[40rem] md:pt-[40rem] md:text-[20rem] lg:mt-[80rem] lg:grid-cols-[auto_auto_auto_1fr] lg:gap-x-[120rem] lg:pt-[56rem] lg:text-[22rem]">
           <nav aria-label={footer.menu}>
             <h3 className="text-[13rem] font-bold uppercase tracking-[0.06em] text-ink/60 md:text-[15rem] lg:text-[17rem]">{footer.menu}</h3>
             <ul className="mt-[12rem] flex flex-col items-start md:mt-[18rem] md:gap-[4rem]">
@@ -114,7 +115,7 @@ export default function Footer() {
             <h3 className="text-[13rem] font-bold uppercase tracking-[0.06em] text-ink/60 md:text-[15rem] lg:text-[17rem]">{footer.address}</h3>
             <p className="mt-[12rem] leading-[1.4] md:mt-[18rem]">{brand.address}</p>
           </div>
-          <div className="col-span-2 flex items-center gap-[12rem] md:col-span-1 md:flex-col md:items-end md:justify-end md:text-right">
+          <div className="col-span-2 flex items-center gap-[12rem] md:col-span-3 md:gap-[18rem] lg:col-span-1 lg:flex-col lg:items-end lg:justify-end lg:text-right">
             <span className="block h-[44rem] w-[44rem] shrink-0 rounded-full md:h-[72rem] md:w-[72rem] lg:h-[88rem] lg:w-[88rem]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={brand.logo} alt="" width={176} height={176} className="block h-full w-full rounded-full" />
