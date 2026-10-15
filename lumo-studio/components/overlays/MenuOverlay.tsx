@@ -57,7 +57,7 @@ export default function MenuOverlay() {
         <div className="mnu-ball c bg-lime" />
         <div className="mnu-ball c bg-blue" />
       </div>
-      <div className="absolute inset-0 flex max-h-[100svh] flex-col items-center justify-start overflow-y-auto py-[20rem] [scrollbar-width:none] md:py-[16rem] lg:max-h-none lg:flex-row lg:justify-between lg:overflow-visible lg:px-[42rem] lg:py-0">
+      <div data-lenis-prevent className="absolute inset-0 flex max-h-[100svh] flex-col items-center justify-start overflow-y-auto py-[20rem] [scrollbar-width:none] md:py-[16rem] lg:max-h-none lg:flex-row lg:justify-between lg:overflow-visible lg:px-[42rem] lg:py-0">
         <Badge id="b-left" label={left.label} href={left.href} delay={1.25} exit={-1} disc="fill-ink" ink="fill-pink" text="fill-white" className="max-lg:hidden" />
         <Badge id="b-left-s" label={left.label} href={left.href} delay={1.15} exit={1} disc="fill-white" ink="fill-ink" text="fill-ink" className="mb-[34rem] mt-auto md:mb-[28rem] lg:hidden" />
         <nav className="relative flex w-full flex-col items-center lg:w-auto">

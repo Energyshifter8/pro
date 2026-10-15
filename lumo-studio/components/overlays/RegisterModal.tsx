@@ -75,7 +75,8 @@ export default function RegisterModal() {
 
   return (
     <div className={`dsc fixed inset-0 z-[200] flex flex-col items-center overflow-y-auto overscroll-contain py-[24rem] md:py-[40rem] lg:block lg:overflow-visible lg:py-0 ${on ? "on" : ""}`}
-      role="dialog" aria-modal="true" aria-labelledby="reg-title">
+      role="dialog" aria-modal="true" aria-labelledby="reg-title"
+      data-lenis-prevent /* lockScroll() stops Lenis, which would otherwise swallow this container's touch/wheel scroll */>
       <div className="dsc-backdrop" onClick={close} />
       <div className="dsc-card relative mx-auto my-auto w-[340rem] px-[14rem] pb-[44rem] pt-[40rem] md:w-[624rem] md:px-[18rem] md:pb-[138rem] md:pt-[94rem] lg:absolute lg:left-1/2 lg:top-1/2 lg:m-0 lg:h-[919rem] lg:w-[1758rem] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:p-0">
         <Face fill="#fff" className="dsc-layer white z-[-1] max-lg:-inset-x-[44rem] md:max-lg:-inset-x-[81rem] lg:z-auto" />
