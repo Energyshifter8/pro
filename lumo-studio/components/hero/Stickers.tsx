@@ -41,12 +41,6 @@ type Def = {
 
 const defs: Def[] = [
   {
-    id: "participants", float: [19.5, 7.2, 10],
-    box: "w-[82rem] left-[8rem] top-[133rem] md:w-[100rem] md:left-[560rem] md:top-[130rem] lg:w-[136rem] lg:left-[202.6rem] lg:top-[-103.9rem]",
-    body: (<><Shape n={14} inner={0.74} stroke={7} spin={30} className="text-pink" />
-      <p className={`${label} text-white opacity-80`}><span className={num}>{stat("participants").value}</span>{stat("participants").label}</p></>),
-  },
-  {
     id: "itpark", float: [5.4, 0.4, 8.4], rock: [-7, -14, 1],
     box: "h-[37rem] w-[107rem] left-[261rem] top-[227rem] md:h-[38.5rem] md:w-[131rem] md:left-[514rem] md:top-[268rem] lg:h-[53rem] lg:w-[178rem] lg:left-[1063.1rem] lg:top-[150.6rem]",
     body: (<><div className="h-full w-full rounded-[120rem] bg-lime" />

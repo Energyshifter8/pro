@@ -3,17 +3,7 @@ import { useLayoutEffect, useRef } from "react";
 import { hero } from "@/lib/olympiad";
 import { INTRO, INTRO_ADAPTIVE, useIntroReady } from "@/lib/intro";
 import { Frag, useLineProgress } from "../ui/LineReveal";
-import { GlyphText, type GlyphSlot } from "../ui/GlyphText";
 import PenLine from "./PenLine";
-
-const DESKTOP_GLYPHS: Record<string, GlyphSlot> = {
-  "о": { k: "o", adv: 1.045, ix: 0.014, asc: 0.761, iw: 1.026, ih: 0.763 },
-  "0": { k: "o", adv: 0.66, ix: 0.02, asc: 0.761, iw: 0.62, ih: 0.763 },
-};
-const MOBILE_GLYPHS: Record<string, GlyphSlot> = {
-  ...DESKTOP_GLYPHS,
-  "о": { k: "o", adv: 0.8, ix: 0.014, asc: 0.761, iw: 0.78, ih: 0.763 },
-};
 
 function useFitLines(ready: boolean) {
   const els = useRef<(HTMLSpanElement | null)[]>([]);
@@ -42,7 +32,7 @@ function DesktopTitle({ ready }: { ready: boolean }) {
     <h1 aria-label={hero.label} className="display relative hidden pt-[20rem] text-[240rem] leading-[0.78] text-lilac lg:block">
       {hero.lines.map((l, i) => (
         <Frag key={i} p={lines[i]} d={1.01} off={0} className={`absolute inset-x-0 z-[1] whitespace-pre ${i === 1 ? "text-right" : ""} ${i === 2 ? "text-lime" : ""}`} style={{ top: `${LINE_TOP[i]}em` }}>
-          <span ref={fit(i)} className={`inline-block ${i === 1 ? "origin-right" : "origin-left"}`}><GlyphText text={l} glyphs={DESKTOP_GLYPHS} lh={0.78} /></span>
+          <span ref={fit(i)} className={`inline-block ${i === 1 ? "origin-right" : "origin-left"}`}>{l}</span>
         </Frag>
       ))}
       <PenLine />
@@ -64,7 +54,7 @@ function AdaptiveTitle({ ready }: { ready: boolean }) {
     <h1 aria-label={hero.label} className="display relative z-[2] m-0 text-[76rem] leading-none tracking-[-0.017em] text-lilac md:text-[108rem] lg:hidden">
       {hero.mobileLines.map((l, i) => (
         <Frag key={i} p={ps[i]} d={1.165} off={0.3} className={`block whitespace-nowrap ${ROWS[i] ?? ROWS[2]}`}>
-          <span ref={fit(i)} className={`inline-block ${(ROWS[i] ?? "").includes("text-right") ? "origin-right" : "origin-left"}`}><GlyphText text={l} glyphs={MOBILE_GLYPHS} /></span>
+          <span ref={fit(i)} className={`inline-block ${(ROWS[i] ?? "").includes("text-right") ? "origin-right" : "origin-left"}`}>{l}</span>
         </Frag>
       ))}
     </h1>

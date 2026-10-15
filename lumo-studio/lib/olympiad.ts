@@ -46,19 +46,16 @@ export const ui = {
   cursor: { idle: "Та", click: "Дарах", drag: "Чирэх" },
 };
 
-const zeroGlyph = (y: number) => String(y).replace("0", "{0}");
-
 export const hero = {
   label: `Программчлалын олимпиад ${year}`,
-  lines: ["Программчлалын", "{о}лимпиад", zeroGlyph(year)],
-  mobileLines: ["Программ-", "члалын", "{о}лимпиад", zeroGlyph(year)],
+  lines: ["Программчлалын", "олимпиад", String(year)],
+  mobileLines: ["Программ-", "члалын", "олимпиад", String(year)],
   sub: "Авьяасаа дэлгэрүүлж, мэдлэгээ бататгах боломж.",
   startsAt: null as string | null,
   dateSoon: "Огноо : 11.14",
   started: "Олимпиад эхэллээ!",
   units: ["өдөр", "цаг", "мин", "сек"],
   badges: [
-    { id: "participants", value: "1000+", label: "оролцогч" },
     { id: "fund", value: "1,130,000₮", label: "Шагналын сан" },
     { id: "first", value: "300'000₮", label: "1-р байр" },
     { id: "fee", value: "5–15,000₮", label: "Бүртгэл" },
@@ -72,7 +69,6 @@ export const about = {
   title: ["Оюутан залуусын", "[программчлалын] тэмцээн"],
   text: "Программчлалын олимпиад нь Sys&CoTech клубээс жил бүр уламжлал болгон зохион байгуулагддаг үйл ажиллагаануудын нэг юм.",
   metrics: [
-    { value: "1000+", label: "оролцогч" },
     { value: "3", label: "шагналт байр" },
     { value: "5,000–15,000₮", label: "бүртгэлийн хураамж" },
   ],
