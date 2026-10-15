@@ -73,7 +73,7 @@ export const about = {
     { value: "5,000–15,000₮", label: "бүртгэлийн хураамж" },
   ],
   sentence: [
-    ["К{о}дло.", "slot"],
+    ["Кодло.", "slot"],
     ["slot", "Сэтгэ."],
     ["Өрсөлд.", "slot"],
     ["Ял.", "slot", "slot"],
@@ -115,6 +115,7 @@ export const sponsors = {
   list: [
     {
       name: "Nasha Tech",
+      href: "https://nashatech.com/",
       logo: "/logos/nasha-tech.png",
       text: "Internet болон E-Commerce нь улс үндэстэн болон байршлаас үл хамааран бүгдэд адил боломжийг олгодог бөгөөд энэ боломжоо алдалгүй ашиглахад бид танд тусална.",
     },

@@ -22,7 +22,7 @@ function TagBg() {
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex h-[41rem] items-center gap-[9rem] ${className}`}>
-      <span className="flex h-[36rem] w-[36rem] shrink-0 rounded-full bg-white p-[2.5rem] lg:h-[41rem] lg:w-[41rem]">
+      <span className="flex h-[36rem] w-[36rem] shrink-0 rounded-full lg:h-[41rem] lg:w-[41rem]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={brand.logo} alt="" width={82} height={82} className="block h-full w-full rounded-full" />
       </span>

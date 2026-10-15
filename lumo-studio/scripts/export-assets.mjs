@@ -37,7 +37,6 @@ const C = {
 };
 
 const STICKERS = [
-  ["badge-1000-participants", "оролцогч", "starburst-pink", "svg"],
   ["badge-it-park-training", "сургалтын эрх", "pill-lime", "html"],
   ["badge-registration-fee", "Бүртгэл", "starburst-red", "svg"],
   ["badge-syscotech-club", "клуб", "leaf-blue", "html"],

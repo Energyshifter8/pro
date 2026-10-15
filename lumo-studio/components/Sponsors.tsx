@@ -34,7 +34,7 @@ function RingLogo({ className = "" }: { className?: string }) {
           <textPath href="#org-ring" textLength={527} lengthAdjust="spacing">{sponsors.organizer.ring}</textPath>
         </text>
       </svg>
-      <span className="absolute inset-[24%] block rounded-full bg-white p-[3%]">
+      <span className="absolute inset-[24%] block rounded-full">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={brand.logo} alt={sponsors.organizer.name} width={160} height={160} className="block h-full w-full rounded-full" />
       </span>
@@ -53,15 +53,18 @@ export default function Sponsors() {
         </h2>
         <div className="mt-[36rem] grid gap-[14rem] md:mt-[60rem] md:gap-[20rem] lg:mt-[100rem] lg:grid-cols-[7fr_5fr] lg:gap-[30rem]">
           {sponsors.list.map((s) => (
-            <Reveal key={s.name} className="flex flex-col gap-[20rem] rounded-[36rem] border-[2rem] border-lilac/15 bg-white/[.04] p-[20rem] md:flex-row md:items-center md:gap-[36rem] md:p-[36rem] lg:gap-[50rem] lg:p-[50rem]">
-              <div className="flex aspect-square w-[130rem] shrink-0 items-center justify-center rounded-[28rem] bg-white p-[16rem] md:w-[200rem] lg:w-[280rem] lg:p-[34rem]">
-                <SponsorLogo src={s.logo} name={s.name} />
-              </div>
-              <div>
-                <p className="text-[12rem] font-bold uppercase tracking-[0.06em] text-lime md:text-[15rem] lg:text-[17rem]">{sponsors.label}</p>
-                <h3 style={fitSpacing()} className="display mt-[10rem] text-[40rem] leading-[0.85] text-white md:text-[60rem] lg:mt-[16rem] lg:text-[84rem]">{s.name}</h3>
-                <p className="mt-[12rem] text-[14rem] leading-[1.45] md:text-[18rem] lg:mt-[22rem] lg:text-[21rem]">{s.text}</p>
-              </div>
+            <Reveal key={s.name} className="rounded-[36rem] border-[2rem] border-lilac/15 bg-white/[.04] transition-colors duration-300 hover:border-lilac/40">
+              <a href={s.href} target="_blank" rel="noopener noreferrer" data-cursor="pointer"
+                className="flex h-full flex-col gap-[20rem] rounded-[inherit] p-[20rem] md:flex-row md:items-center md:gap-[36rem] md:p-[36rem] lg:gap-[50rem] lg:p-[50rem]">
+                <div className="flex aspect-square w-[130rem] shrink-0 items-center justify-center rounded-[28rem] bg-white p-[16rem] md:w-[200rem] lg:w-[280rem] lg:p-[34rem]">
+                  <SponsorLogo src={s.logo} name={s.name} />
+                </div>
+                <div>
+                  <p className="text-[12rem] font-bold uppercase tracking-[0.06em] text-lime md:text-[15rem] lg:text-[17rem]">{sponsors.label}</p>
+                  <h3 style={fitSpacing()} className="display mt-[10rem] text-[40rem] leading-[0.85] text-white md:text-[60rem] lg:mt-[16rem] lg:text-[84rem]">{s.name}</h3>
+                  <p className="mt-[12rem] text-[14rem] leading-[1.45] md:text-[18rem] lg:mt-[22rem] lg:text-[21rem]">{s.text}</p>
+                </div>
+              </a>
             </Reveal>
           ))}
           <Reveal delay={0.1} className="flex flex-col items-center justify-center gap-[18rem] rounded-[36rem] bg-pink p-[24rem] text-center text-white md:flex-row md:justify-start md:gap-[36rem] md:p-[36rem] md:text-left lg:flex-col lg:justify-center lg:gap-[30rem] lg:p-[50rem] lg:text-center">

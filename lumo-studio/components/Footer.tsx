@@ -115,7 +115,7 @@ export default function Footer() {
             <p className="mt-[12rem] leading-[1.4] md:mt-[18rem]">{brand.address}</p>
           </div>
           <div className="col-span-2 flex items-center gap-[12rem] md:col-span-1 md:flex-col md:items-end md:justify-end md:text-right">
-            <span className="block h-[44rem] w-[44rem] shrink-0 rounded-full bg-white p-[3rem] md:h-[72rem] md:w-[72rem] lg:h-[88rem] lg:w-[88rem]">
+            <span className="block h-[44rem] w-[44rem] shrink-0 rounded-full md:h-[72rem] md:w-[72rem] lg:h-[88rem] lg:w-[88rem]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={brand.logo} alt="" width={176} height={176} className="block h-full w-full rounded-full" />
             </span>
