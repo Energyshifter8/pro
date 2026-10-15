@@ -59,7 +59,7 @@ export const hero = {
   units: ["өдөр", "цаг", "мин", "сек"],
   badges: [
     { id: "participants", value: "1000+", label: "оролцогч" },
-    { id: "fund", value: "600'000₮", label: "Шагналын сан" },
+    { id: "fund", value: "1,130,000₮", label: "Шагналын сан" },
     { id: "first", value: "300'000₮", label: "1-р байр" },
     { id: "fee", value: "5–15,000₮", label: "Бүртгэл" },
     { id: "itpark", value: "IT Park", label: "сургалтын эрх" },
