@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { goals } from "@/lib/olympiad";
 import { openRegister } from "@/lib/store";
 import { Frag, useInViewToggle, useLineProgress } from "./ui/LineReveal";
@@ -9,30 +10,13 @@ import Bubble from "./ui/Bubble";
 const WAVE =
   "M0 6C83.3 16.2 166.7 25.7 250 36.5C333.3 47.3 416.7 60.3 500 71C550 77.5 600 83.2 650 89C683.3 92.9 716.7 97 750 100.4C816.7 107.1 883.3 113.8 950 118C983.3 120.1 1016.7 121.8 1050 121.8C1083.3 121.8 1116.7 118 1150 114.7C1200 109.8 1250 102.5 1300 95.7C1333.3 91.2 1366.7 86.1 1400 81.2C1450 73.8 1500 66 1550 58.5C1583.3 53.5 1616.7 48.4 1650 43.5C1683.3 38.6 1716.7 33.5 1750 29.1C1800 22.5 1850 15.7 1900 11C1933.3 7.9 1966.7 6.1 2000 4.4C2033.3 2.7 2066.7 1.6 2100 0.9C2133.3 0.2 2166.7 0.2 2200 0.2C2238.3 0.2 2276.7 1.1 2315 1.6V160H0Z";
 
-type Color = (typeof goals.cards)[number]["color"];
 type Card = (typeof goals.cards)[number];
 
-function CardIcon({ variant }: { variant: Color }) {
-  const c = "#150734";
-  return (
-    <svg viewBox="0 0 256 256" className="inline h-auto w-full align-baseline" aria-hidden>
-      {variant === "lime" && (
-        <g fill={c}>{Array.from({ length: 8 }, (_, i) => <rect key={i} x="110" y="8" width="36" height="120" rx="18" transform={`rotate(${i * 45} 128 128)`} />)}</g>
-      )}
-      {variant === "red" && (
-        <g fill={c}>{Array.from({ length: 6 }, (_, i) => <ellipse key={i} cx="128" cy="62" rx="34" ry="58" transform={`rotate(${i * 60} 128 128)`} />)}<circle cx="128" cy="128" r="30" /></g>
-      )}
-      {variant === "sun" && (
-        <g fill="none" stroke={c} strokeWidth="26">{[0, 1, 2, 3].map((i) => <circle key={i} cx={128 + 44 * Math.cos((i * Math.PI) / 2)} cy={128 + 44 * Math.sin((i * Math.PI) / 2)} r="58" />)}</g>
-      )}
-    </svg>
-  );
-}
-
+// w/h are the character SVGs' cropped viewBox dimensions
 const CARD = {
-  lime: { box: "bg-lime text-ink", btn: "bg-ink text-lime hover:text-white", circle: "bg-pink" },
-  red: { box: "bg-red text-ink", btn: "bg-ink text-red hover:text-white", circle: "bg-violet" },
-  sun: { box: "bg-[#fbd402] text-ink", btn: "bg-ink text-[#fbd402] hover:text-white", circle: "bg-pink" },
+  purple: { box: "bg-char-purple text-white", btn: "bg-ink text-lilac hover:text-white", circle: "bg-pink", w: 2667, h: 4509 },
+  red: { box: "bg-char-red text-white", btn: "bg-ink text-char-red hover:text-white", circle: "bg-violet", w: 636, h: 870 },
+  yellow: { box: "bg-char-yellow text-char-ink", btn: "bg-ink text-char-yellow hover:text-white", circle: "bg-pink", w: 2154, h: 4651 },
 } as const;
 
 const pad = "px-[30rem] pb-[40rem] pt-[50rem] md:px-[40rem] md:pb-[60rem] md:pt-[50rem] lg:px-[50rem] lg:py-[78rem]";
@@ -41,9 +25,13 @@ function CardBody({ s }: { s: Card }) {
   const v = CARD[s.color];
   return (
     <>
-      <h3 className="text-center text-[26rem] font-bold leading-[0.92] md:text-[40rem] lg:text-[65rem]">{s.title[0]}<br />{s.title[1]}</h3>
-      <p className="mt-[14rem] text-center text-[12rem] md:mt-[18rem] md:text-[16rem] lg:mt-[32rem] lg:text-[19rem]">{s.text}</p>
-      <div className="mt-[24rem] w-[170rem] md:mt-[30rem] md:w-[256rem] lg:mt-[42rem]"><CardIcon variant={s.color} /></div>
+      <span aria-hidden className="pointer-events-none absolute left-[-0.08em] top-1/2 -translate-y-1/2 select-none whitespace-nowrap text-[200rem] font-extrabold italic uppercase leading-none text-white/[0.09] md:text-[260rem] lg:text-[300rem]">{s.title[0].split(" ")[0]}</span>
+      <h3 className="relative text-center text-[26rem] font-bold leading-[0.92] md:text-[40rem] lg:text-[65rem]">{s.title[0]}<br />{s.title[1]}</h3>
+      <p className="relative mt-[14rem] text-center text-[12rem] md:mt-[18rem] md:text-[16rem] lg:mt-[32rem] lg:text-[19rem]">{s.text}</p>
+      <div className="relative mt-[24rem] animate-float md:mt-[30rem] lg:mt-[42rem]">
+        <Image src={`/characters/${s.color}.svg`} alt="" width={v.w} height={v.h}
+          className="block h-[160rem] w-auto [filter:drop-shadow(0_10px_12px_rgba(0,0,0,.25))] md:h-[200rem] lg:h-[293rem]" />
+      </div>
       <Bubble onClick={openRegister} circle={v.circle}
         className={`mt-[28rem] rounded-[90rem] px-[24rem] py-[16rem] text-[12rem] font-bold leading-[1.5] md:mt-[43rem] md:px-[30rem] md:py-[20rem] md:text-[15rem] ${v.btn}`}>
         {goals.cta}
@@ -99,12 +87,12 @@ export default function Goals() {
             if (i === 1)
               return (
                 <li key={s.title.join()} ref={ref} className="relative mx-auto w-[358rem] shrink-0 rounded-[37rem] [transform-style:preserve-3d] max-lg:order-first md:w-[458rem] lg:mx-0 lg:w-auto lg:flex-1 lg:px-[50rem] lg:py-[78rem]">
-                  <div className={`relative flex h-full flex-col items-center justify-between rounded-[inherit] [backface-visibility:hidden] lg:absolute lg:inset-0 ${pad} ${v.box}`}><CardBody s={s} /></div>
+                  <div className={`relative flex h-full flex-col items-center justify-between rounded-[inherit] [backface-visibility:hidden] overflow-hidden lg:absolute lg:inset-0 ${pad} ${v.box}`}><CardBody s={s} /></div>
                   <div aria-hidden className={`absolute inset-0 rounded-[inherit] [backface-visibility:hidden] [transform:rotateY(180deg)] ${v.box}`} />
                 </li>
               );
             return (
-              <li key={s.title.join()} ref={ref} className={`mx-auto flex w-[358rem] shrink-0 flex-col items-center justify-between rounded-[37rem] md:w-[458rem] lg:mx-0 lg:w-auto lg:flex-1 ${pad} ${v.box}`}>
+              <li key={s.title.join()} ref={ref} className={`relative mx-auto flex w-[358rem] overflow-hidden shrink-0 flex-col items-center justify-between rounded-[37rem] md:w-[458rem] lg:mx-0 lg:w-auto lg:flex-1 ${pad} ${v.box}`}>
                 <CardBody s={s} />
               </li>
             );

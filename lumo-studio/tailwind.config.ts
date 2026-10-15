@@ -20,6 +20,12 @@ const config: Config = {
         blue: "#3d71ff",
         violet: "#4e00ff",
         green: "#11b04c",
+        char: {
+          purple: "#4A2E85",
+          red: "#E33F24",
+          yellow: "#FCAD18",
+          ink: "#1B0B3F",
+        },
       },
       fontFamily: {
         display: ["var(--font-display)", "var(--font-sans)", "Impact", "sans-serif"],
@@ -32,6 +38,10 @@ const config: Config = {
       },
       keyframes: {
         spin: { to: { transform: "rotate(360deg)" } },
+        float: { "0%, 100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-8px)" } },
+      },
+      animation: {
+        float: "float 4s ease-in-out infinite",
       },
     },
   },
